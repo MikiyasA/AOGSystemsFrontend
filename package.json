@@ -9,19 +9,27 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@mantine/core": "^7.1.0",
+    "@mantine/dates": "^7.1.0",
+    "@mantine/dropzone": "^7.1.0",
+    "@mantine/form": "^7.1.0",
+    "@mantine/hooks": "^7.1.0",
+    "@mantine/modals": "^7.1.0",
+    "@mantine/nprogress": "^7.1.0",
+    "dayjs": "^1.11.10",
+    "next": "latest",
     "react": "latest",
-    "react-dom": "latest",
-    "next": "latest"
+    "react-dom": "latest"
   },
   "devDependencies": {
-    "typescript": "latest",
-    "@types/react": "latest",
     "@types/node": "latest",
+    "@types/react": "latest",
     "@types/react-dom": "latest",
     "autoprefixer": "latest",
+    "eslint": "latest",
+    "eslint-config-next": "latest",
     "postcss": "latest",
     "tailwindcss": "latest",
-    "eslint": "latest",
-    "eslint-config-next": "latest"
+    "typescript": "latest"
   }
 }
