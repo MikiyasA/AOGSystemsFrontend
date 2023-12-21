@@ -1,0 +1,30 @@
+.th {
+    padding: 0;
+    justify-content: start;
+  }
+  
+  .control {
+    width: 100%;
+    padding: 15px 15px 15px 3px;
+    /* var(--mantine-spacing-xs) var(--mantine-spacing-xs); */
+  
+    @mixin hover {
+      background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+    }
+  }
+  
+  .icon {
+    width: rem(21px);
+    height: rem(21px);
+    border-radius: rem(21px);
+  }
+  .textWrap {
+    text-wrap: nowrap;
+  }
+/* 
+p {
+    font-size: xx-large;
+  } */
+  .tableTitle{
+
+  }
