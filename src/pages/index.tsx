@@ -3,11 +3,13 @@ import { Inter } from 'next/font/google'
 import Layout from '@/hocs/Layout'
 import { FollowupTable } from '@/components/FollowupTable'
 import { useGetAllActiveFollowUpsQuery, useGetAllActiveFollowUpsTabsQuery, useGetPartByIdQuery } from './api/apiSlice'
-import { Box, Group, Tabs } from '@mantine/core'
+import { Box, Button, Group, Tabs } from '@mantine/core'
 import { IconBold, IconBolt, IconChecklist, IconCirclePlus, IconEyeCheck, IconEyeExclamation, IconSettingsBolt } from '@tabler/icons-react'
 import { modals } from '@mantine/modals'
 import TabForm from '@/components/TabForm'
 import TabActionMenu from '@/components/TabActionMenu'
+import Link from 'next/link'
+import { API_URL } from '@/config'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -61,6 +63,30 @@ export default function Home() {
 
   const {data: activeTabs, isLoading: tabIsLoading, isSuccess: tabIsSuccess} = useGetAllActiveFollowUpsTabsQuery('')
 
+  const handleExport = () => {
+    fetch(`${API_URL}/AOGFollowUp/ExportAOGFPTOExcel`) // Adjust the endpoint URL
+    .then(response => response.blob())
+    .then(blob => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+          const today = new Date();
+          const date = today.toLocaleDateString('en-US', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric'
+          });
+          const hour = today.getHours();
+          const shift = hour < 3 ? 'Evening' : hour < 9 ? 'Night' : hour < 18 ? 'Day' : '';
+        link.download = `AOG Part Status For ${date} ${shift} Shift.xlsx`; // Use the same filename as in the handler
+        link.click();
+        URL.revokeObjectURL(url);
+    })
+    .catch(error => {
+        // Handle errors
+    });
+  }
+
   return (
     <Layout 
     title='AOG Follow Up'
@@ -94,6 +120,8 @@ export default function Home() {
                   ),
                 })}
               />
+              <Button onClick={handleExport} ml={30}>
+              Export Followup</Button>
           </Tabs.List>}
             
             <Tabs.Panel value="needHigherMgntAttn">

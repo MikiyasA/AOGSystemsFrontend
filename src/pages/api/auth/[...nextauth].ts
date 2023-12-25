@@ -26,21 +26,24 @@ export const authOptions: NextAuthOptions = {
       const res = await axios.post(`${API_URL}/User/LoginUser`,credentials);
       const data = await res.data;
       if(!data) {
-        return null
+        throw new Error('No data - something went wrong with login.');
+      }
+      console.log(res)
+      if(data.error){
+        throw new Error(data.error)
       }
       const decoded: any = jwtDecode(data?.token)
-      console.log({decoded})
       const userData = {
         token: data?.token,
         user: { 
           username: decoded.unique_name[1],
-          fullName: decoded.given_name,
+          firstName: decoded.given_name,
+          lastName: decoded.family_name,
           userId: decoded.nameid,
           email: decoded.email
           },
         role: decoded.role,
       };
-      console.log({userData})
       return userData;
       },
     }),
@@ -55,7 +58,8 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.user.userId;
         token.username = user.user.username;
-        token.fullName = user.user.fullName;
+        token.firstName = user.user.firstName;
+        token.lastName = user.user.lastName;
         token.email = user.user.email;
         token.role = user.role;
         token.token = user.token;
@@ -66,7 +70,8 @@ export const authOptions: NextAuthOptions = {
       if (token && session.user) {
         session.user.id = token.id;
         session.user.username = token.username;
-        session.user.fullName = token.fullName;
+        session.user.firstName = token.firstName;
+        session.user.lastName = token.lastName;
         session.user.email = token.email;
         session.user.role = token.role;
         session.token = token.token;

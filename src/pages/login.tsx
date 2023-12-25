@@ -46,6 +46,7 @@ export default function Login() {
     role: [],
   };
   const [value, setValue] = useSessionStorage({key: 'loginData', defaultValue: initialData});
+  const [errorMessage, setErrorMessage] = useState('');
   
   const router = useRouter();
   const callbackUrl = decodeURI((router.query?.callbackUrl as string) ?? '/');
@@ -73,6 +74,9 @@ export default function Login() {
         redirect: false,
       });
       console.log({result})
+      if(result?.error) {
+        setErrorMessage(result.error)
+      }
       // if (result?.error) {
       //   console.log(result.error);
       // }
@@ -143,6 +147,7 @@ export default function Login() {
           <Button fullWidth mt="xl" type='submit' loading={isLoading}>
               Sign in
           </Button>
+          {errorMessage && <Text color='red'>{errorMessage}</Text>}
           </Paper>
 
         </form>

@@ -144,7 +144,7 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ['CoreFollowup'],
         }),
-
+        
         getAllActiveFollowUpsTabs: builder.query({
             query: () => `AOGFollowUp/GetAllActiveFollowUpTabs/`,
             providesTags: ['FollowupTab', 'Followup']
@@ -177,7 +177,7 @@ export const apiSlice = createApi({
                 }
             }),
         }),
-
+        
         // #endregion
 
         // #region "Assignment"
@@ -259,6 +259,9 @@ export const {
     useAssignUserToRoleMutation,
     useUnassignUserToRoleMutation,
 
+    useGetAllUsersQuery,
+    useGetAllRolesQuery,
+
     useUpdateFollowupMutation,
     useAddRemarkMutation,
     useAddFollowUpMutation,
@@ -266,24 +269,24 @@ export const {
     useUpdateFollowupTabMutation,
     useAddCoreFollowupMutation,
 
-    useUpdateCoreFollowupMutation,
-    useAddAssignmentMutation,
-    useUpdateAssignmentMutation,
-
-    useGetAllUsersQuery,
-    useGetAllRolesQuery,
-
     useGetAllActiveFollowUpsTabsQuery,
     useGetAllTabsQuery,
     useGetAllActiveFollowUpsQuery,
     useGetFollowupTabByIdQuery,
+
     useGetAllActiveCoreFollowupQuery,
     useGetAllCoreFollowupQuery,
+
     useGetActiveAssignmentQuery,
     useGetAllAssignmentQuery,
 
+    useUpdateCoreFollowupMutation,
+    useAddAssignmentMutation,
+    useUpdateAssignmentMutation,
+
     useAddPartMutation,
     useUpdatePartMutation,
+
     useGetAllPartQuery,
     useGetPartByIdQuery,
     useGetPartByPNQuery,
