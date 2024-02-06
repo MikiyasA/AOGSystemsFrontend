@@ -6,6 +6,7 @@ import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import MyLoadingOverlay from "@/components/MyLoadingOverlay";
 
 
 const Register = () => {
@@ -36,7 +37,7 @@ const Register = () => {
     const [registerUser, {isLoading, isSuccess, error}] = useCreateUserMutation()
     const handleSubmit = async (e: any) => {
         e.preventDefault()
-        const {data: registerData}: any = await registerUser(form.values).unwrap()
+        const registerData = await registerUser(form.values).unwrap()
         registerData.succeeded ? notifications.show({
             title: 'Success',
             message:  registerData?.message || 'User Registered Successfully 👍',
@@ -56,6 +57,8 @@ const Register = () => {
     
     return(
     <Container size={700} my={40}>
+        {isLoading  &&
+            <MyLoadingOverlay />}
       <Title ta="center" className={classes.title}>
         Registration Form!
       </Title>

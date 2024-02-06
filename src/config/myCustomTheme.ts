@@ -5,17 +5,11 @@ export const myCustomTheme = createTheme({
     
     components: {
         Button: {
-            classNames:{
-
-            },
-            styles:{
+            styles: {
                 root: {
-                    backgroundColor: 'green',
+                    backgroundColor: "green",
                     padding: 5,
-                    // '&:hover': {
-                    //     backgroundColor: 'darkblue',
-                    // },
-                },
+                }
             }
         },
         Table: {
@@ -23,6 +17,19 @@ export const myCustomTheme = createTheme({
                 root: {
                     padding: 2,
                 }
+            }
+        },
+        Link: {
+            classNames:{
+                backgroundColor: 'red',
+            },
+            styles: {
+                root: {
+                    textDecoration: 'none',
+                    color: 'red'
+                    
+                },
+                
             }
         }
     }

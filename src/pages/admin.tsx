@@ -1,7 +1,9 @@
-import { UserTable } from "@/components/UserTable"
+import { UserTable } from "@/components/User/UserTable"
 import Layout from "@/hocs/Layout"
 import { Group } from "@mantine/core"
 import { useGetAllUsersQuery } from "./api/apiSlice"
+import withAuth from "../hocs/withAuth"
+import MyLoadingOverlay from "@/components/MyLoadingOverlay"
 
 var userTable = [
     {key: 'userName', value: 'User Name'},
@@ -23,6 +25,8 @@ const Admin = ({data}: any) => {
             title="Admin Page"
             description="Admin Page"
         >
+            {isLoading  &&
+            <MyLoadingOverlay />}
             <Group>
                 {isSuccess && <UserTable
                     data={userData}
@@ -35,4 +39,4 @@ const Admin = ({data}: any) => {
     )
 }
 
-export default Admin
+export default withAuth(Admin, ['Admin'])

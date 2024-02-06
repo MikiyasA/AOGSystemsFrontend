@@ -14,17 +14,6 @@ type Props = {
 }
 
 const Layout = ({children, title, description}: Props) => {
-
-  const [loginData, setLoginData] = useSessionStorage({key: 'loginData'});
-  
-  const router = useRouter()
-  useEffect(() => { 
-    console.log('loginData', loginData?.token)
-    if(!loginData){
-        // router.push('/')
-    }
-    
-}, [loginData])
   
 return (
     <Group>

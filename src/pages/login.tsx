@@ -21,6 +21,7 @@ import { useState } from 'react';
 import { jwtDecode } from "jwt-decode";
 import { AnyAaaaRecord } from 'dns';
 import { useRouter } from 'next/router';
+import MyLoadingOverlay from '@/components/MyLoadingOverlay';
 
 
 
@@ -45,7 +46,6 @@ export default function Login() {
      },
     role: [],
   };
-  const [value, setValue] = useSessionStorage({key: 'loginData', defaultValue: initialData});
   const [errorMessage, setErrorMessage] = useState('');
   
   const router = useRouter();
@@ -54,19 +54,8 @@ export default function Login() {
   const [login, {isLoading, isSuccess, error}] = useLoginUserMutation()
   const handleSubmit = async (e: any) => {
       e.preventDefault()
-      // const response = await fetch('/api/auth', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(form.values),
-      // })
-      // const data = await response.json()
-      // console.log({data})
-    // }
-    //   console.log({form})
+      
       const {username, password} = form.values
-      // await signIn('credentials', { redirect: false });
       const result = await signIn("credentials", {
         username: username, 
         password: password,
@@ -74,45 +63,14 @@ export default function Login() {
         redirect: false,
       });
       console.log({result})
-      if(result?.error) {
-        setErrorMessage(result.error)
-      }
-      // if (result?.error) {
-      //   console.log(result.error);
-      // }
-      // if (result?.ok) {
-      //   console.log('result', result);
-      // }
-    };
-
-
-      // try{
-      //   const loginData = await login(form.values).unwrap()
-      //   if(loginData) {
-      //     const decoded: any = jwtDecode(loginData?.token)
-      //     console.log({decoded})
-      //     const userData = {
-      //       token: loginData?.token,
-      //       user: { 
-      //         username: decoded.unique_name[1],
-      //         fullName: decoded.given_name,
-      //         userId: decoded.nameid,
-      //         email: decoded.email
-      //        },
-      //       role: decoded.role,
-      //     };
-      //     setValue(userData)
-      //   }
-
-      // } catch(e) {
-      //   console.log({e})
-      //   console.log({error})
-      // }
-      
-  
+      if(result?.ok)
+        router.push(callbackUrl);
+    };  
 
   return (
     <Container size={420} my={40}>
+      {isLoading  &&
+      <MyLoadingOverlay />}
       <Title ta="center" className={classes.title}>
         Welcome back!
       </Title>

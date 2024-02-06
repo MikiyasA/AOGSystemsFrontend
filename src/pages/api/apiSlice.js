@@ -14,8 +14,7 @@ export const apiSlice = createApi({
             return headers
         }
     }),
-    tagTypes: ['Followup', 'FollowupTab', 'CoreFollowup', 'Assignment', 'User', 'Part'],
-
+    tagTypes: ['Followup', 'FollowupTab', 'CoreFollowup', 'Assignment', 'User', 'Part', 'Sales', 'Invoice', 'Company', 'Loan'],
     
     endpoints: (builder) => ({
 
@@ -67,6 +66,15 @@ export const apiSlice = createApi({
             invalidatesTags: ['User']
         }),
 
+        createNewRole: builder.mutation({
+            query: (data) => ({
+                url: 'User/CreateNewRole',
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: ['User']
+        }),
+
         unassignUserToRole: builder.mutation({
             query: (data) => ({
                 url: 'User/UnassignsUserToRole',
@@ -80,10 +88,15 @@ export const apiSlice = createApi({
             query: () => `User/GetAllUsers/`,
             providesTags: ['User']
         }),
-        getAllRoles: builder.query({
-            query: () => `User/GetAllRole/`,
+        getUserByUsername: builder.query({
+            query: (username) => `User/GetUserByUsername?username=${username}`,
             providesTags: ['User']
         }),
+        getAllRoles: builder.query({
+            query: () => `User/GetAllRole`,
+            providesTags: ['User']
+        }),
+
 
         //#endregion
 
@@ -247,10 +260,346 @@ export const apiSlice = createApi({
         }),
         // #endregion "Part"
         
-    })
+        // #region Sales
+        createSalesOrder: builder.mutation({
+            query: (data) => ({
+                url: 'Sales/CreateSales',
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: ['Sales']
+        }),
+        updateSalesOrder: builder.mutation({
+            query: (data) => ({
+                url: 'Sales/UpdateSales',
+                method: 'PUT',
+                body: data
+            }),
+            invalidatesTags: ['Sales']
+        }),
+        addPartList: builder.mutation({
+            query: (data) => ({
+                url: 'Sales/AddSalesPartList',
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: ['Sales']
+        }),
+        updatePartList: builder.mutation({
+            query: (data) => ({
+                url: 'Sales/UpdateSalesPartList',
+                method: 'PUT',
+                body: data
+            }),
+            invalidatesTags: ['Sales']
+        }),
+
+        shipSales: builder.mutation({
+            query: (data) => ({
+                url: 'Sales/ShipSales',
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: ['Sales']
+        }),
+
+        salesApproval: builder.mutation({
+            query: (data) => ({
+                url: 'Sales/SalesApproval',
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: ['Sales']
+        }),
+
+        salesCloser: builder.mutation({
+            query: (data) => ({
+                url: 'Sales/SalesCloser',
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: ['Sales']
+        }),
+
+        getAllSalesOrder: builder.query({
+            query: () => `Sales/GetAllSales`,
+            providesTags: ['Sales']
+        }),
+        getSalesOrderById: builder.query({
+            query: (id) => `Sales/GetSalesByID/${id}`,
+            providesTags: ['Sales']
+        }),
+        getSalesOrderByCompanyId: builder.query({
+            query: (companyId) => `Sales/GetSalesByCompanyId/${companyId}`,
+            providesTags: ['Sales']
+        }),
+        getSalesOrderByOrderNo: builder.query({
+            query: (orderNo) => `Sales/GetSalesByOrderNo/${orderNo}`,
+            providesTags: ['Sales']
+        }),
+        getSalesOrderByCustomerOrderNo: builder.query({
+            query: (customerOrderNo) => `Sales/GetAllGetSalesByCustomerOrderNo/${customerOrderNo}Sales`,
+            providesTags: ['Sales']
+        }),
+        getAllActiveSalesOrder: builder.query({
+            query: () => `Sales/GetAllActiveSales`,
+            providesTags: ['Sales']
+        }),
+
+        getAllSalesPartList: builder.query({
+            query: () => `Sales/GetAllSalesPartList`,
+            providesTags: ['Sales']
+        }),
+        getSalesPartListByID: builder.query({
+            query: (id) => `Sales/GetSalesPartListByID/${id}`,
+            providesTags: ['Sales']
+        }),
+
+        // #endregion Sales
+
+        // #region Invoice
+        createInvoice: builder.mutation({
+            query: (data) => ({
+                url: 'Invoice/CreateInvoice',
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: ['Invoice', 'Sales']
+        }),
+        updateInvoice: builder.mutation({
+            query: (data) => ({
+                url: 'Invoice/UpdateInvoice',
+                method: 'PUT',
+                body: data
+            }),
+            invalidatesTags: ['Invoice', 'Sales']
+        }),
+
+        invoiceApproval: builder.mutation({
+            query: (data) => ({
+                url: 'Invoice/InvoiceApproval',
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: ['Invoice']
+        }),
+        invoiceCloser: builder.mutation({
+            query: (data) => ({
+                url: 'Invoice/InvoiceCloser',
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: ['Invoice']
+        }),
+
+        getAllInvoice: builder.query({
+            query: () => `Invoice/GetAllInvoices`,
+            providesTags: ['Invoice']
+        }),
+        getInvoiceByID: builder.query({
+            query: (id) => `Invoice/GetInvoiceByID/${id}`,
+            providesTags: ['Invoice']
+        }),
+        getInvoiceBySalesOrderId: builder.query({
+            query: (orderId) => `Invoice/GetInvoiceBySalesOrderId/${orderId}`,
+            providesTags: ['Invoice']
+        }),
+        getInvoiceByLoanOrderId: builder.query({
+            query: (orderId) => `Invoice/GetInvoiceByLoanOrderId/${orderId}`,
+            providesTags: ['Invoice']
+        }),
+        getInvoiceByInvoiceNo: builder.query({
+            query: (invoiceNo) => `Invoice/GetInvoiceByInvoiceNo/${invoiceNo}`,
+            providesTags: ['Invoice']
+        }),
+        getInvoicesByInvoiceNo: builder.query({
+            query: (invoiceNo) => `Invoice/GetInvoicesByInvoiceNo/${invoiceNo}`,
+            providesTags: ['Invoice']
+        }),
+        getApprovedInvoices: builder.query({
+            query: () => `Invoice/GetApprovedlInvoices`,
+            providesTags: ['Invoice']
+        }),
+        getUnapprovedInvoices: builder.query({
+            query: () => `Invoice/GetUnapprovedlInvoices`,
+            providesTags: ['Invoice']
+        }),
+        getActiveInvoices: builder.query({
+            query: () => `Invoice/GetActiveInvoices`,
+            providesTags: ['Invoice']
+        }),
+        getInvoicesByTransactionType: builder.query({
+            query: (type) => `Invoice/GetInvoicesBytransactionType/${type}`,
+            providesTags: ['Invoice']
+        }),
+        // #endregion Invoice
+    
+        // #region Company 
+        createCompany: builder.mutation({
+            query: (data) => ({
+                url: 'Company/CreateCompany',
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: ['Company']
+        }),
+        updateCompany: builder.mutation({
+            query: (data) => ({
+                url: 'Company/UpdateCompany',
+                method: 'PUT',
+                body: data
+            }),
+            invalidatesTags: ['Company']
+        }),
+
+        getAllCompanies: builder.query({
+            query: () => `Company/GetAllCompanies`,
+            providesTags: ['Company']
+        }),
+        getCompanyByID: builder.query({
+            query: (id) => `Company/GetCompanyByID/${id}`,
+            providesTags: ['Company']
+        }),
+        getCompanyByCode: builder.query({
+            query: (code) => `Company/GetCompanyByCode/${code}`,
+            providesTags: ['Company']
+        }),
+        getCompanyByName: builder.query({
+            query: (name) => `Company/GetCompanyByName/${name}`,
+            providesTags: ['Company']
+        }),
+        //#endregion
+    
+        // #region Loan 
+        createLoan: builder.mutation({
+            query: (data) => ({
+                url: 'Loan/CreateLoan',
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: ['Loan']
+        }),
+        updateLoan: builder.mutation({
+            query: (data) => ({
+                url: 'Loan/UpdateLoan',
+                method: 'PUT',
+                body: data
+            }),
+            invalidatesTags: ['Loan']
+        }),
+        loanApproval: builder.mutation({
+            query: (data) => ({
+                url: 'Loan/LoanApproval',
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: ['Loan']
+        }),
+        addLoanPartList: builder.mutation({
+            query: (data) => ({
+                url: 'Loan/AddLoanPartList',
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: ['Loan']
+        }),
+        updateLoanPartList: builder.mutation({
+            query: (data) => ({
+                url: 'Loan/UpdateLoanPartList',
+                method: 'PUT',
+                body: data
+            }),
+            invalidatesTags: ['Loan']
+        }),
+        loanPartLineRemoval: builder.mutation({
+            query: (data) => ({
+                url: 'Loan/LoanPartLineRemoval',
+                method: 'PUT',
+                body: data
+            }),
+            invalidatesTags: ['Loan']
+        }),
+        shipLoan: builder.mutation({
+            query: (data) => ({
+                url: 'Loan/ShipLoan',
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: ['Loan']
+        }),
+        addOffer: builder.mutation({
+            query: (data) => ({
+                url: 'Loan/AddOffer',
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: ['Loan']
+        }),
+        updateOffer: builder.mutation({
+            query: (data) => ({
+                url: 'Loan/UpdateOffer',
+                method: 'PUT',
+                body: data
+            }),
+            invalidatesTags: ['Loan']
+        }),
+        loanCloser: builder.mutation({
+            query: (data) => ({
+                url: 'Loan/LoanCloser',
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: ['Loan']
+        }),
+
+        getAllLoans: builder.query({
+            query: () => `Loan/GetAllLoans`,
+            providesTags: ['Loan']
+        }),
+        getLoanByID: builder.query({
+            query: (id) => `Loan/GetLoanByID/${id}`,
+            providesTags: ['Loan']
+        }),
+        getLoanByByCompanyId: builder.query({
+            query: (companyId) => `Loan/GetLoanByCompanyId/${companyId}`,
+            providesTags: ['Loan']
+        }),
+        getLoanByOrderNo: builder.query({
+            query: (orderNo) => `Loan/GetLoanByOrderNo/${orderNo}`,
+            providesTags: ['Loan']
+        }),
+        getLoanByCustomerOrderNo: builder.query({
+            query: (customerOrderNo) => `Loan/GetLoanByCustomerOrderNo/${customerOrderNo}`,
+            providesTags: ['Loan']
+        }),
+        getAllActiveLoan: builder.query({
+            query: () => `Loan/GetAllActiveLoan`,
+            providesTags: ['Loan']
+        }),
+        getAllLoanPartList: builder.query({
+            query: () => `Loan/GetAllLoanPartList`,
+            providesTags: ['Loan']
+        }),
+        getLoanPartListByID: builder.query({
+            query: (id) => `Loan/GetLoanPartListByID/${id}`,
+            providesTags: ['Loan']
+        }),
+        getAllOffers: builder.query({
+            query: () => `Loan/GetAllOffers/`,
+            providesTags: ['Loan']
+        }),
+        getOfferByID: builder.query({
+            query: (id) => `Loan/GetOfferByID/${id}`,
+            providesTags: ['Loan']
+        }),
+
+        // #endregion
+    }) 
 })
 
 export const {
+
+    // #region User
     useCreateUserMutation,
     useLoginUserMutation,
     useActivateUserMutation,
@@ -258,16 +607,26 @@ export const {
     useUpdateUserMutation,
     useAssignUserToRoleMutation,
     useUnassignUserToRoleMutation,
-
+    useCreateNewRoleMutation,
+    
     useGetAllUsersQuery,
     useGetAllRolesQuery,
+    useGetUserByUsernameQuery,
+    
+    // #endregion 
 
+    // #region followup 
     useUpdateFollowupMutation,
     useAddRemarkMutation,
     useAddFollowUpMutation,
     useAddFollowUpTabMutation,
     useUpdateFollowupTabMutation,
     useAddCoreFollowupMutation,
+
+    useUpdateCoreFollowupMutation,
+    useAddAssignmentMutation,
+    useUpdateAssignmentMutation,
+
 
     useGetAllActiveFollowUpsTabsQuery,
     useGetAllTabsQuery,
@@ -277,13 +636,14 @@ export const {
     useGetAllActiveCoreFollowupQuery,
     useGetAllCoreFollowupQuery,
 
+    // #endregion 
+
+    // #region assignment 
     useGetActiveAssignmentQuery,
     useGetAllAssignmentQuery,
+    // #endregion 
 
-    useUpdateCoreFollowupMutation,
-    useAddAssignmentMutation,
-    useUpdateAssignmentMutation,
-
+    // #region part
     useAddPartMutation,
     useUpdatePartMutation,
 
@@ -291,5 +651,79 @@ export const {
     useGetPartByIdQuery,
     useGetPartByPNQuery,
     useGetPartByPartialPNQuery,
+    // #endregion 
 
+    // #region sales
+    useCreateSalesOrderMutation,
+    useUpdateSalesOrderMutation,
+    useAddPartListMutation,
+    useUpdatePartListMutation,
+    useShipSalesMutation,
+    useSalesApprovalMutation,
+    useSalesCloserMutation,
+
+    useGetAllSalesOrderQuery,
+    useGetSalesOrderByIdQuery,
+    useGetSalesOrderByCompanyIdQuery,
+    useGetSalesOrderByCustomerOrderNoQuery,
+    useGetSalesOrderByOrderNoQuery,
+    useGetAllActiveSalesOrderQuery,
+    useGetAllSalesPartListQuery,
+    useGetSalesPartListByIDQuery,
+    // #endregion 
+
+    // #region invoice 
+    useCreateInvoiceMutation,
+    useUpdateInvoiceMutation,
+    useInvoiceApprovalMutation,
+    useInvoiceCloserMutation,
+
+    useGetAllInvoiceQuery,
+    useGetInvoiceByIDQuery,
+    useGetInvoiceBySalesOrderIdQuery,
+    useGetInvoiceByLoanOrderIdQuery,
+    useGetInvoiceByInvoiceNoQuery,
+    useGetInvoicesByInvoiceNoQuery,
+    useGetApprovedInvoicesQuery,
+    useGetUnapprovedInvoicesQuery,
+    useGetActiveInvoicesQuery,
+    useGetInvoicesByTransactionTypeQuery,
+
+    // #endregion
+
+    // #region Company 
+    useCreateCompanyMutation,
+    useUpdateCompanyMutation,
+
+    useGetAllCompaniesQuery,
+    useGetCompanyByIDQuery,
+    useGetCompanyByCodeQuery,
+    useGetCompanyByNameQuery,
+    // #endregion
+
+    // #region Loan 
+    useCreateLoanMutation,
+    useUpdateLoanMutation,
+    useLoanApprovalMutation,
+    useAddLoanPartListMutation,
+    useUpdateLoanPartListMutation,
+    useLoanPartLineRemovalMutation,
+    useShipLoanMutation,
+    useAddOfferMutation,
+    useUpdateOfferMutation,
+    useLoanCloserMutation,
+
+    useGetAllLoansQuery,
+    useGetLoanByIDQuery,
+    useGetLoanByByCompanyIdQuery,
+    useGetLoanByOrderNoQuery,
+    useGetLoanByCustomerOrderNoQuery,
+    useGetAllActiveLoanQuery,
+    useGetAllLoanPartListQuery,
+    useGetLoanPartListByIDQuery,
+    useGetAllOffersQuery,
+    useGetOfferByIDQuery,
+    // #endregion
+
+    
 } = apiSlice

@@ -8,5 +8,6 @@
         "nameid",
         "tabler",
         "tiptap"
-    ]
+    ],
+    "editor.formatOnSave": true
 }

@@ -1,13 +1,10 @@
 import { ColorSwatch, Table } from "@mantine/core"
-import TabActionMenu from "./TabActionMenu"
+import TabActionMenu from "./AOGFollowup/TabActionMenu"
 import { useState } from "react"
 
 const CustomTable = ({header, data}: any) => {
 
     // const [searchData, setSearchData] = useState() // TODO
-
-    // const searchedData = data()
-
 
     const rows = data?.map((el: any, index: any) => {
         
@@ -38,8 +35,8 @@ const CustomTable = ({header, data}: any) => {
             <Table>
                 <Table.Thead>
                     <Table.Tr>
-                    {header.map((th: any) => (
-                        <Table.Th>{th}</Table.Th>
+                    {header.map((th: any, i: any) => (
+                        <Table.Th key={i}>{th}</Table.Th>
                     ))}
                     </Table.Tr>
                 </Table.Thead>
