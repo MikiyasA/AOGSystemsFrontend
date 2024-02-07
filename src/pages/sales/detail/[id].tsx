@@ -320,7 +320,7 @@ const Detail = ({ data }: any) => {
                 </Button>
               )}
 
-              {!salesOrder?.isFullyShipped && (
+              {salesOrder?.isApproved && (
                 <Button
                   onClick={() => {
                     modals.open({
@@ -330,7 +330,7 @@ const Detail = ({ data }: any) => {
                     });
                   }}
                 >
-                  Send Shipment
+                  {salesOrder?.isFullyShipped ? "Update" : "Send"} Shipment
                 </Button>
               )}
 
@@ -378,7 +378,7 @@ const Detail = ({ data }: any) => {
               <Table.Thead>
                 <Table.Tr>
                   {header.map((th: any, i: any) => {
-                    if (th === "Part" && !salesOrder?.isFullyShipped)
+                    if (th === "Part")
                       return (
                         <Table.Th key={i}>
                           {th}{" "}
@@ -422,8 +422,9 @@ const Detail = ({ data }: any) => {
                       </Text>
                     ) : (
                       <RaiseInvoice
-                        salesOrder={salesOrder}
                         partData={partData}
+                        order={salesOrder}
+                        orderType="sales"
                       />
                     )}
                   </>

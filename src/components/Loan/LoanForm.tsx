@@ -45,12 +45,13 @@ const LoanForm = ({ data, action }: any) => {
       customerOrderNo: data?.customerOrderNo,
       orderedByName: data?.orderedByName,
       orderedByEmail: data?.orderedByEmail,
+      shipToAddress: data?.shipToAddress,
       status: data?.status,
       note: data?.note,
       partId: data?.partId,
-      quantity: data?.quantity,
-      uom: data?.uom,
-      currency: data?.currency,
+      quantity: data?.quantity || 1,
+      uom: data?.uom || "EA",
+      currency: data?.currency || "USD",
       description: [],
       basePrice: data?.basePrice,
       unitPrice: data?.unitPrice,
@@ -183,6 +184,11 @@ const LoanForm = ({ data, action }: any) => {
             placeholder="Order By Email Address"
             {...form.getInputProps("orderedByEmail")}
             required
+          />
+          <TextInput
+            label="Ship to Address"
+            placeholder="Ship to Address"
+            {...form.getInputProps("shipToAddress")}
           />
 
           {action == "add" && (
@@ -327,12 +333,12 @@ export const AddLineItemForm = ({ data, loanId }: any) => {
       id: data?.id,
       loanId: loanId,
       partId: data?.partId,
-      quantity: data?.quantity,
-      uom: data?.uom,
+      quantity: data?.quantity || 1,
+      uom: data?.uom || "EA",
       description: data?.description,
       basePrice: data?.basePrice,
       unitPrice: data?.unitPrice,
-      currency: data?.currency,
+      currency: data?.currency || "USD",
     },
     validate: {
       quantity: (x: any) => (x < 1 ? "Quantity must be grater than one" : null),
@@ -469,8 +475,8 @@ export const EditPartLine = ({ data, invoiced }: any) => {
     initialValues: {
       id: data?.id,
       partId: data?.partId,
-      quantity: data?.quantity,
-      uom: data?.uom,
+      quantity: data?.quantity || 1,
+      uom: data?.uom || "EA",
       serialNo: data?.serialNo,
       rid: data?.rid,
       shipDate: data?.shipDate,
@@ -640,10 +646,10 @@ export const OfferForm = ({ data, action, loanPartListId }: any) => {
       loanPartListId: loanPartListId,
       description: data?.description,
       basePrice: data?.basePrice,
-      quantity: data?.quantity,
+      quantity: data?.quantity || 1,
       unitPrice: data?.unitPrice,
       totalPrice: data?.totalPrice,
-      currency: data?.currency,
+      currency: data?.currency || "USD",
     },
     validate: {
       quantity: (x: any) => (x < 1 ? "Quantity must be grater than one" : null),

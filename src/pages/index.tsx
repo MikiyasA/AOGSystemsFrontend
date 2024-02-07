@@ -57,7 +57,9 @@ export default function Home() {
     { key: "quantity", value: "Qty" },
     { key: "vendor", value: "Vendor" },
     { key: "awbNo", value: "AWB No" },
+    { key: "flightNo", value: "Flight No" },
     { key: "edd", value: "EDD" },
+    { key: "status", value: "Status" },
     { key: "remarks", value: "Remarks" },
   ];
 
@@ -66,7 +68,10 @@ export default function Home() {
   );
 
   const underReceiving = data?.filter(
-    (w: any) => w.status === "Under Receiving"
+    (w: any) =>
+      w.status === "Under Receiving" ||
+      w.status === "Received" ||
+      w.status === "Received & Advised"
   );
 
   const {

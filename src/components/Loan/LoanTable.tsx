@@ -122,6 +122,7 @@ var detailData = [
   { key: "companyId", value: "Customer Name" },
   { key: "orderedByName", value: "Order By Name" },
   { key: "orderedByEmail", value: "Order By Email" },
+  { key: "shipToAddress", value: "Ship To Address" },
   { key: "status", value: "Status" },
   { key: "note", value: "Note" },
   { key: "createdAT", value: "Order Date" },

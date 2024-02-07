@@ -12,6 +12,7 @@ import {
   SimpleGrid,
   Table,
   TextInput,
+  Tooltip,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
@@ -61,8 +62,9 @@ const InvoiceForm = ({ data, action, partData, orderType }: any) => {
   const handleFormSubmit = async (e: any) => {
     e.preventDefault();
     if (action === "add") {
-      const addReturn = await createInvoice(form.values).unwrap();
-      addReturn.isSuccess
+      const addReturn = await createInvoice(form.values);
+      console.log({ addReturn });
+      addReturn?.data?.isSuccess
         ? notifications.show({
             title: "Success",
             message: addReturn?.message || "Invoice Added Successfully 👍",
@@ -71,7 +73,9 @@ const InvoiceForm = ({ data, action, partData, orderType }: any) => {
         : notifications.show({
             title: "Failure",
             message:
-              createError?.data.message || "Error occurs on Invoice Added",
+              addReturn?.error?.data?.message ||
+              createError?.data.message ||
+              "Error occurs on Invoice Added",
             color: "red",
           });
     } else if (action === "update") {
@@ -113,23 +117,35 @@ const InvoiceForm = ({ data, action, partData, orderType }: any) => {
       <>
         <Table.Tr key={index + "2"}>
           <Table.Td>
-            <Checkbox
-              aria-label="Select row"
-              checked={
-                form.values.partLists.some((x) => x.id == el.id) ||
-                el.isInvoiced
+            <Tooltip
+              label={
+                !el.rid && !el.shipDate
+                  ? "RID & SN must be filled"
+                  : el.isInvoiced
+                  ? "Already invoiced"
+                  : "Ok to invoice"
               }
-              disabled={el.isInvoiced}
-              onChange={(event) => {
-                const exist = form.values.partLists.some((x) => x.id == el.id);
-                if (exist) {
-                  const i = form.values.partLists.indexOf(el);
-                  form.removeListItem("partLists", i);
-                } else {
-                  form.insertListItem("partLists", el);
+            >
+              <Checkbox
+                aria-label="Select row"
+                checked={
+                  form.values.partLists.some((x) => x.id == el.id) ||
+                  el.isInvoiced
                 }
-              }}
-            />
+                disabled={el.isInvoiced || (!el.rid && !el.shipDate)}
+                onChange={(event) => {
+                  const exist = form.values.partLists.some(
+                    (x) => x.id == el.id
+                  );
+                  if (exist) {
+                    const i = form.values.partLists.indexOf(el);
+                    form.removeListItem("partLists", i);
+                  } else {
+                    form.insertListItem("partLists", el);
+                  }
+                }}
+              />
+            </Tooltip>
           </Table.Td>
           <Table.Td>
             {part && part[0]?.partNumber} ({part && part[0]?.description})
@@ -153,29 +169,41 @@ const InvoiceForm = ({ data, action, partData, orderType }: any) => {
   const loanRows = loanPartListsTBInvoiced?.map((el: any, index: any) => {
     const part = partData?.filter((p: any) => p.id === el.partId);
 
-    createIsSuccess || (updateIsSuccess && modals.closeAll());
+    (createIsSuccess || updateIsSuccess) && modals.closeAll();
 
     return (
       <>
         <Table.Tr key={index + "2"}>
           <Table.Td>
-            <Checkbox
-              aria-label="Select row"
-              checked={
-                form.values.partLists.some((x) => x.id == el.id) ||
-                el.isInvoiced
+            <Tooltip
+              label={
+                !el.rid && !el.shipDate
+                  ? "RID & SN must be filled"
+                  : el.isInvoiced
+                  ? "Already invoiced"
+                  : "Ok to invoice"
               }
-              disabled={el.isInvoiced}
-              onChange={(event) => {
-                const exist = form.values.partLists.some((x) => x.id == el.id);
-                if (exist) {
-                  const i = form.values.partLists.indexOf(el);
-                  form.removeListItem("partLists", i);
-                } else {
-                  form.insertListItem("partLists", el);
+            >
+              <Checkbox
+                aria-label="Select row"
+                checked={
+                  form.values.partLists.some((x) => x.id == el.id) ||
+                  el.isInvoiced
                 }
-              }}
-            />
+                disabled={el.isInvoiced || (!el.rid && !el.shipDate)}
+                onChange={(event) => {
+                  const exist = form.values.partLists.some(
+                    (x) => x.id == el.id
+                  );
+                  if (exist) {
+                    const i = form.values.partLists.indexOf(el);
+                    form.removeListItem("partLists", i);
+                  } else {
+                    form.insertListItem("partLists", el);
+                  }
+                }}
+              />
+            </Tooltip>
           </Table.Td>
           <Table.Td>
             {part && part[0]?.partNumber} ({part && part[0]?.description})

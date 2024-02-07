@@ -245,6 +245,7 @@ const FollowUpForm = ({ tab }: any) => {
               "On Hold",
               "Under Shipping",
               "Under Receiving",
+              "Partially Received",
               "Received",
               "Received & Advised",
               "Closed",
@@ -262,7 +263,7 @@ const FollowUpForm = ({ tab }: any) => {
           <TextInput
             label="Flight No"
             placeholder="Flight No"
-            {...form.getInputProps("FlightNo")}
+            {...form.getInputProps("flightNo")}
             required={form.values.status === "Under Shipping"}
           />
           <TextInput

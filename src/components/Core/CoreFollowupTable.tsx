@@ -135,6 +135,7 @@ var detailData = [
   { key: "description", value: "Description" },
   { key: "stockNo", value: "Stock No" },
   { key: "vendor", value: "Vendor" },
+  { key: "partReleasedDate", value: "Part Released Date" },
   { key: "partReceiveDate", value: "Part Receive Date" },
   { key: "returnDueDate", value: "Return Due Date" },
   { key: "returnProcessedDate", value: "Return Processed Date" },
@@ -204,7 +205,8 @@ export function CoreFollowupTable({ data, table, tableTitle, isActive }: any) {
             col.key === "partReceiveDate" ||
             col.key === "returnDueDate" ||
             col.key === "returnProcessedDate" ||
-            col.key === "podDate"
+            col.key === "podDate" ||
+            col.key === "partReleasedDate"
           ) {
             const date = row[col.key] ? new Date(row[col.key]) : null;
             const formattedDate = date?.toLocaleDateString("en-US", {

@@ -17,6 +17,7 @@ var coreTable = [
   { key: "description", value: "Description" },
   { key: "stockNo", value: "Stock No" },
   { key: "vendor", value: "Vendor" },
+  { key: "partReleasedDate", value: "Part Released Date" },
   { key: "partReceiveDate", value: "Part Receive Date" },
   { key: "returnDueDate", value: "Return Due Date" },
   { key: "returnProcessedDate", value: "Return Processed Date" },

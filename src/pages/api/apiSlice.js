@@ -364,7 +364,7 @@ export const apiSlice = createApi({
                 method: 'POST',
                 body: data
             }),
-            invalidatesTags: ['Invoice', 'Sales']
+            invalidatesTags: ['Invoice', 'Sales', 'Loan']
         }),
         updateInvoice: builder.mutation({
             query: (data) => ({
@@ -372,7 +372,7 @@ export const apiSlice = createApi({
                 method: 'PUT',
                 body: data
             }),
-            invalidatesTags: ['Invoice', 'Sales']
+            invalidatesTags: ['Invoice', 'Sales', 'Loan']
         }),
 
         invoiceApproval: builder.mutation({

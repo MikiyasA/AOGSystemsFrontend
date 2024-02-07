@@ -180,8 +180,6 @@ export function InvoiceList({ data, table, tableTitle, isActive }: any) {
   const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
 
-  const MAX_CHARACTERS = 50;
-
   useEffect(() => {
     setSortedData(data);
   }, [data]);

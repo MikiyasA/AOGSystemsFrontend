@@ -84,7 +84,7 @@ const PartForm = ({ data, action, redirect }: any) => {
       updateReturn.isSuccess
         ? notifications.show({
             title: "Success",
-            message: updateReturn?.message || "Part Add Successfully 👍",
+            message: updateReturn?.message || "Part Updated Successfully 👍",
             color: "green",
           })
         : notifications.show({

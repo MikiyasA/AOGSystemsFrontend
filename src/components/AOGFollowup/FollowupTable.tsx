@@ -36,6 +36,7 @@ import { useForm } from "@mantine/form";
 import FollowupDetail from "./FollowupDetail";
 import ActionMenu from "./ActionMenu";
 import Link from "next/link";
+import { formatDate } from "@/config/util";
 
 export interface RowData {
   rid: string;
@@ -137,6 +138,7 @@ var detailData = [
   { key: "vendor", value: "Vendor" },
   { key: "edd", value: "EDD" },
   { key: "awbNo", value: "AWB No" },
+  { key: "flightNo", value: "Flight No" },
   { key: "status", value: "Status" },
   { key: "needHigherMgntAttn", value: "Need Higher Mgn Attn" },
   { key: "remarks", value: "Remarks" },
@@ -226,15 +228,9 @@ export function FollowupTable({ data, tab, table, tableTitle }: any) {
             </Table.Td>
           );
         } else if (col.key === "requestDate" || col.key === "edd") {
-          const date = new Date(row[col.key]);
-          const formattedDate = date.toLocaleDateString("en-US", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-          });
           return (
             <Table.Td key={`col-${index}`} p={5} m={0}>
-              {formattedDate}
+              {formatDate(row[col.key])}
             </Table.Td>
           );
         } else if (col.key === "description") {

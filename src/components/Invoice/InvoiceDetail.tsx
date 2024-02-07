@@ -397,6 +397,17 @@ const InvoiceDetail = ({ data, location }: any) => {
             </Group>
             <hr />
           </Box>
+          {data?.remark && (
+            <>
+              <Group>
+                <Title order={5}>Remark:</Title>
+                <Title order={6} style={{ fontWeight: 100 }}>
+                  {data?.remark}
+                </Title>
+              </Group>
+              <hr />
+            </>
+          )}
         </Box>
         <Box my={20}>
           <Title my={15} order={4}>

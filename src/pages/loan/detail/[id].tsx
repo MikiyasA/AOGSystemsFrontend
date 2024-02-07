@@ -46,6 +46,7 @@ import { truncate } from "fs";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { formatDate } from "@/config/util";
+import { RaiseInvoice } from "@/components/Invoice/RaiseInvoice";
 
 const Detail = ({ data }: any) => {
   const route = useRouter();
@@ -69,7 +70,7 @@ const Detail = ({ data }: any) => {
     "Description",
     "Base Price",
     "Unit Price",
-    "Quantity",
+    "Quantity/Days",
     "Total Price",
     "Currency",
     "Action",
@@ -174,22 +175,24 @@ const Detail = ({ data }: any) => {
                           <Table.Th key={i}>
                             {th}
                             {!el.isInvoiced && (
-                              <IconCirclePlus
-                                style={{ marginLeft: "10px" }}
-                                color="green"
-                                onClick={() => {
-                                  modals.open({
-                                    title: "Add Offer",
-                                    size: "90%",
-                                    children: (
-                                      <OfferForm
-                                        action="add"
-                                        loanPartListId={el.id}
-                                      />
-                                    ),
-                                  });
-                                }}
-                              />
+                              <Tooltip label="Add Offer for specific part line">
+                                <IconCirclePlus
+                                  style={{ marginLeft: "10px" }}
+                                  color="green"
+                                  onClick={() => {
+                                    modals.open({
+                                      title: "Add Offer",
+                                      size: "90%",
+                                      children: (
+                                        <OfferForm
+                                          action="add"
+                                          loanPartListId={el.id}
+                                        />
+                                      ),
+                                    });
+                                  }}
+                                />
+                              </Tooltip>
                             )}
                           </Table.Th>
                         );
@@ -502,22 +505,24 @@ const Detail = ({ data }: any) => {
                         <Table.Th key={i}>
                           {th}{" "}
                           {loanOrder?.status !== "Close" && (
-                            <IconCirclePlus
-                              style={{ marginLeft: "10px" }}
-                              color="green"
-                              onClick={() => {
-                                modals.open({
-                                  title: "Add Part List",
-                                  size: "90%",
-                                  children: (
-                                    <AddLineItemForm
-                                      action="add"
-                                      loanId={loanOrder.id}
-                                    />
-                                  ),
-                                });
-                              }}
-                            />
+                            <Tooltip label="Add Part Line">
+                              <IconCirclePlus
+                                style={{ marginLeft: "10px" }}
+                                color="green"
+                                onClick={() => {
+                                  modals.open({
+                                    title: "Add Part List",
+                                    size: "90%",
+                                    children: (
+                                      <AddLineItemForm
+                                        action="add"
+                                        loanId={loanOrder.id}
+                                      />
+                                    ),
+                                  });
+                                }}
+                              />
+                            </Tooltip>
                           )}
                         </Table.Th>
                       );
@@ -542,25 +547,11 @@ const Detail = ({ data }: any) => {
                         rasing is needed
                       </Text>
                     ) : (
-                      <Button
-                        onClick={() => {
-                          console.log({ loanOrder });
-                          modals.open({
-                            title: `Raise Invoice For ${loanOrder?.orderNo}`,
-                            size: "90%",
-                            children: (
-                              <InvoiceForm
-                                action="add"
-                                data={loanOrder}
-                                partData={partData}
-                                orderType="loan"
-                              />
-                            ),
-                          });
-                        }}
-                      >
-                        Raise Invoice
-                      </Button>
+                      <RaiseInvoice
+                        order={loanOrder}
+                        partData={partData}
+                        orderType="loan"
+                      />
                     )}
                   </>
                 ) : (

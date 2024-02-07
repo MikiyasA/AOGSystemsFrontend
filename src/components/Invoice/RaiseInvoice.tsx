@@ -2,14 +2,27 @@ import { useListState, randomId } from "@mantine/hooks";
 import { Box, Button, Checkbox } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import InvoiceForm from "./InvoiceForm";
+import { useEffect, useState } from "react";
 
 const initialValues = [
-  { label: "All Parts include", checked: false, key: randomId() },
-  { label: "Receive sms notifications", checked: false, key: randomId() },
-  { label: "Receive push notifications", checked: false, key: randomId() },
+  {
+    label: "Is the price and quantity confirmed and correct?",
+    checked: false,
+    key: randomId(),
+  },
+  {
+    label: "Is the part shipped and information is updated properly?",
+    checked: false,
+    key: randomId(),
+  },
+  {
+    label: "RID and SN is updated for all line item to be invoiced?",
+    checked: false,
+    key: randomId(),
+  },
 ];
 
-export function RaiseInvoice({ salesOrder, partData }: any) {
+export function IndeterminateCheckbox() {
   const [values, handlers] = useListState(initialValues);
 
   const allChecked = values.every((value) => value.checked);
@@ -28,41 +41,45 @@ export function RaiseInvoice({ salesOrder, partData }: any) {
     />
   ));
 
-  const checkBox = (
+  return (
     <>
       <Checkbox
         checked={allChecked}
         indeterminate={indeterminate}
-        label="Receive all notifications"
+        label="Make sure the below actions are taken before rasing the invoice"
         onChange={() =>
           handlers.setState((current) =>
             current.map((value) => ({ ...value, checked: !allChecked }))
           )
         }
       />
-      <>{items}</>
+      {items}
     </>
   );
+}
 
+export function RaiseInvoice({ order, partData, orderType }: any) {
   return (
     <>
       <Button
         onClick={() => {
           modals.openConfirmModal({
-            title: "Please confirm your action",
-            confirmProps: { disabled: allChecked },
+            size: "40%",
+            title:
+              "Make sure the below actions are taken before rasing the invoice",
+            // confirmProps: { disabled: allChecked },
             labels: { confirm: "Confirm", cancel: "Cancel" },
-            children: <Box>{checkBox}</Box>,
+            children: <IndeterminateCheckbox />,
             onConfirm() {
               modals.open({
-                title: `Raise Invoice For ${salesOrder?.orderNo}`,
+                title: `Raise Invoice For ${order?.orderNo}`,
                 size: "90%",
                 children: (
                   <InvoiceForm
                     action="add"
-                    data={salesOrder}
+                    data={order}
                     partData={partData}
-                    orderType="sales"
+                    orderType={orderType}
                   />
                 ),
               });
