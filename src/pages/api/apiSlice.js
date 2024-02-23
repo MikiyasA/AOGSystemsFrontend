@@ -14,7 +14,7 @@ export const apiSlice = createApi({
             return headers
         }
     }),
-    tagTypes: ['Followup', 'FollowupTab', 'CoreFollowup', 'Assignment', 'User', 'Part', 'Sales', 'Invoice', 'Company', 'Loan'],
+    tagTypes: ['Followup', 'FollowupTab', 'CoreFollowup', 'Assignment', 'User', 'Part', 'Sales', 'Invoice', 'Company', 'Loan', 'Attachment'],
     
     endpoints: (builder) => ({
 
@@ -158,6 +158,7 @@ export const apiSlice = createApi({
             invalidatesTags: ['CoreFollowup'],
         }),
         
+        
         getAllActiveFollowUpsTabs: builder.query({
             query: () => `AOGFollowUp/GetAllActiveFollowUpTabs/`,
             providesTags: ['FollowupTab', 'Followup']
@@ -167,7 +168,10 @@ export const apiSlice = createApi({
             query: () => `AOGFollowUp/GetAllFollowUpTabs/`,
             providesTags: ['FollowupTab', 'Followup']
         }),
-
+        getAllFollowUps: builder.query({
+            query: (query) => `AOGFollowUp/GetAllAOGFollowUps?${query}`,
+            providesTags: ['Followup']
+        }),
         getAllActiveFollowUps: builder.query({
             query: () => `AOGFollowUp/GetAllActiveFollowUps/`,
             providesTags: ['Followup']
@@ -210,6 +214,46 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ['Assignment'],
         }),
+        startAssignment: builder.mutation({
+            query: (data) => ({
+                url: 'Assignment/StartAssignment',
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: ['Assignment'],
+        }),
+        finishAssignment: builder.mutation({
+            query: (data) => ({
+                url: 'Assignment/FinishedAssignment',
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: ['Assignment'],
+        }),
+        reassignAssignment: builder.mutation({
+            query: (data) => ({
+                url: 'Assignment/ReassignAssignment',
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: ['Assignment'],
+        }),
+        reopenAssignment: builder.mutation({
+            query: (data) => ({
+                url: 'Assignment/ReopenAssignment',
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: ['Assignment'],
+        }),
+        closeAssignment: builder.mutation({
+            query: (data) => ({
+                url: 'Assignment/CloseAssignment',
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: ['Assignment'],
+        }),
 
         
         getActiveAssignment: builder.query({
@@ -217,7 +261,12 @@ export const apiSlice = createApi({
             providesTags: ['Assignment']
         }),
         getAllAssignment: builder.query({
-            query: () => `Assignment/GetAllAssignments`,
+            query: (query) => `Assignment/GetAllAssignments?${query}`,
+            providesTags: ['Assignment'],
+            invalidatesTags: ['Assignment'],
+        }),
+        getAssignmentById: builder.query({
+            query: (id) => `Assignment/GetAssignmentUpByID/${id}`,
             providesTags: ['Assignment']
         }),
         // #endregion
@@ -322,7 +371,7 @@ export const apiSlice = createApi({
         }),
 
         getAllSalesOrder: builder.query({
-            query: () => `Sales/GetAllSales`,
+            query: (query) => `Sales/GetAllSales?${query}`,
             providesTags: ['Sales']
         }),
         getSalesOrderById: builder.query({
@@ -393,7 +442,7 @@ export const apiSlice = createApi({
         }),
 
         getAllInvoice: builder.query({
-            query: () => `Invoice/GetAllInvoices`,
+            query: (query) => `Invoice/GetAllInvoices?${query}`,
             providesTags: ['Invoice']
         }),
         getInvoiceByID: builder.query({
@@ -553,7 +602,7 @@ export const apiSlice = createApi({
         }),
 
         getAllLoans: builder.query({
-            query: () => `Loan/GetAllLoans`,
+            query: (query) => `Loan/GetAllLoans?${query}`,
             providesTags: ['Loan']
         }),
         getLoanByID: builder.query({
@@ -594,6 +643,47 @@ export const apiSlice = createApi({
         }),
 
         // #endregion
+
+        // #region Attachment
+        uploadAttachment: builder.mutation({
+            query: (data) => ({
+                url: 'Attachment/UploadAttachment',
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: ['Attachment']
+        }),
+        updateAttachment: builder.mutation({
+            query: (data) => ({
+                url: 'Attachment/UpdateAttachment',
+                method: 'PUT',
+                body: data
+            }),
+            invalidatesTags: ['Attachment']
+        }),
+
+        getAttachmentById: builder.query({
+            query: (id) => `Attachment/GetAttachmentById/${id}`,
+            providesTags: ['Attachment']
+        }),
+        getAttachmentByFileName: builder.query({
+            query: (fileName) => `Attachment/GetAttachmentByFileName/${fileName}`,
+            providesTags: ['Attachment']
+        }),
+        getAttachmentLinkById: builder.query({
+            query: (id) => `Attachment/GetAttachmentLinkById/${id}`,
+            providesTags: ['Attachment']
+        }),
+        getAttachmentLinkByAttachmentId: builder.query({
+            query: (attachmentId) => `Attachment/GetAttachmentLinkByAttachmentId/${attachmentId}`,
+            providesTags: ['Attachment']
+        }),
+        getAttachmentLinkByEntityId: builder.query({
+            query: ({entityId, entityType} ) => `Attachment/GetAttachmentLinkByEntityId/${entityId}/${entityType}`,
+            providesTags: ['Attachment']
+        }),
+
+        // #endregion
     }) 
 })
 
@@ -624,12 +714,11 @@ export const {
     useAddCoreFollowupMutation,
 
     useUpdateCoreFollowupMutation,
-    useAddAssignmentMutation,
-    useUpdateAssignmentMutation,
 
 
     useGetAllActiveFollowUpsTabsQuery,
     useGetAllTabsQuery,
+    useGetAllFollowUpsQuery,
     useGetAllActiveFollowUpsQuery,
     useGetFollowupTabByIdQuery,
 
@@ -639,8 +728,17 @@ export const {
     // #endregion 
 
     // #region assignment 
-    useGetActiveAssignmentQuery,
-    useGetAllAssignmentQuery,
+        useAddAssignmentMutation,
+        useUpdateAssignmentMutation,
+        useStartAssignmentMutation,
+        useFinishAssignmentMutation,
+        useReassignAssignmentMutation,
+        useReopenAssignmentMutation,
+        useCloseAssignmentMutation,
+        
+        useGetActiveAssignmentQuery,
+        useGetAllAssignmentQuery,
+        useGetAssignmentByIdQuery,
     // #endregion 
 
     // #region part
@@ -725,5 +823,14 @@ export const {
     useGetOfferByIDQuery,
     // #endregion
 
+    // #region Attachment
+    useUploadAttachmentMutation,
+    useUpdateAttachmentMutation,
+    useGetAttachmentByIdQuery,
+    useGetAttachmentByFileNameQuery,
+    useGetAttachmentLinkByIdQuery,
+    useGetAttachmentLinkByAttachmentIdQuery,
+    useGetAttachmentLinkByEntityIdQuery,
+    // #endregion 
     
 } = apiSlice

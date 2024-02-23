@@ -26,6 +26,10 @@ import { modals } from "@mantine/modals";
 import coreClasses from "../../styles/CoreFollowupTable.module.css";
 import AssignmentDetail from "./AssignmentDetail";
 import AssignmentForm from "./AssignmentForm";
+import { formatDate, getUserNameById } from "@/config/util";
+import Link from "next/link";
+import { useGetAllUsersQuery } from "@/pages/api/apiSlice";
+import Paginate from "../Paginate";
 
 export interface RowData {
   poNo: string;
@@ -122,9 +126,16 @@ var detailData = [
   { key: "description", value: "Description" },
 ];
 
-export function AssignmentTable({ data, table, tableTitle, isActive }: any) {
+export function AssignmentTable({
+  data,
+  table,
+  tableTitle,
+  isActive,
+  metadata,
+  form,
+}: any) {
   const [search, setSearch] = useState("");
-  const [sortedData, setSortedData] = useState(data);
+  const [sortedData, setSortedData] = useState<any>();
   const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
 
@@ -148,6 +159,8 @@ export function AssignmentTable({ data, table, tableTitle, isActive }: any) {
       sortData(data, { sortBy, reversed: reverseSortDirection, search: value })
     );
   };
+
+  const { data: users } = useGetAllUsersQuery("");
 
   const rows = sortedData?.map((row: any, index: any) => {
     const today = new Date();
@@ -174,17 +187,36 @@ export function AssignmentTable({ data, table, tableTitle, isActive }: any) {
             col.key === "startDate" ||
             col.key === "dueDate" ||
             col.key === "expectedFinishedDate" ||
+            col.key === "reAssignedAt" ||
+            col.key === "reOpenedAt" ||
+            col.key === "closedAt" ||
             col.key === "finishedDate"
           ) {
-            const date = row[col.key] ? new Date(row[col.key]) : null;
-            const formattedDate = date?.toLocaleDateString("en-US", {
-              day: "2-digit",
-              month: "short",
-              year: "numeric",
-            });
             return (
               <Table.Td key={`col-${index}`} p={5} m={0}>
-                {formattedDate}
+                {formatDate(row[col.key])}
+              </Table.Td>
+            );
+          } else if (
+            col.key === "startBy" ||
+            col.key === "finishedBy" ||
+            col.key === "assignedTo" ||
+            col.key === "reAssignedTo" ||
+            col.key === "reAssignedBy" ||
+            col.key === "reOpenedBy" ||
+            col.key === "closedBy"
+          ) {
+            return (
+              <Table.Td key={`col-${index}`} p={5} m={0}>
+                {getUserNameById(users, row[col.key])}
+              </Table.Td>
+            );
+          } else if (col.key === "title") {
+            return (
+              <Table.Td key={`col-${index}`} p={2} m={0}>
+                <Link href={`/assignment/detail/${row.id}`}>
+                  {row[col.key]}
+                </Link>
               </Table.Td>
             );
           } else {
@@ -247,17 +279,20 @@ export function AssignmentTable({ data, table, tableTitle, isActive }: any) {
           value={search}
           onChange={handleSearchChange}
         />
-        <Button
-          onClick={() =>
-            modals.open({
-              size: "100%",
-              title: "Add Assignment",
-              children: <AssignmentForm data={data} action="add" />,
-            })
-          }
-        >
-          Add Assignment
-        </Button>
+        {isActive && (
+          <Button
+            onClick={() =>
+              modals.open({
+                size: "100%",
+                title: "Add Assignment",
+                children: <AssignmentForm data={data} action="add" />,
+              })
+            }
+          >
+            Add Assignment
+          </Button>
+        )}
+        {!isActive && <Paginate metadata={metadata} form={form} data={data} />}
 
         <Table w={"fit-content"} layout="fixed" highlightOnHover striped>
           <Table.Tbody>
@@ -276,7 +311,7 @@ export function AssignmentTable({ data, table, tableTitle, isActive }: any) {
                   </Th>
                 );
               })}
-              <Th>Action</Th>
+              {isActive && <Th>Action</Th>}
             </Table.Tr>
           </Table.Tbody>
           <Table.Tbody>

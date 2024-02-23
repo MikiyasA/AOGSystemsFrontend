@@ -2,8 +2,11 @@ import {
   useAddFollowUpMutation,
   useAddRemarkMutation,
   useGetAllActiveFollowUpsTabsQuery,
+  useGetAllPartQuery,
+  useGetAllTabsQuery,
 } from "@/pages/api/apiSlice";
 import {
+  Accordion,
   Box,
   Button,
   Checkbox,
@@ -19,6 +22,7 @@ import { useForm } from "@mantine/form";
 import { modals } from "@mantine/modals";
 import { useEffect } from "react";
 import MyLoadingOverlay from "../MyLoadingOverlay";
+import { IconFilterSearch } from "@tabler/icons-react";
 
 const FollowUpForm = ({ tab }: any) => {
   const form = useForm({
@@ -290,3 +294,181 @@ const FollowUpForm = ({ tab }: any) => {
 };
 
 export default FollowUpForm;
+
+export const FollowupFilterForm = ({ form, handleSubmit, isLoading }: any) => {
+  const { data: part } = useGetAllPartQuery("");
+  const { data: tab } = useGetAllTabsQuery("");
+
+  return (
+    <Accordion mt={20} variant="contained">
+      <Accordion.Item value="Filter">
+        <Accordion.Control
+          icon={<IconFilterSearch color="darkgreen" size={25} />}
+          fw={700}
+        >
+          Filter Followup{" "}
+        </Accordion.Control>
+        <Accordion.Panel>
+          <form onSubmit={handleSubmit}>
+            <Box>
+              <SimpleGrid
+                cols={{ base: 1, sm: 3, lg: 5 }}
+                spacing={{ base: 1, sm: "xl", lg: "sm" }}
+                verticalSpacing={{ base: "sm", sm: "sm" }}
+              >
+                <TextInput
+                  label="RID"
+                  placeholder="RID to search"
+                  {...form.getInputProps("rid")}
+                />
+                <DateInput
+                  label="Request Date From"
+                  placeholder="Pick Request Date From"
+                  value={
+                    form.values.requestDateFrom &&
+                    new Date(form.values.requestDateFrom)
+                  }
+                  onChange={(e: any) =>
+                    form.setValues({
+                      requestDateFrom: e ? new Date(e).toISOString() : null,
+                    })
+                  }
+                  error={form.errors.requestDateFrom}
+                  clearable
+                />
+                <DateInput
+                  label="Request Date To"
+                  placeholder="Pick Request Date To"
+                  value={
+                    form.values.requestDateTo &&
+                    new Date(form.values.requestDateTo)
+                  }
+                  onChange={(e: any) =>
+                    form.setValues({
+                      requestDateTo: e ? new Date(e).toISOString() : undefined,
+                    })
+                  }
+                  error={form.errors.requestDateTo}
+                  clearable
+                />
+                <TextInput
+                  label="Aircraft"
+                  placeholder="Aircraft to search"
+                  {...form.getInputProps("airCraft")}
+                />
+                <TextInput
+                  label="Tail No"
+                  placeholder="Tail No to search"
+                  {...form.getInputProps("tailNo")}
+                />
+                <Select
+                  label="Work Location"
+                  placeholder="Work Location"
+                  data={["Home Base", "Out Station", "Tool"]}
+                  allowDeselect={false}
+                  {...form.getInputProps("workLocation")}
+                />
+                <TextInput
+                  label="AOG Station"
+                  placeholder="AOG Station to search"
+                  {...form.getInputProps("aogStation")}
+                />
+                <TextInput
+                  label="Customer"
+                  placeholder="Customer to search"
+                  {...form.getInputProps("customer")}
+                />
+                <TextInput
+                  label="PO Number"
+                  placeholder="PO Number to search"
+                  {...form.getInputProps("PONumber")}
+                />
+                <Select
+                  label="Order Type"
+                  placeholder="Order Type"
+                  data={[
+                    "Purchase",
+                    "Exchange",
+                    "CEP",
+                    "Repair",
+                    "Warranty",
+                    "Borrow",
+                  ]}
+                  allowDeselect={false}
+                  searchable
+                  nothingFoundMessage="Nothing found..."
+                  {...form.getInputProps("orderType")}
+                />
+                <TextInput
+                  label="Vendor"
+                  placeholder="Vendor to search"
+                  {...form.getInputProps("vendor")}
+                />
+                <TextInput
+                  label="AWB No"
+                  placeholder="AWB No to search"
+                  {...form.getInputProps("awbNo")}
+                />
+                <TextInput
+                  label="Flight No"
+                  placeholder="Flight No to search"
+                  {...form.getInputProps("flightNo")}
+                />
+                <Select
+                  label="Reassigned To"
+                  placeholder="Select one User"
+                  data={part?.map((u: any) => ({
+                    value: `${u.id}`,
+                    label: `${u.partNumber}`,
+                  }))}
+                  searchable
+                  nothingFoundMessage="Nothing found..."
+                  {...form.getInputProps("reAssignedBy")}
+                />
+                <Select
+                  label="Reassigned To"
+                  placeholder="Select one User"
+                  data={tab?.map((u: any) => ({
+                    value: `${u.id}`,
+                    label: `${u.partNumber}`,
+                  }))}
+                  searchable
+                  nothingFoundMessage="Nothing found..."
+                  {...form.getInputProps("reAssignedBy")}
+                />
+                <Select
+                  label="Status"
+                  placeholder="Status"
+                  data={[
+                    "Request Received",
+                    "On Quote",
+                    "Order Placed",
+                    "On Hold",
+                    "Under Shipping",
+                    "Under Receiving",
+                    "Partially Received",
+                    "Received",
+                    "Received & Advised",
+                    "Closed",
+                  ]}
+                  searchable
+                  nothingFoundMessage="Nothing found..."
+                  {...form.getInputProps("status")}
+                />
+                <NumberInput
+                  label="No. Data per page"
+                  placeholder="No. Data per page"
+                  {...form.getInputProps("pageSize")}
+                />
+              </SimpleGrid>
+            </Box>
+            <Button type="submit" mt="sm" loading={isLoading}>
+              {" "}
+              Filter
+            </Button>
+          </form>
+        </Accordion.Panel>
+      </Accordion.Item>
+    </Accordion>
+  );
+};

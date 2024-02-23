@@ -13,9 +13,11 @@ import {
   keys,
   Button,
   Title,
+  Tabs,
 } from "@mantine/core";
 import {
   useGetActiveInvoicesQuery,
+  useGetAllInvoiceQuery,
   useInvoiceApprovalMutation,
 } from "../api/apiSlice";
 import { formatDate } from "@/config/util";
@@ -31,16 +33,20 @@ import {
   IconSearch,
   IconEditCircle,
   IconEye,
+  IconChecklist,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { modals } from "@mantine/modals";
 import InvoiceForm, {
+  InvoiceFilterForm,
   UpdateInvoiceForm,
 } from "@/components/Invoice/InvoiceForm";
 import { useEffect, useState } from "react";
 
 import classes from "../../styles/Followup.module.css";
 import InvoiceDetail from "@/components/Invoice/InvoiceDetail";
+import { useForm } from "@mantine/form";
+import Paginate from "@/components/Paginate";
 
 export interface RowData {
   id: number;
@@ -174,7 +180,14 @@ var tableStr = [
   { key: "remark", value: "Remark" },
 ];
 
-export function InvoiceList({ data, table, tableTitle, isActive }: any) {
+export function InvoiceList({
+  data,
+  table,
+  tableTitle,
+  isActive,
+  metadata,
+  form,
+}: any) {
   const [search, setSearch] = useState("");
   const [sortedData, setSortedData] = useState(data);
   const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
@@ -311,6 +324,7 @@ export function InvoiceList({ data, table, tableTitle, isActive }: any) {
           value={search}
           onChange={handleSearchChange}
         />
+        {!isActive && <Paginate metadata={metadata} form={form} data={data} />}
         <Table w={"fit-content"} layout="fixed" highlightOnHover striped>
           <Table.Tbody>
             <Table.Tr>
@@ -355,6 +369,29 @@ export function InvoiceList({ data, table, tableTitle, isActive }: any) {
 const Invoice = ({}) => {
   const { data: invoices } = useGetActiveInvoicesQuery("");
 
+  const form = useForm();
+  const queryStr = Object.keys(form.values)
+    .map(
+      (key) =>
+        form.values[key] &&
+        `${encodeURIComponent(key)}=${encodeURIComponent(form.values[key])}`
+    )
+    .join("&");
+
+  const [queryString, SetQueryString] = useState(queryStr);
+
+  useEffect(() => {
+    form.values?.page && SetQueryString(queryStr);
+  }, [queryStr, form.values?.page]);
+
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    SetQueryString(queryStr);
+  };
+
+  const { data: allInvoice, isLoading: allLoading } =
+    useGetAllInvoiceQuery(queryString);
+
   return (
     <Layout title="Active Invoice List" description="Active Invoice List">
       <Center
@@ -364,11 +401,50 @@ const Invoice = ({}) => {
           width: "100%",
         }}
       >
-        <InvoiceList
-          data={invoices}
-          table={tableStr}
-          tableTitle="Active Invoices"
-        />
+        <Tabs defaultValue="Active" color="green">
+          <Tabs.List>
+            <Tabs.Tab
+              color="green"
+              value="Active"
+              leftSection={<IconChecklist color="green" />}
+            >
+              Active Sales Orders
+            </Tabs.Tab>
+            <Tabs.Tab
+              color="green"
+              value="inactive"
+              leftSection={<IconChecklist color="green" />}
+            >
+              All Sales Orders
+            </Tabs.Tab>
+          </Tabs.List>
+          <Tabs.Panel value="Active">
+            <Box>
+              <InvoiceList
+                data={invoices}
+                table={tableStr}
+                tableTitle="Active Invoices"
+                isActive
+              />
+            </Box>
+          </Tabs.Panel>
+          <Tabs.Panel value="inactive">
+            <Box>
+              <InvoiceFilterForm
+                form={form}
+                handleSubmit={handleSubmit}
+                isLoading={allLoading}
+              />
+              <InvoiceList
+                data={allInvoice?.data}
+                table={tableStr}
+                tableTitle="All Invoices"
+                metadata={allInvoice?.metadata}
+                form={form}
+              />
+            </Box>
+          </Tabs.Panel>
+        </Tabs>
       </Center>
     </Layout>
   );

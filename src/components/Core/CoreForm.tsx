@@ -4,6 +4,7 @@ import {
   useUpdateFollowupMutation,
 } from "@/pages/api/apiSlice";
 import {
+  Accordion,
   Box,
   Button,
   Checkbox,
@@ -17,7 +18,7 @@ import {
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { modals } from "@mantine/modals";
-import { IconSelectAll } from "@tabler/icons-react";
+import { IconFilterSearch, IconSelectAll } from "@tabler/icons-react";
 import { Input } from "postcss";
 import { useEffect } from "react";
 import FollowUpForm from "../AOGFollowup/AddFollowUp";
@@ -313,3 +314,156 @@ const CoreForm = ({ data, action }: any) => {
   );
 };
 export default CoreForm;
+
+export const CoreFilterForm = ({ form, handleSubmit, isLoading }: any) => {
+  return (
+    <Accordion mt={20} variant="contained">
+      <Accordion.Item value="Filter">
+        <Accordion.Control
+          icon={<IconFilterSearch color="darkgreen" size={25} />}
+          fw={700}
+        >
+          Filter Core Followups{" "}
+        </Accordion.Control>
+        <Accordion.Panel>
+          <form onSubmit={handleSubmit}>
+            <Box>
+              <SimpleGrid
+                cols={{ base: 1, sm: 3, lg: 5 }}
+                spacing={{ base: 1, sm: "xl", lg: "sm" }}
+                verticalSpacing={{ base: "sm", sm: "sm" }}
+              >
+                <TextInput
+                  label="PO"
+                  placeholder="PO to search"
+                  {...form.getInputProps("poNo")}
+                />
+                <DateInput
+                  label="Created Date From"
+                  placeholder="Created Date From"
+                  value={
+                    form.values.poCreatedDateFrom &&
+                    new Date(form.values.poCreatedDateFrom)
+                  }
+                  onChange={(e: any) =>
+                    form.setValues({
+                      poCreatedDateFrom: e ? new Date(e).toISOString() : null,
+                    })
+                  }
+                  error={form.errors.poCreatedDateFrom}
+                  clearable
+                />
+                <DateInput
+                  label="Created Date To"
+                  placeholder="Created Date To"
+                  value={
+                    form.values.poCreatedDateTo &&
+                    new Date(form.values.poCreatedDateTo)
+                  }
+                  onChange={(e: any) =>
+                    form.setValues({
+                      poCreatedDateTo: e
+                        ? new Date(e).toISOString()
+                        : undefined,
+                    })
+                  }
+                  error={form.errors.poCreatedDateTo}
+                  clearable
+                />
+
+                <TextInput
+                  label="Aircraft"
+                  placeholder="Aircraft to search"
+                  {...form.getInputProps("airCraft")}
+                />
+                <TextInput
+                  label="Tail No"
+                  placeholder="Tail No to search"
+                  {...form.getInputProps("tailNo")}
+                />
+                <TextInput
+                  label="Part Number"
+                  placeholder="Part Number to search"
+                  {...form.getInputProps("partNumber")}
+                />
+                <TextInput
+                  label="Stock No"
+                  placeholder="Stock No to search"
+                  {...form.getInputProps("stockNo")}
+                />
+                <TextInput
+                  label="Vendor"
+                  placeholder="Vendor to search"
+                  {...form.getInputProps("vendor")}
+                />
+
+                <TextInput
+                  label="AWB No"
+                  placeholder="AWB No to search"
+                  {...form.getInputProps("awbNo")}
+                />
+                <TextInput
+                  label="Returned Part"
+                  placeholder="Returned Part to search"
+                  {...form.getInputProps("returnedPart")}
+                />
+                <DateInput
+                  label="POD Date From"
+                  placeholder="POD Date From"
+                  value={
+                    form.values.PODDateFrom && new Date(form.values.PODDateFrom)
+                  }
+                  onChange={(e: any) =>
+                    form.setValues({
+                      PODDateFrom: e ? new Date(e).toISOString() : null,
+                    })
+                  }
+                  error={form.errors.PODDateFrom}
+                  clearable
+                />
+                <DateInput
+                  label="POD Date To"
+                  placeholder="POD Date To"
+                  value={
+                    form.values.PODDateTo && new Date(form.values.PODDateTo)
+                  }
+                  onChange={(e: any) =>
+                    form.setValues({
+                      PODDateTo: e ? new Date(e).toISOString() : undefined,
+                    })
+                  }
+                  error={form.errors.PODDateTo}
+                  clearable
+                />
+                <Select
+                  label="Status"
+                  placeholder="Status"
+                  data={[
+                    "Created",
+                    "In-work",
+                    "Re-Assigned",
+                    "Finished",
+                    "Closed",
+                    "Re-opened",
+                  ]}
+                  searchable
+                  nothingFoundMessage="Nothing found..."
+                  {...form.getInputProps("status")}
+                />
+                <NumberInput
+                  label="No. Data per page"
+                  placeholder="No. Data per page"
+                  {...form.getInputProps("pageSize")}
+                />
+              </SimpleGrid>
+            </Box>
+            <Button type="submit" mt="sm" loading={isLoading}>
+              {" "}
+              Filter
+            </Button>
+          </form>
+        </Accordion.Panel>
+      </Accordion.Item>
+    </Accordion>
+  );
+};

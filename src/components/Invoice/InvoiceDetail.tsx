@@ -129,7 +129,7 @@ const InvoiceDetail = ({ data, location }: any) => {
       <Head>
         <title>{`Invoice ${data?.invoiceNo}`}</title>
       </Head>
-      {invoiceAppLoading && <MyLoadingOverlay />}
+      {invoiceAppLoading || (isLoading && <MyLoadingOverlay />)}
 
       <Title order={2} mb={20}>
         Invoice {data?.invoiceNo}

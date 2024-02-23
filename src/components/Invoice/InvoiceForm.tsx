@@ -1,8 +1,10 @@
 import {
   useCreateInvoiceMutation,
+  useGetAllCompaniesQuery,
   useUpdateInvoiceMutation,
 } from "@/pages/api/apiSlice";
 import {
+  Accordion,
   Box,
   Button,
   Checkbox,
@@ -19,6 +21,7 @@ import { notifications } from "@mantine/notifications";
 import MyLoadingOverlay from "../MyLoadingOverlay";
 import { DateInput } from "@mantine/dates";
 import { modals } from "@mantine/modals";
+import { IconFilterSearch } from "@tabler/icons-react";
 
 const InvoiceForm = ({ data, action, partData, orderType }: any) => {
   console.log({ data });
@@ -375,5 +378,161 @@ export const UpdateInvoiceForm = ({ data }: any) => {
         </Button>
       </form>
     </Box>
+  );
+};
+
+export const InvoiceFilterForm = ({ form, handleSubmit, isLoading }: any) => {
+  const { data: company } = useGetAllCompaniesQuery("");
+  return (
+    <Accordion mt={20} variant="contained">
+      <Accordion.Item value="Filter">
+        <Accordion.Control
+          icon={<IconFilterSearch color="darkgreen" size={25} />}
+          fw={700}
+        >
+          Filter Sales Orders{" "}
+        </Accordion.Control>
+        <Accordion.Panel>
+          <form onSubmit={handleSubmit}>
+            <Box>
+              <SimpleGrid
+                cols={{ base: 1, sm: 3, lg: 5 }}
+                spacing={{ base: 1, sm: "xl", lg: "sm" }}
+                verticalSpacing={{ base: "sm", sm: "sm" }}
+              >
+                <TextInput
+                  label="Invoice Number"
+                  placeholder="Invoice Number "
+                  {...form.getInputProps("invoiceNo")}
+                />
+
+                <DateInput
+                  label="Invoice Date From"
+                  placeholder="Invoice Date From"
+                  value={
+                    form.values.invoiceDateFrom &&
+                    new Date(form.values.invoiceDateFrom)
+                  }
+                  onChange={(e: any) =>
+                    form.setValues({
+                      invoiceDateFrom: e ? new Date(e).toISOString() : null,
+                    })
+                  }
+                  error={form.errors.invoiceDateFrom}
+                  clearable
+                />
+                <DateInput
+                  label="Invoice Date To"
+                  placeholder="Invoice Date To"
+                  value={
+                    form.values.invoiceDateTo &&
+                    new Date(form.values.invoiceDateTo)
+                  }
+                  onChange={(e: any) =>
+                    form.setValues({
+                      invoiceDateTo: e ? new Date(e).toISOString() : undefined,
+                    })
+                  }
+                  error={form.errors.invoiceDateTo}
+                  clearable
+                />
+                <DateInput
+                  label="Due Date From"
+                  placeholder="Due Date From"
+                  value={
+                    form.values.dueDateFrom && new Date(form.values.dueDateFrom)
+                  }
+                  onChange={(e: any) =>
+                    form.setValues({
+                      dueDateFrom: e ? new Date(e).toISOString() : null,
+                    })
+                  }
+                  error={form.errors.dueDateFrom}
+                  clearable
+                />
+                <DateInput
+                  label="Due Date To"
+                  placeholder="Due Date To"
+                  value={
+                    form.values.dueDateTo && new Date(form.values.dueDateTo)
+                  }
+                  onChange={(e: any) =>
+                    form.setValues({
+                      dueDateTo: e ? new Date(e).toISOString() : undefined,
+                    })
+                  }
+                  error={form.errors.dueDateTo}
+                  clearable
+                />
+                <TextInput
+                  label="Transaction Type"
+                  placeholder="Transaction Type "
+                  {...form.getInputProps("transactionType")}
+                />
+                <TextInput
+                  label="POP Reference"
+                  placeholder="POP Reference "
+                  {...form.getInputProps("popReference")}
+                />
+                <DateInput
+                  label="POP Date From"
+                  placeholder="POP Date From"
+                  value={
+                    form.values.popDateFrom && new Date(form.values.popDateFrom)
+                  }
+                  onChange={(e: any) =>
+                    form.setValues({
+                      popDateFrom: e ? new Date(e).toISOString() : null,
+                    })
+                  }
+                  error={form.errors.popDateFrom}
+                  clearable
+                />
+                <DateInput
+                  label="POP Date To"
+                  placeholder="POP Date To"
+                  value={
+                    form.values.popDateTo && new Date(form.values.popDateTo)
+                  }
+                  onChange={(e: any) =>
+                    form.setValues({
+                      popDateTo: e ? new Date(e).toISOString() : undefined,
+                    })
+                  }
+                  error={form.errors.popDateTo}
+                  clearable
+                />
+                <Select
+                  label="Status"
+                  placeholder="Status"
+                  data={[
+                    "Created",
+                    "Sent To Finance",
+                    "Invoice Raised",
+                    "Sent To Customer",
+                    "To Be Collected By ICH",
+                    "Payment Settled",
+                    "POP Requested",
+                    "Closed",
+                  ]}
+                  searchable
+                  nothingFoundMessage="Nothing found..."
+                  {...form.getInputProps("status")}
+                />
+                <NumberInput
+                  label="No. Data per page"
+                  placeholder="No. Data per page"
+                  {...form.getInputProps("pageSize")}
+                />
+              </SimpleGrid>
+            </Box>
+            <Button type="submit" mt="sm" loading={isLoading}>
+              {" "}
+              Filter
+            </Button>
+          </form>
+        </Accordion.Panel>
+      </Accordion.Item>
+    </Accordion>
   );
 };

@@ -39,6 +39,7 @@ import Link from "next/link";
 import { formatDate } from "@/config/util";
 import LoanDetail from "./LoanDetail";
 import LoanForm from "./LoanForm";
+import Paginate from "../Paginate";
 
 export interface RowData {
   companyId: number;
@@ -129,7 +130,14 @@ var detailData = [
   { key: "createdBy", value: "Order Created By" },
 ];
 
-export function LoanTable({ data, table, tableTitle, isActive }: any) {
+export function LoanTable({
+  data,
+  table,
+  tableTitle,
+  isActive,
+  metadata,
+  form,
+}: any) {
   const [search, setSearch] = useState("");
   const [sortedData, setSortedData] = useState(data);
   const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
@@ -271,17 +279,22 @@ export function LoanTable({ data, table, tableTitle, isActive }: any) {
             value={search}
             onChange={handleSearchChange}
           />
-          <Button
-            onClick={() =>
-              modals.open({
-                title: "Create Loan Order",
-                size: "90%",
-                children: <LoanForm action="add" />,
-              })
-            }
-          >
-            Create Loan Order
-          </Button>
+          {isActive && (
+            <Button
+              onClick={() =>
+                modals.open({
+                  title: "Create Loan Order",
+                  size: "90%",
+                  children: <LoanForm action="add" />,
+                })
+              }
+            >
+              Create Loan Order
+            </Button>
+          )}
+          {!isActive && (
+            <Paginate metadata={metadata} form={form} data={data} />
+          )}
 
           <Table.ScrollContainer minWidth={200}>
             <Table

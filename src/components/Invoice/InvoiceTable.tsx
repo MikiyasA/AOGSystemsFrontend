@@ -1,6 +1,5 @@
 import {
   useGetInvoiceByLoanOrderIdQuery,
-  useGetInvoiceByOrderIdQuery,
   useGetInvoiceBySalesOrderIdQuery,
   useInvoiceApprovalMutation,
 } from "@/pages/api/apiSlice";

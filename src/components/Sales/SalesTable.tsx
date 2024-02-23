@@ -38,6 +38,7 @@ import UserForm, { CreateRoleForm } from "../User/UserForm";
 import SalesDetail from "./SalesDetail";
 import SalesForm from "./SalesForm";
 import Link from "next/link";
+import Paginate from "../Paginate";
 
 export interface RowData {
   companyId: number;
@@ -128,7 +129,14 @@ var detailData = [
   { key: "createdBy", value: "Order Created By" },
 ];
 
-export function SalesTable({ data, table, tableTitle, isActive }: any) {
+export function SalesTable({
+  data,
+  table,
+  tableTitle,
+  isActive,
+  metadata,
+  form,
+}: any) {
   const [search, setSearch] = useState("");
   const [sortedData, setSortedData] = useState(data);
   const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
@@ -276,18 +284,23 @@ export function SalesTable({ data, table, tableTitle, isActive }: any) {
             value={search}
             onChange={handleSearchChange}
           />
-          <Button
-            onClick={() =>
-              modals.open({
-                title: "Create Sales Order",
-                size: "90%",
-                children: <SalesForm action="add" />,
-              })
-            }
-          >
-            Create Sales Order
-          </Button>
+          {isActive && (
+            <Button
+              onClick={() =>
+                modals.open({
+                  title: "Create Sales Order",
+                  size: "90%",
+                  children: <SalesForm action="add" />,
+                })
+              }
+            >
+              Create Sales Order
+            </Button>
+          )}
 
+          {!isActive && (
+            <Paginate metadata={metadata} form={form} data={data} />
+          )}
           <Table.ScrollContainer minWidth={200}>
             <Table
               horizontalSpacing="xl"

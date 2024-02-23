@@ -40,6 +40,7 @@ import coreClasses from "../../styles/CoreFollowupTable.module.css";
 import { DateInput } from "@mantine/dates";
 import CoreFollowupDetail from "./CoreFollowupDetail";
 import MyLoadingOverlay from "../MyLoadingOverlay";
+import Paginate from "../Paginate";
 
 export interface RowData {
   poNo: string;
@@ -146,7 +147,14 @@ var detailData = [
   { key: "status", value: "Status" },
 ];
 
-export function CoreFollowupTable({ data, table, tableTitle, isActive }: any) {
+export function CoreFollowupTable({
+  data,
+  table,
+  tableTitle,
+  isActive,
+  metadata,
+  form,
+}: any) {
   const [search, setSearch] = useState("");
   const [sortedData, setSortedData] = useState(data);
   const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
@@ -183,7 +191,7 @@ export function CoreFollowupTable({ data, table, tableTitle, isActive }: any) {
         key={index}
         style={{ borderRadius: 10 }}
         className={
-          remainingDays < 13
+          isActive && remainingDays < 13
             ? remainingDays < 5
               ? coreClasses.blinkRed
               : coreClasses.blinkYellow
@@ -254,57 +262,14 @@ export function CoreFollowupTable({ data, table, tableTitle, isActive }: any) {
                 })
               }
             />
-            {/* <ActionMenu row={row}/> */}
           </Table.Td>
         )}
       </Table.Tr>
     );
   });
 
-  const filterForm = useForm({
-    validateInputOnBlur: true,
-    initialValues: {
-      createdStartDate: null,
-      createdEndDate: null,
-      returnStartDate: null,
-      returnEndDate: null,
-      podStartDate: null,
-      podEndDate: null,
-      status: null,
-      airCraft: "",
-      tailNo: "",
-      pn: "a",
-      vendor: "s",
-      awbNo: "v",
-      returnPart: "",
-      pageSize: 0,
-    },
-    validate: {
-      pn: (v: string) =>
-        v?.length < 4
-          ? "PN must be provided and should be 4 character minimum"
-          : null,
-    },
-  });
-  console.log("filterForm", filterForm);
-  const [tableData, setTableData] = useState(table);
-
-  table = tableData;
-  const {
-    data: filterQueryData,
-    isLoading: filterIsLoading,
-    refetch,
-  } = useGetAllCoreFollowupQuery(filterForm.values);
-
-  const handleFilterSubmit = (e: any) => {
-    e.preventDefault();
-    refetch();
-    setTableData(filterQueryData);
-  };
-
   return (
     <Box mx={30}>
-      {filterIsLoading && <MyLoadingOverlay />}
       <Center className={classes.tableTitle}>
         <Title>{tableTitle}</Title>
       </Center>
@@ -321,196 +286,20 @@ export function CoreFollowupTable({ data, table, tableTitle, isActive }: any) {
           value={search}
           onChange={handleSearchChange}
         />
-        <Button
-          onClick={() =>
-            modals.open({
-              size: "100%",
-              title: "Add Followup",
-              children: <CoreForm data={data} action="add" />,
-            })
-          }
-        >
-          Add Core FollowUp
-        </Button>
-
-        {!isActive && (
-          <Group mb={50}>
-            <Title order={5}>Filter Option</Title>
-            <form onSubmit={handleFilterSubmit}>
-              <SimpleGrid
-                cols={{ base: 1, sm: 2, lg: 5 }}
-                spacing={{ base: 10, sm: "sm" }}
-                verticalSpacing={{ base: "xs", sm: "xs" }}
-                style={{ alignItems: "center" }}
-              >
-                <Group>
-                  By Created Date
-                  <Group
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "50% 50%",
-                      gap: "3px",
-                    }}
-                  >
-                    <DateInput
-                      label="From"
-                      valueFormat="DD-MMM-YYYY"
-                      placeholder="Pick Start Date to filtered by Created Date"
-                      onChange={(e: any) =>
-                        filterForm.setValues({
-                          createdStartDate: new Date(e?.toString()),
-                        })
-                      }
-                      error={filterForm.errors.createdStartDate}
-                      clearable
-                    />
-                    <DateInput
-                      label="To"
-                      valueFormat="DD-MMM-YYYY"
-                      placeholder="Pick End Date to filtered by Created Date"
-                      onChange={(e: any) =>
-                        filterForm.setValues({
-                          createdEndDate: new Date(e.toString()),
-                        })
-                      }
-                      error={filterForm.errors.createdEndDate}
-                      clearable
-                    />
-                  </Group>
-                </Group>
-
-                <Group>
-                  By Return Date
-                  <Group
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "50% 50%",
-                      gap: "3px",
-                    }}
-                  >
-                    <DateInput
-                      label="From"
-                      valueFormat="DD-MMM-YYYY"
-                      placeholder="Pick Start Date to filtered by Return Date"
-                      onChange={(e: any) =>
-                        filterForm.setValues({
-                          returnStartDate: new Date(e.toString()),
-                        })
-                      }
-                      error={filterForm.errors.returnStartDate}
-                      clearable
-                    />
-                    <DateInput
-                      label="To"
-                      valueFormat="DD-MMM-YYYY"
-                      placeholder="Pick End Date to filtered by Return Date"
-                      onChange={(e: any) =>
-                        filterForm.setValues({
-                          returnEndDate: new Date(e.toString()),
-                        })
-                      }
-                      error={filterForm.errors.returnEndDate}
-                      clearable
-                    />
-                  </Group>
-                </Group>
-
-                <Group>
-                  By POD Date
-                  <Group
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "50% 50%",
-                      gap: "3px",
-                    }}
-                  >
-                    <DateInput
-                      label="From"
-                      valueFormat="DD-MMM-YYYY"
-                      placeholder="Pick Start Date to filtered by POD Date"
-                      onChange={(e: any) =>
-                        filterForm.setValues({
-                          podStartDate: new Date(e.toString()),
-                        })
-                      }
-                      error={filterForm.errors.podStartDate}
-                      clearable
-                    />
-                    <DateInput
-                      label="To"
-                      valueFormat="DD-MMM-YYYY"
-                      placeholder="Pick End Date to filtered by POD Date"
-                      onChange={(e: any) =>
-                        filterForm.setValues({
-                          podEndDate: new Date(e.toString()),
-                        })
-                      }
-                      error={filterForm.errors.podEndDate}
-                      clearable
-                    />
-                  </Group>
-                </Group>
-
-                <Select
-                  label="Status"
-                  placeholder="Status"
-                  data={[
-                    "Part Received",
-                    "Part Installed",
-                    "Awaiting Core Unit",
-                    "Document Sent",
-                    "Under Shipping",
-                    "Delivered To Supplier",
-                    "Closed",
-                  ]}
-                  allowDeselect={false}
-                  searchable
-                  nothingFoundMessage="Nothing found..."
-                  {...filterForm.getInputProps("status")}
-                  style={{ alignSelf: "end" }}
-                />
-                <TextInput
-                  label="Tail No"
-                  placeholder="Tail No"
-                  {...filterForm.getInputProps("tailNo")}
-                />
-                <TextInput
-                  label="Part Number"
-                  placeholder="Part Number"
-                  {...filterForm.getInputProps("pn")}
-                />
-                <TextInput
-                  label="Vendor"
-                  placeholder="Vendor"
-                  {...filterForm.getInputProps("vendor")}
-                />
-                <TextInput
-                  label="AWB"
-                  placeholder="AWB"
-                  {...filterForm.getInputProps("awbNo")}
-                />
-                <TextInput
-                  label="Returned Part"
-                  placeholder="Returned Part"
-                  {...filterForm.getInputProps("returnPart")}
-                />
-                <NumberInput
-                  label="Row per Page"
-                  suffix="  Pages"
-                  defaultValue={10}
-                  min={10}
-                  style={{}}
-                  w={120}
-                  {...filterForm.getInputProps("pageSize")}
-                />
-                <Button type="submit" mt="sm" loading={false}>
-                  {" "}
-                  Submit
-                </Button>
-              </SimpleGrid>
-            </form>
-          </Group>
+        {isActive && (
+          <Button
+            onClick={() =>
+              modals.open({
+                size: "100%",
+                title: "Add Followup",
+                children: <CoreForm data={data} action="add" />,
+              })
+            }
+          >
+            Add Core FollowUp
+          </Button>
         )}
+        {!isActive && <Paginate metadata={metadata} form={form} data={data} />}
 
         <Table
           horizontalSpacing="lg"

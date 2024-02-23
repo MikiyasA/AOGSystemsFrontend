@@ -1,11 +1,31 @@
-import { Box, Button, Group, SimpleGrid, Title, Center } from "@mantine/core";
+import {
+  Box,
+  Button,
+  Group,
+  SimpleGrid,
+  Title,
+  Center,
+  Table,
+} from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
-import { IconCircleArrowUpRightFilled } from "@tabler/icons-react";
+import {
+  IconCircleArrowUpRightFilled,
+  IconEye,
+  IconFileDownload,
+} from "@tabler/icons-react";
 import PartForm from "./PartForm";
 import { IconCircleArrowUpRight } from "@tabler/icons-react";
+import { useGetAttachmentLinkByEntityIdQuery } from "@/pages/api/apiSlice";
+import { downloadFile } from "@/config/util";
+import AttachmentTable from "../Attachment/AttachmentTable";
 
 const PartDetail = ({ part }: any) => {
+  const { data: attachments } = useGetAttachmentLinkByEntityIdQuery({
+    entityId: part?.id,
+    entityType: "Part",
+  });
+  console.log({ attachments });
   return (
     <Center
       style={{
@@ -129,6 +149,7 @@ const PartDetail = ({ part }: any) => {
             </Title>
           </Group>
         </SimpleGrid>
+        <AttachmentTable attachments={attachments} />
       </Box>
     </Center>
   );

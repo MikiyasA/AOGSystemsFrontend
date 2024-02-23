@@ -1,4 +1,5 @@
 import {
+  Accordion,
   Box,
   Button,
   Checkbox,
@@ -22,7 +23,11 @@ import {
   useUpdateSalesOrderMutation,
 } from "@/pages/api/apiSlice";
 import { modals } from "@mantine/modals";
-import { IconCirclePlus, IconEditCircle } from "@tabler/icons-react";
+import {
+  IconCirclePlus,
+  IconEditCircle,
+  IconFilterSearch,
+} from "@tabler/icons-react";
 import { DateInput } from "@mantine/dates";
 import PartForm from "../Part/PartForm";
 import CompanyForm from "../Company/CompanyForm";
@@ -568,5 +573,126 @@ export const ShipSalesForm = ({ data, salesId, action }: any) => {
         </Button>
       </form>
     </Box>
+  );
+};
+
+export const SalesFilterForm = ({ form, handleSubmit, isLoading }: any) => {
+  const { data: company } = useGetAllCompaniesQuery("");
+  return (
+    <Accordion mt={20} variant="contained">
+      <Accordion.Item value="Filter">
+        <Accordion.Control
+          icon={<IconFilterSearch color="darkgreen" size={25} />}
+          fw={700}
+        >
+          Filter Sales Orders{" "}
+        </Accordion.Control>
+        <Accordion.Panel>
+          <form onSubmit={handleSubmit}>
+            <Box>
+              <SimpleGrid
+                cols={{ base: 1, sm: 3, lg: 5 }}
+                spacing={{ base: 1, sm: "xl", lg: "sm" }}
+                verticalSpacing={{ base: "sm", sm: "sm" }}
+              >
+                <Select
+                  label="Company"
+                  placeholder="Select one Company"
+                  data={company?.map((u: any) => ({
+                    value: `${u.id}`,
+                    label: `${u.name}`,
+                  }))}
+                  searchable
+                  nothingFoundMessage="Nothing found..."
+                  {...form.getInputProps("companyId")}
+                />
+                <TextInput
+                  label="Order By Name"
+                  placeholder="Order By Name "
+                  {...form.getInputProps("orderByName")}
+                />
+                <TextInput
+                  label="Order By Email"
+                  placeholder="Order By Email "
+                  {...form.getInputProps("orderByEmail")}
+                />
+
+                <TextInput
+                  label="Order Number"
+                  placeholder="Order Number "
+                  {...form.getInputProps("orderNo")}
+                />
+                <TextInput
+                  label="Customer Order Number"
+                  placeholder="Customer Order Number "
+                  {...form.getInputProps("customerOrderNo")}
+                />
+                <TextInput
+                  label="AWB Number"
+                  placeholder="AWB Number "
+                  {...form.getInputProps("awbNo")}
+                />
+                <DateInput
+                  label="Ship Date From"
+                  placeholder="Ship Date From"
+                  value={
+                    form.values.shipDateFrom &&
+                    new Date(form.values.shipDateFrom)
+                  }
+                  onChange={(e: any) =>
+                    form.setValues({
+                      shipDateFrom: e ? new Date(e).toISOString() : null,
+                    })
+                  }
+                  error={form.errors.shipDateFrom}
+                  clearable
+                />
+                <DateInput
+                  label="Ship Date To"
+                  placeholder="Ship Date To"
+                  value={
+                    form.values.shipDateTo && new Date(form.values.shipDateTo)
+                  }
+                  onChange={(e: any) =>
+                    form.setValues({
+                      shipDateTo: e ? new Date(e).toISOString() : undefined,
+                    })
+                  }
+                  error={form.errors.shipDateTo}
+                  clearable
+                />
+                <Select
+                  label="Status"
+                  placeholder="Status"
+                  data={[
+                    "Created",
+                    "Part Requested",
+                    "Part Issued",
+                    "Part Sent",
+                    "Received by Customer",
+                    "Payment Requested",
+                    "Invoice Sent To Customer",
+                    "Payment Received",
+                    "Closed",
+                  ]}
+                  searchable
+                  nothingFoundMessage="Nothing found..."
+                  {...form.getInputProps("status")}
+                />
+                <NumberInput
+                  label="No. Data per page"
+                  placeholder="No. Data per page"
+                  {...form.getInputProps("pageSize")}
+                />
+              </SimpleGrid>
+            </Box>
+            <Button type="submit" mt="sm" loading={isLoading}>
+              {" "}
+              Filter
+            </Button>
+          </form>
+        </Accordion.Panel>
+      </Accordion.Item>
+    </Accordion>
   );
 };

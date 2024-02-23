@@ -5,6 +5,7 @@ import { FollowupTable } from "@/components/AOGFollowup/FollowupTable";
 import {
   useGetAllActiveFollowUpsQuery,
   useGetAllActiveFollowUpsTabsQuery,
+  useGetAllFollowUpsQuery,
   useGetPartByIdQuery,
 } from "./api/apiSlice";
 import { Box, Button, Group, Tabs, Center } from "@mantine/core";
@@ -12,6 +13,7 @@ import {
   IconChecklist,
   IconCirclePlus,
   IconEyeCheck,
+  IconListSearch,
 } from "@tabler/icons-react";
 import { modals } from "@mantine/modals";
 import TabForm from "@/components/AOGFollowup/TabForm";
@@ -19,6 +21,9 @@ import TabActionMenu from "@/components/AOGFollowup/TabActionMenu";
 import Link from "next/link";
 import { API_URL } from "@/config";
 import MyLoadingOverlay from "@/components/MyLoadingOverlay";
+import { useEffect, useState } from "react";
+import { FollowupFilterForm } from "@/components/AOGFollowup/AddFollowUp";
+import { useForm } from "@mantine/form";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -105,6 +110,27 @@ export default function Home() {
       });
   };
 
+  const form = useForm();
+  const queryStr = Object.keys(form.values)
+    .map(
+      (key) =>
+        form.values[key] &&
+        `${encodeURIComponent(key)}=${encodeURIComponent(form.values[key])}`
+    )
+    .join("&");
+
+  const [queryString, SetQueryString] = useState(queryStr);
+
+  useEffect(() => {
+    form.values?.page && SetQueryString(queryStr);
+  }, [queryStr, form.values?.page]);
+
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    SetQueryString(queryStr);
+  };
+  const { data: allFollowups, isLoading: allLoading } =
+    useGetAllFollowUpsQuery(queryString);
   return (
     <Layout title="AOG Follow Up" description="Follow Up table ">
       {isLoading || (tabIsLoading && <MyLoadingOverlay />)}
@@ -140,6 +166,13 @@ export default function Home() {
                   <TabActionMenu data={tab} />
                 </Group>
               ))}
+              <Tabs.Tab
+                color="green"
+                value="allFollowups"
+                leftSection={<IconListSearch color="green" />}
+              >
+                All Followups
+              </Tabs.Tab>
               <IconCirclePlus
                 color="green"
                 cursor={"pointer"}
@@ -162,6 +195,7 @@ export default function Home() {
               data={needHigherMgntAttnData}
               table={homeBaseTable}
               tableTitle="Followups Needs High Management Attention"
+              isActive
             />
           </Tabs.Panel>
           {activeTabs?.map((tab: any, index: any) => (
@@ -180,6 +214,7 @@ export default function Home() {
                           )}
                           table={outStationTable}
                           tableTitle="Out Station Followup"
+                          isActive
                         />
                         <FollowupTable
                           tab={tab}
@@ -190,12 +225,14 @@ export default function Home() {
                           )}
                           table={homeBaseTable}
                           tableTitle="Home Base Followup"
+                          isActive
                         />
                         <FollowupTable
                           tab={tab}
                           data={underReceiving}
                           table={receivingTable}
                           tableTitle="Part Under Receiving"
+                          isActive
                         />
                       </>
                     ) : (
@@ -204,6 +241,7 @@ export default function Home() {
                         data={tab?.followUps}
                         table={homeBaseTable}
                         tableTitle={tab.name}
+                        isActive
                       />
                     )}
                   </>
@@ -211,6 +249,23 @@ export default function Home() {
               </Group>
             </Tabs.Panel>
           ))}
+
+          <Tabs.Panel value="allFollowups">
+            <Box>
+              <FollowupFilterForm
+                form={form}
+                handleSubmit={handleSubmit}
+                isLoading={allLoading}
+              />
+              <FollowupTable
+                data={allFollowups?.data}
+                table={homeBaseTable}
+                tableTitle="All Followups"
+                metadata={allFollowups?.metadata}
+                form={form}
+              />
+            </Box>
+          </Tabs.Panel>
         </Tabs>
       </Center>
     </Layout>

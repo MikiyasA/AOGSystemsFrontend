@@ -37,6 +37,8 @@ import FollowupDetail from "./FollowupDetail";
 import ActionMenu from "./ActionMenu";
 import Link from "next/link";
 import { formatDate } from "@/config/util";
+import Paginate from "../Paginate";
+import DownloadExcel from "../DownloadExcel";
 
 export interface RowData {
   rid: string;
@@ -144,7 +146,15 @@ var detailData = [
   { key: "remarks", value: "Remarks" },
 ];
 
-export function FollowupTable({ data, tab, table, tableTitle }: any) {
+export function FollowupTable({
+  data,
+  tab,
+  table,
+  tableTitle,
+  isActive,
+  metadata,
+  form,
+}: any) {
   const [search, setSearch] = useState("");
   const [sortedData, setSortedData] = useState(data);
   const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
@@ -296,17 +306,21 @@ export function FollowupTable({ data, tab, table, tableTitle }: any) {
           value={search}
           onChange={handleSearchChange}
         />
-        <Button
-          onClick={() =>
-            modals.open({
-              size: "100%",
-              title: "Add Followup",
-              children: <FollowUpForm tab={tab} />,
-            })
-          }
-        >
-          Add FollowUp
-        </Button>
+        {isActive && (
+          <Button
+            onClick={() =>
+              modals.open({
+                size: "100%",
+                title: "Add Followup",
+                children: <FollowUpForm tab={tab} />,
+              })
+            }
+          >
+            Add FollowUp
+          </Button>
+        )}
+        {!isActive && <Paginate metadata={metadata} form={form} data={data} />}
+
         <Table.ScrollContainer minWidth={200}>
           <Table
             horizontalSpacing="lg"
