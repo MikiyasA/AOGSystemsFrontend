@@ -25,7 +25,6 @@ const PartDetail = ({ part }: any) => {
     entityId: part?.id,
     entityType: "Part",
   });
-  console.log({ attachments });
   return (
     <Center
       style={{
@@ -149,7 +148,11 @@ const PartDetail = ({ part }: any) => {
             </Title>
           </Group>
         </SimpleGrid>
-        <AttachmentTable attachments={attachments} />
+        <AttachmentTable
+          attachments={attachments}
+          entityId={part?.id}
+          entityType="Part"
+        />
       </Box>
     </Center>
   );
