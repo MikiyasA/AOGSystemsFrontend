@@ -47,6 +47,7 @@ import classes from "../../styles/Followup.module.css";
 import InvoiceDetail from "@/components/Invoice/InvoiceDetail";
 import { useForm } from "@mantine/form";
 import Paginate from "@/components/Paginate";
+import withAuth from "@/hocs/withAuth";
 
 export interface RowData {
   id: number;
@@ -153,15 +154,24 @@ function sortData(
 
   return filterData(
     [...data].sort((a, b) => {
-      if (payload.reversed) {
-        return b[sortBy]
-          ?.toLocaleString()
-          .localeCompare(a[sortBy]?.toLocaleString());
+      const aValue = a[sortBy];
+      const bValue = b[sortBy];
+
+      if (aValue === null || aValue === undefined) {
+        return payload.reversed ? 1 : -1;
+      }
+      if (bValue === null || bValue === undefined) {
+        return payload.reversed ? -1 : 1;
       }
 
-      return a[sortBy]
-        ?.toLocaleString()
-        .localeCompare(b[sortBy]?.toLocaleString());
+      if (typeof aValue === "number" && typeof bValue === "number") {
+        return payload.reversed ? bValue - aValue : aValue - bValue;
+      }
+
+      // Fallback to string comparison
+      return payload.reversed
+        ? bValue.toString().localeCompare(aValue.toString())
+        : aValue.toString().localeCompare(bValue.toString());
     }),
     payload.search
   );
@@ -247,6 +257,12 @@ export function InvoiceList({
                 </Table.Td>
               );
             }
+          } else if (col.key === "invoiceNo") {
+            return (
+              <Table.Td key={`col-${index}`} p={2} m={0}>
+                <Link href={`/invoice/detail/${row.id}`}>{row.invoiceNo}</Link>
+              </Table.Td>
+            );
           } else if (col.key === "company") {
             return (
               <Table.Td key={`col-${index}`} p={2} m={0}>
@@ -450,4 +466,4 @@ const Invoice = ({}) => {
   );
 };
 
-export default Invoice;
+export default withAuth(Invoice, ["Coordinator", "TL", "Management"]);

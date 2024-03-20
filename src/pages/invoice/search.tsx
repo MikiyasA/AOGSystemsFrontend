@@ -12,6 +12,7 @@ import Link from "next/link";
 import MyLoadingOverlay from "@/components/MyLoadingOverlay";
 import { formatDate } from "@/config/util";
 import { IconCircleCheck, IconCircleX } from "@tabler/icons-react";
+import withAuth from "@/hocs/withAuth";
 
 const SearchInvoice = () => {
   const [invoice, setInvoice] = useState<any>();
@@ -29,24 +30,10 @@ const SearchInvoice = () => {
   const handleChange = (e: any) => {
     e.preventDefault();
     setInvoiceNo(e.target.value);
-    // if (searchBy === "Code") {
-    //   setCode(e.target.value);
-    // } else if (searchBy === "Name") {
-    //   setName(e.target.value);
-    // }
   };
   const handleSubmit = (e: any) => {
     e.preventDefault();
     setInvoice(invoiceNo);
-
-    // if (searchBy === "Code") {
-    //   // setName("");
-    //   setCompanies(codeData);
-    // } else if (searchBy === "Name") {
-    //   // setCode("");
-    //   setCompanies(nameData);
-    // }
-    // setCompany(codeData || nameData);
   };
 
   const header = [
@@ -68,7 +55,6 @@ const SearchInvoice = () => {
         <Table.Td>
           <Link href={`/invoice/detail/${el.id}`}>{el.invoiceNo}</Link>
         </Table.Td>
-        {/* <Table.Td>{el.invoiceNo}</Table.Td> */}
         <Table.Td>{formatDate(el.invoiceDate)}</Table.Td>
         <Table.Td>{formatDate(el.dueDate)}</Table.Td>
         <Table.Td>{el.transactionType}</Table.Td>
@@ -97,17 +83,9 @@ const SearchInvoice = () => {
             style={{ display: "flex", alignItems: "flex-end", gap: "20px" }}
           >
             <Group>
-              {/* <Select
-                label="Search Parameter"
-                placeholder="Search by"
-                data={["Code", "Name"]}
-                onChange={(e: any) => setSearchBy(e)}
-                required
-                allowDeselect={false}
-              /> */}
               <TextInput
-                label="Company Code"
-                placeholder="Code to Search"
+                label="Invoice Number"
+                placeholder="Invoice Number to Search"
                 onChange={handleChange}
                 required
               />
@@ -141,4 +119,4 @@ const SearchInvoice = () => {
   );
 };
 
-export default SearchInvoice;
+export default withAuth(SearchInvoice, ["Coordinator", "TL", "Management"]);

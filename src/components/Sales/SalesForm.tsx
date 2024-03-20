@@ -45,24 +45,14 @@ const SalesForm = ({ data, action }: any) => {
       shipToAddress: data?.shipToAddress,
       status: data?.status || "Created",
       note: data?.note,
-      salesId: data?.salesId,
-      quantity: data?.quantity || 1,
-      uom: data?.uom,
-      unitPrice: data?.unitPrice,
-      currency: data?.currency,
-    },
-    validate: {
-      companyId: (v) => (v?.length < 1 ? "Company must be selected" : null),
-    },
-  });
-
-  const partListForm = useForm({
-    initialValues: {
-      salesId: data?.salesId,
+      partId: data?.partId,
       quantity: data?.quantity || 1,
       uom: data?.uom || "EA",
       unitPrice: data?.unitPrice,
       currency: data?.currency || "USD",
+    },
+    validate: {
+      companyId: (v) => (v?.length < 1 ? "Company must be selected" : null),
     },
   });
 
@@ -98,17 +88,13 @@ const SalesForm = ({ data, action }: any) => {
   const handleFormSubmit = async (e: any) => {
     e.preventDefault();
     if (action === "add") {
-      const createReturn = await createSales(form.values).unwrap();
-      if (createReturn.isSuccess) {
-        partListForm.setFieldValue("salesId", createReturn?.salesId);
-        const addReturn = await addPartList(partListForm.values).unwrap();
-        if (addReturn.isSuccess) {
-          notifications.show({
-            title: "Success",
-            message: addReturn?.message || "Sales Order Creatd Successfully 👍",
-            color: "green",
-          });
-        }
+      const addReturn = await createSales(form.values).unwrap();
+      if (addReturn.isSuccess) {
+        notifications.show({
+          title: "Success",
+          message: addReturn?.message || "Sales Order Created Successfully 👍",
+          color: "green",
+        });
       } else {
         notifications.show({
           title: "Failure",
@@ -201,7 +187,7 @@ const SalesForm = ({ data, action }: any) => {
                   }))}
                   searchable
                   nothingFoundMessage="Nothing found... Please introduce Part First"
-                  {...form.getInputProps("companyId")}
+                  {...form.getInputProps("partId")}
                   required
                 />
                 <Tooltip label="Add Company">
@@ -228,7 +214,7 @@ const SalesForm = ({ data, action }: any) => {
                   label="Quantity"
                   placeholder="Quantity"
                   min={1}
-                  {...partListForm.getInputProps("quantity")}
+                  {...form.getInputProps("quantity")}
                 />
                 <Select
                   styles={{
@@ -242,7 +228,7 @@ const SalesForm = ({ data, action }: any) => {
                   searchable
                   withAsterisk
                   nothingFoundMessage="Nothing found..."
-                  {...partListForm.getInputProps("uom")}
+                  {...form.getInputProps("uom")}
                   required
                 />
               </Group>
@@ -250,14 +236,14 @@ const SalesForm = ({ data, action }: any) => {
                 label="Unit Price"
                 placeholder="Unit Price"
                 min={1}
-                {...partListForm.getInputProps("unitPrice")}
+                {...form.getInputProps("unitPrice")}
               />
               <Select
                 label="Currency"
                 placeholder="Select Currency"
                 data={["USD", "BIR", "EUR", "GBP", "CNY", "INR", "AUD", "CAD"]}
                 withAsterisk
-                {...partListForm.getInputProps("currency")}
+                {...form.getInputProps("currency")}
               />
             </>
           )}
@@ -372,7 +358,7 @@ export const LineItemForm = ({ data, salesId, action }: any) => {
           });
     }
   };
-
+  (addIsSuccess || updateIsSuccess) && modals.closeAll();
   return (
     <Box w={"100%"} px={50}>
       {updateIsLoading && <MyLoadingOverlay />}
@@ -511,7 +497,7 @@ export const ShipSalesForm = ({ data, salesId, action }: any) => {
           color: "red",
         });
   };
-
+  shipSalesSuccess && modals.closeAll();
   return (
     <Box w={"100%"} px={50}>
       {shipSalesLoading && <MyLoadingOverlay />}

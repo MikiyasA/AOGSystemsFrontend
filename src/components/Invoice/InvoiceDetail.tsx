@@ -1,6 +1,7 @@
 import { formatDate } from "@/config/util";
 import {
   useGetAllPartQuery,
+  useGetAttachmentLinkByEntityIdQuery,
   useGetLoanByIDQuery,
   useGetSalesOrderByIdQuery,
   useInvoiceApprovalMutation,
@@ -24,6 +25,8 @@ import { UpdateInvoiceForm } from "./InvoiceForm";
 import Head from "next/head";
 
 import MyLoadingOverlay from "@/components/MyLoadingOverlay";
+import WithComponentAuth from "@/hocs/WithComponentAuth";
+import AttachmentTable from "../Attachment/AttachmentTable";
 
 const InvoiceDetail = ({ data, location }: any) => {
   const { data: salesOrder, isLoading } = useGetSalesOrderByIdQuery(
@@ -31,8 +34,10 @@ const InvoiceDetail = ({ data, location }: any) => {
   );
   const { data: loanOrder } = useGetLoanByIDQuery(data?.loanOrderId);
   const { data: partData } = useGetAllPartQuery("");
-  console.log({ data });
-  console.log({ salesOrder });
+  const { data: attachments } = useGetAttachmentLinkByEntityIdQuery({
+    entityId: data?.id,
+    entityType: "Invoice",
+  });
 
   const header = [
     "IT#",
@@ -244,61 +249,67 @@ const InvoiceDetail = ({ data, location }: any) => {
           <Group my={20}>
             {data?.status !== "Closed" && (
               <>
-                <Button
-                  onClick={() =>
-                    modals.open({
-                      title: "Update Invoice",
-                      size: "90%",
-                      children: (
-                        <UpdateInvoiceForm data={data} action="update" />
-                      ),
-                    })
-                  }
-                >
-                  Update Invoice
-                </Button>
+                <WithComponentAuth allowedRoles={["Coordinator", "TL"]}>
+                  <Button
+                    onClick={() =>
+                      modals.open({
+                        title: "Update Invoice",
+                        size: "90%",
+                        children: (
+                          <UpdateInvoiceForm data={data} action="update" />
+                        ),
+                      })
+                    }
+                  >
+                    Update Invoice
+                  </Button>
+                </WithComponentAuth>
                 {data?.isApproved ? (
-                  <Button
-                    onClick={() => {
-                      modals.openConfirmModal({
-                        title: "Unapprove Invoice",
-                        children: (
-                          <Text size="sm">
-                            Are you sure you want to unapproved the Invoice?
-                          </Text>
-                        ),
-                        labels: { confirm: "Confirm", cancel: "Cancel" },
-                        onConfirm: () =>
-                          invoiceApproval({
-                            id: data?.id,
-                            isApproved: false,
-                          }),
-                      });
-                    }}
-                  >
-                    Unapproved Invoice
-                  </Button>
+                  <WithComponentAuth allowedRoles={["Coordinator", "TL"]}>
+                    <Button
+                      onClick={() => {
+                        modals.openConfirmModal({
+                          title: "Unapprove Invoice",
+                          children: (
+                            <Text size="sm">
+                              Are you sure you want to unapproved the Invoice?
+                            </Text>
+                          ),
+                          labels: { confirm: "Confirm", cancel: "Cancel" },
+                          onConfirm: () =>
+                            invoiceApproval({
+                              id: data?.id,
+                              isApproved: false,
+                            }),
+                        });
+                      }}
+                    >
+                      Unapproved Invoice
+                    </Button>
+                  </WithComponentAuth>
                 ) : (
-                  <Button
-                    onClick={() => {
-                      modals.openConfirmModal({
-                        title: "Approve Invoice",
-                        children: (
-                          <Text size="sm">
-                            Are you sure you want toapproved the Invoice?
-                          </Text>
-                        ),
-                        labels: { confirm: "Confirm", cancel: "Cancel" },
-                        onConfirm: () =>
-                          invoiceApproval({
-                            id: data?.id,
-                            isApproved: true,
-                          }),
-                      });
-                    }}
-                  >
-                    Approved Invoice
-                  </Button>
+                  <WithComponentAuth allowedRoles={["TL"]}>
+                    <Button
+                      onClick={() => {
+                        modals.openConfirmModal({
+                          title: "Approve Invoice",
+                          children: (
+                            <Text size="sm">
+                              Are you sure you want toapproved the Invoice?
+                            </Text>
+                          ),
+                          labels: { confirm: "Confirm", cancel: "Cancel" },
+                          onConfirm: () =>
+                            invoiceApproval({
+                              id: data?.id,
+                              isApproved: true,
+                            }),
+                        });
+                      }}
+                    >
+                      Approved Invoice
+                    </Button>
+                  </WithComponentAuth>
                 )}{" "}
               </>
             )}
@@ -315,43 +326,55 @@ const InvoiceDetail = ({ data, location }: any) => {
               </Button>
             )}
             {data?.status !== "Closed" ? (
-              <Button
-                onClick={() => {
-                  modals.openConfirmModal({
-                    title: "Close The Invoice",
-                    children: (
-                      <Text>Are you sure you want to close the Invoice?</Text>
-                    ),
-                    labels: { confirm: "Confirm", cancel: "Cancel" },
-                    onConfirm: () =>
-                      invoiceCloser({
-                        id: data?.id,
-                        status: "Closed",
-                      }),
-                  });
-                }}
-              >
-                Close Invoice
-              </Button>
+              <>
+                {data?.popReference && (
+                  <WithComponentAuth allowedRoles={["TL"]}>
+                    <Button
+                      onClick={() => {
+                        modals.openConfirmModal({
+                          title: "Close The Invoice",
+                          children: (
+                            <Text>
+                              Are you sure you want to close the Invoice?
+                            </Text>
+                          ),
+                          labels: { confirm: "Confirm", cancel: "Cancel" },
+                          onConfirm: () =>
+                            invoiceCloser({
+                              id: data?.id,
+                              status: "Closed",
+                            }),
+                        });
+                      }}
+                    >
+                      Close Invoice
+                    </Button>
+                  </WithComponentAuth>
+                )}
+              </>
             ) : (
-              <Button
-                onClick={() => {
-                  modals.openConfirmModal({
-                    title: "Close The Invoice",
-                    children: (
-                      <Text>Are you sure you want to re-open the Invoice?</Text>
-                    ),
-                    labels: { confirm: "Confirm", cancel: "Cancel" },
-                    onConfirm: () =>
-                      invoiceCloser({
-                        id: data?.id,
-                        status: "Re-Opened",
-                      }),
-                  });
-                }}
-              >
-                Re-Open Invoice
-              </Button>
+              <WithComponentAuth allowedRoles={["TL"]}>
+                <Button
+                  onClick={() => {
+                    modals.openConfirmModal({
+                      title: "Close The Invoice",
+                      children: (
+                        <Text>
+                          Are you sure you want to re-open the Invoice?
+                        </Text>
+                      ),
+                      labels: { confirm: "Confirm", cancel: "Cancel" },
+                      onConfirm: () =>
+                        invoiceCloser({
+                          id: data?.id,
+                          status: "Re-Opened",
+                        }),
+                    });
+                  }}
+                >
+                  Re-Open Invoice
+                </Button>
+              </WithComponentAuth>
             )}
           </Group>
         )}
@@ -468,6 +491,13 @@ const InvoiceDetail = ({ data, location }: any) => {
             </>
           )}
         </Box>
+        {location !== "print" && (
+          <AttachmentTable
+            attachments={attachments}
+            entityId={data?.id}
+            entityType="Invoice"
+          />
+        )}
       </Box>
     </Center>
   );

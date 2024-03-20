@@ -63,12 +63,13 @@ const EditFollowup = ({ data, tab }: any) => {
       aogStation: data?.aogStation,
       customer: data?.customer,
       partNumber: data?.partNumber,
+      haveCostSaving: data?.haveCostSaving,
       description: data?.description,
       stockNo: data?.stockNo,
       financialClass: data?.financialClass,
       poNumber: data?.poNumber,
       orderType: data?.orderType,
-      quantity: data?.quantity,
+      quantity: data?.quantity || 1,
       uom: data?.uom,
       vendor: data?.vendor,
       edd: data?.edd,
@@ -85,6 +86,7 @@ const EditFollowup = ({ data, tab }: any) => {
       // requestDate: (v) => (v === null ? 'Request Date is mandatory' : null)
     },
   });
+  console.log(form.values);
   const remarkForm = useForm({
     initialValues: {
       aogFollowUpId: data.id,
@@ -199,9 +201,6 @@ const EditFollowup = ({ data, tab }: any) => {
             label="Work Location"
             placeholder="Work Location"
             data={["Home Base", "Out Station", "Tool"]}
-            // defaultValue='Home Base'
-            // value={form.values.workLocation}
-            // onChange={form.setValues({workLocation: value})}
             allowDeselect={false}
             {...form.getInputProps("workLocation")}
           />
@@ -209,6 +208,7 @@ const EditFollowup = ({ data, tab }: any) => {
             label="AOG Station"
             placeholder="AOG Station"
             {...form.getInputProps("aogStation")}
+            required={form.values.workLocation === "Out Station"}
           />
           <TextInput
             label="Customer"
@@ -233,10 +233,19 @@ const EditFollowup = ({ data, tab }: any) => {
             placeholder="Stock No"
             {...form.getInputProps("stockNo")}
           />
+
           <TextInput
             label="PO Number"
             placeholder="PO Number"
             {...form.getInputProps("poNumber")}
+            required={form.values.haveCostSaving}
+          />
+          <Checkbox
+            label="Has Cost Saving"
+            variant="filled"
+            checked={form.values.haveCostSaving}
+            {...form.getInputProps("haveCostSaving")}
+            style={{ alignSelf: "end", paddingBottom: 10 }}
           />
           <Select
             // label="Order Type"
@@ -258,6 +267,7 @@ const EditFollowup = ({ data, tab }: any) => {
             searchable
             nothingFoundMessage="Nothing found..."
             {...form.getInputProps("orderType")}
+            required={form.values.poNumber}
           />
           <Group justify="space-between">
             <NumberInput
@@ -268,7 +278,6 @@ const EditFollowup = ({ data, tab }: any) => {
               }}
               label="Quantity"
               placeholder="Quantity"
-              defaultValue={1}
               min={1}
               {...form.getInputProps("quantity")}
             />
@@ -280,23 +289,20 @@ const EditFollowup = ({ data, tab }: any) => {
               }}
               width={"50%"}
               label="UOM"
-              placeholder="Unit of measurment"
+              placeholder="Unit of measurement"
               defaultValue={"EA"}
               {...form.getInputProps("uom")}
-              // data={['EA', 'SH', 'LBS', 'CAN', 'A', 'B']}
-              // allowDeselect={false}
-              // searchable
-              // nothingFoundMessage="Nothing found..."
             />
           </Group>
           <TextInput
             label="Vendor"
             placeholder="Vendor"
             {...form.getInputProps("vendor")}
+            required={form.values.poNumber}
           />
           <DateInput
             label="EDD"
-            placeholder="Estimated Delivey Date"
+            placeholder="Estimated Delivery Date"
             value={form.values.edd && new Date(form.values.edd)}
             onChange={(e: any) => {
               const dateValue = e ? new Date(e?.toString()) : null;

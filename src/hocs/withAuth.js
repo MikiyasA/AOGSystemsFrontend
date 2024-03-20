@@ -1,35 +1,38 @@
-import { useRouter } from 'next/router';
-import { useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { modals } from "@mantine/modals";
+import MyLoadingOverlay from "@/components/MyLoadingOverlay";
+import { Text, Box } from "@mantine/core";
 
-  
-  const withAuth = (WrappedComponent, allowedRoles = []) => {
-    const Auth = (props) => {
-      const router = useRouter();
-  
-      const { data: session, status } = useSession();
+const withAuth = (WrappedComponent, allowedRoles = []) => {
+  const Auth = (props) => {
+    const router = useRouter();
+    const { data: session, status } = useSession();
+
+    !allowedRoles.includes("Admin") && allowedRoles.push("Admin");
+
+    useEffect(() => {
+      status === "loading" && <MyLoadingOverlay />;
       const user = session?.user;
-  
-      useEffect(() => {
-        if (status === 'loading') {
-          // Optional: Show a loading spinner while session is being checked // TODO
-          return;
-        }
-  
-        if (!user) {
-          router.push('/login'); // Redirect to login page if no user session
-        }
-  
-        if (allowedRoles.length > 0 && user && !allowedRoles.includes(user.role)) {
-          console.log({ router });
-          // Handle unauthorized user based on roles
-        }
-      }, [user, session, status, router]);
-  
-      return <WrappedComponent {...props} />;
-    };
-  
-    return Auth;
+      const flattenedRoles = user?.role?.flat();
+
+      if (status === "unauthenticated") {
+        router.push("/login"); // Redirect to login page if no user session
+      }
+      if (
+        allowedRoles.length > 0 &&
+        user &&
+        !flattenedRoles?.some((role) => allowedRoles.includes(role))
+      ) {
+        router.push("/401");
+      }
+    }, [status, router, session?.user]);
+
+    return <WrappedComponent {...props} />;
   };
-  
-  export default withAuth;
+
+  return Auth;
+};
+
+export default withAuth;

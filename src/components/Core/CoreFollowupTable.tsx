@@ -41,6 +41,7 @@ import { DateInput } from "@mantine/dates";
 import CoreFollowupDetail from "./CoreFollowupDetail";
 import MyLoadingOverlay from "../MyLoadingOverlay";
 import Paginate from "../Paginate";
+import WithComponentAuth from "@/hocs/WithComponentAuth";
 
 export interface RowData {
   poNo: string;
@@ -114,15 +115,24 @@ function sortData(
 
   return filterData(
     [...data].sort((a, b) => {
-      if (payload.reversed) {
-        return b[sortBy]
-          ?.toLocaleString()
-          .localeCompare(a[sortBy]?.toLocaleString());
+      const aValue = a[sortBy];
+      const bValue = b[sortBy];
+
+      if (aValue === null || aValue === undefined) {
+        return payload.reversed ? 1 : -1;
+      }
+      if (bValue === null || bValue === undefined) {
+        return payload.reversed ? -1 : 1;
       }
 
-      return a[sortBy]
-        ?.toLocaleString()
-        .localeCompare(b[sortBy]?.toLocaleString());
+      if (typeof aValue === "number" && typeof bValue === "number") {
+        return payload.reversed ? bValue - aValue : aValue - bValue;
+      }
+
+      // Fallback to string comparison
+      return payload.reversed
+        ? bValue.toString().localeCompare(aValue.toString())
+        : aValue.toString().localeCompare(bValue.toString());
     }),
     payload.search
   );
@@ -251,17 +261,19 @@ export function CoreFollowupTable({
               }}
             />
 
-            <IconEditCircle
-              cursor={"pointer"}
-              color="green"
-              onClick={() =>
-                modals.open({
-                  size: "100%",
-                  title: "Update Core FollowUp",
-                  children: <CoreForm data={row} action="update" />,
-                })
-              }
-            />
+            <WithComponentAuth allowedRoles={["Coordinator", "TL"]}>
+              <IconEditCircle
+                cursor={"pointer"}
+                color="green"
+                onClick={() =>
+                  modals.open({
+                    size: "100%",
+                    title: "Update Core FollowUp",
+                    children: <CoreForm data={row} action="update" />,
+                  })
+                }
+              />
+            </WithComponentAuth>
           </Table.Td>
         )}
       </Table.Tr>
@@ -287,17 +299,19 @@ export function CoreFollowupTable({
           onChange={handleSearchChange}
         />
         {isActive && (
-          <Button
-            onClick={() =>
-              modals.open({
-                size: "100%",
-                title: "Add Followup",
-                children: <CoreForm data={data} action="add" />,
-              })
-            }
-          >
-            Add Core FollowUp
-          </Button>
+          <WithComponentAuth allowedRoles={["Coordinator", "TL"]}>
+            <Button
+              onClick={() =>
+                modals.open({
+                  size: "100%",
+                  title: "Add Followup",
+                  children: <CoreForm data={data} action="add" />,
+                })
+              }
+            >
+              Add Core FollowUp
+            </Button>
+          </WithComponentAuth>
         )}
         {!isActive && <Paginate metadata={metadata} form={form} data={data} />}
 

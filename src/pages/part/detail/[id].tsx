@@ -9,6 +9,7 @@ import {
 import { Box, Group } from "@mantine/core";
 import { useRouter } from "next/router";
 import PartDetail from "@/components/Part/PartDetail";
+import withAuth from "@/hocs/withAuth";
 
 const Detail = () => {
   const route = useRouter();
@@ -26,4 +27,4 @@ const Detail = () => {
     </Layout>
   );
 };
-export default Detail;
+export default withAuth(Detail, ["Coordinator", "TL", "Management"]);

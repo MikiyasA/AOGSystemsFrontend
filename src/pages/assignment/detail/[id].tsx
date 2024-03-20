@@ -1,6 +1,7 @@
 import AssignmentDetail from "@/components/Assignment/AssignmentDetail";
 import MyLoadingOverlay from "@/components/MyLoadingOverlay";
 import Layout from "@/hocs/Layout";
+import withAuth from "@/hocs/withAuth";
 import { useGetAssignmentByIdQuery } from "@/pages/api/apiSlice";
 import { useRouter } from "next/router";
 
@@ -38,4 +39,4 @@ const DetailAssignment = () => {
     </Layout>
   );
 };
-export default DetailAssignment;
+export default withAuth(DetailAssignment, ["Coordinator", "TL", "Management"]);

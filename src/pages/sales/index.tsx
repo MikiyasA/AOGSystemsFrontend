@@ -10,6 +10,7 @@ import { IconChecklist } from "@tabler/icons-react";
 import { useForm } from "@mantine/form";
 import { SalesFilterForm } from "@/components/Sales/SalesForm";
 import { useEffect, useState } from "react";
+import withAuth from "@/hocs/withAuth";
 
 var salesTable = [
   { key: "orderNo", value: "Order No" },
@@ -113,4 +114,4 @@ const Sales = () => {
   );
 };
 
-export default Sales;
+export default withAuth(Sales, ["Coordinator", "TL", "Management"]);

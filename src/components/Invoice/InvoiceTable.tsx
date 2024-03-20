@@ -16,6 +16,7 @@ import { modals } from "@mantine/modals";
 import Link from "next/link";
 import { formatDate } from "@/config/util";
 import { useEffect, useState } from "react";
+import WithComponentAuth from "@/hocs/WithComponentAuth";
 
 export default function InvoiceTable({ data }: any) {
   const header = [
@@ -76,18 +77,20 @@ export default function InvoiceTable({ data }: any) {
           <Table.Td>{el.remark}</Table.Td>
           <Group>
             {el.status !== "Closed" && (
-              <Tooltip label="Edit Invoice">
-                <IconEdit
-                  color="green"
-                  onClick={() => {
-                    modals.open({
-                      title: `Edit Invoice ${el.invoiceNo}`,
-                      size: "90%",
-                      children: <UpdateInvoiceForm data={el} />,
-                    });
-                  }}
-                />
-              </Tooltip>
+              <WithComponentAuth allowedRoles={["Coordinator", "TL"]}>
+                <Tooltip label="Update Invoice">
+                  <IconEdit
+                    color="green"
+                    onClick={() => {
+                      modals.open({
+                        title: `Update Invoice ${el.invoiceNo}`,
+                        size: "90%",
+                        children: <UpdateInvoiceForm data={el} />,
+                      });
+                    }}
+                  />
+                </Tooltip>
+              </WithComponentAuth>
             )}
             {el.isApproved ? (
               <Link href={`/invoice/print/${el.id}`} target="_blank">
@@ -96,27 +99,29 @@ export default function InvoiceTable({ data }: any) {
                 </Tooltip>
               </Link>
             ) : (
-              <Tooltip label="Approve Invoice">
-                <IconFileCheck
-                  color="green"
-                  onClick={() => {
-                    modals.openConfirmModal({
-                      title: "Approve Invoice",
-                      children: (
-                        <Text size="sm">
-                          Are you sure you want to approved the Invoice?
-                        </Text>
-                      ),
-                      labels: { confirm: "Confirm", cancel: "Cancel" },
-                      onConfirm: () =>
-                        invoiceApproval({
-                          id: el?.id,
-                          isApproved: true,
-                        }),
-                    });
-                  }}
-                />
-              </Tooltip>
+              <WithComponentAuth allowedRoles={["TL"]}>
+                <Tooltip label="Approve Invoice">
+                  <IconFileCheck
+                    color="green"
+                    onClick={() => {
+                      modals.openConfirmModal({
+                        title: "Approve Invoice",
+                        children: (
+                          <Text size="sm">
+                            Are you sure you want to approved the Invoice?
+                          </Text>
+                        ),
+                        labels: { confirm: "Confirm", cancel: "Cancel" },
+                        onConfirm: () =>
+                          invoiceApproval({
+                            id: el?.id,
+                            isApproved: true,
+                          }),
+                      });
+                    }}
+                  />
+                </Tooltip>
+              </WithComponentAuth>
             )}
           </Group>
         </Table.Tr>

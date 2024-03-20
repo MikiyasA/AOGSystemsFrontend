@@ -1,12 +1,20 @@
 import { formatDate } from "@/config/util";
 import Layout from "@/hocs/Layout";
-import { useGetCompanyByIDQuery } from "@/pages/api/apiSlice";
+import {
+  useGetAttachmentLinkByEntityIdQuery,
+  useGetCompanyByIDQuery,
+} from "@/pages/api/apiSlice";
 import { Box, Group, SimpleGrid, Title } from "@mantine/core";
+import AttachmentTable from "../Attachment/AttachmentTable";
 
 const LoanDetail = ({ data, detailData }: any) => {
   const { data: companyData, isLoading } = useGetCompanyByIDQuery(
     data.companyId
   );
+  const { data: attachments } = useGetAttachmentLinkByEntityIdQuery({
+    entityId: data?.id,
+    entityType: "Loan",
+  });
   return (
     <>
       <SimpleGrid
@@ -38,6 +46,11 @@ const LoanDetail = ({ data, detailData }: any) => {
           );
         })}
       </SimpleGrid>
+      <AttachmentTable
+        attachments={attachments}
+        entityId={data?.id}
+        entityType="Loan"
+      />
     </>
   );
 };

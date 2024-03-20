@@ -17,10 +17,16 @@ import {
   useGetAllUsersQuery,
   useReopenAssignmentMutation,
   useCloseAssignmentMutation,
+  useGetAttachmentLinkByEntityIdQuery,
 } from "@/pages/api/apiSlice";
 import MyLoadingOverlay from "../MyLoadingOverlay";
+import AttachmentTable from "../Attachment/AttachmentTable";
 
 const AssignmentDetail = ({ data, detailData }: any) => {
+  const { data: attachments } = useGetAttachmentLinkByEntityIdQuery({
+    entityId: data?.id,
+    entityType: "Assignment",
+  });
   const [
     startAssignment,
     { isLoading: startLoading, isSuccess: startSuccess },
@@ -217,6 +223,11 @@ const AssignmentDetail = ({ data, detailData }: any) => {
               )
           )}
         </Box>
+        <AttachmentTable
+          attachments={attachments}
+          entityId={data?.id}
+          entityType="Assignment"
+        />
       </Box>
     </Center>
   );

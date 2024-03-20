@@ -1,7 +1,7 @@
 .link {
   display: flex;
   line-height: 1;
-  padding: rem(8px) rem(12px);
+  padding: 5px;
   border-radius: var(--mantine-radius-sm);
   text-decoration: none;
   color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-0));
@@ -42,4 +42,10 @@
   @mixin dark {
     display: block;
   }
+}
+
+.activeLink {
+  border-bottom: 4px solid green;
+  border-radius: 0px;
+  padding: 4px 2px 2px 2px;
 }

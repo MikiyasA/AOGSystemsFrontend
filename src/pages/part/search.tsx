@@ -9,6 +9,7 @@ import {
 } from "../api/apiSlice";
 import Link from "next/link";
 import MyLoadingOverlay from "@/components/MyLoadingOverlay";
+import withAuth from "@/hocs/withAuth";
 
 const SearchCompany = () => {
   const [partToBeSearched, setPartToBeSearched] = useState<any>();
@@ -100,4 +101,4 @@ const SearchCompany = () => {
   );
 };
 
-export default SearchCompany;
+export default withAuth(SearchCompany, ["Coordinator", "TL", "Management"]);

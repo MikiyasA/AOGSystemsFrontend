@@ -1,5 +1,6 @@
 import CompanyForm from "@/components/Company/CompanyForm";
 import Layout from "@/hocs/Layout";
+import withAuth from "@/hocs/withAuth";
 import { Box, Center } from "@mantine/core";
 
 const AddCompany = () => {
@@ -21,4 +22,4 @@ const AddCompany = () => {
   );
 };
 
-export default AddCompany;
+export default withAuth(AddCompany, ["Coordinator", "TL", "Management"]);

@@ -2,11 +2,12 @@ import { downloadFile } from "@/config/util";
 import { Box, Button, Group, Input, Table, Title } from "@mantine/core";
 import {
   IconCirclePlus,
+  IconEditCircle,
   IconEye,
   IconFileDownload,
   IconPlus,
 } from "@tabler/icons-react";
-import React from "react";
+import React, { useState } from "react";
 import classes from "../../styles/Button.module.css";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -20,16 +21,16 @@ const AttachmentTable = ({ attachments, entityId, entityType }: any) => {
     const queryString = encodeURIComponent(JSON.stringify(data));
     window.open(`/attachments/${data?.id}`, "_blank");
   };
-
+  const [modalId, SetModalId] = useState<void>();
   return (
-    <Box my={30}>
+    <Box my={30} w={"fit-content"}>
       <Group>
         <Title order={4}>Attachments</Title>
         <IconCirclePlus
           color="green"
           cursor={"pointer"}
-          onClick={() =>
-            modals.open({
+          onClick={() => {
+            const modal = modals.open({
               title: `Add Attachment`,
               size: "60%",
               children: (
@@ -37,10 +38,12 @@ const AttachmentTable = ({ attachments, entityId, entityType }: any) => {
                   entityId={entityId}
                   entityType={entityType}
                   action="add"
+                  modalId={modalId}
                 />
               ),
-            })
-          }
+            });
+            SetModalId(modal);
+          }}
         />
       </Group>
       <Table w={"fit-content"}>
@@ -48,9 +51,9 @@ const AttachmentTable = ({ attachments, entityId, entityType }: any) => {
           <Table.Tr>
             <Table.Th>Item#</Table.Th>
             <Table.Th>File Name</Table.Th>
-            {/* <Table.Th>File Type</Table.Th> */}
             {/* <Table.Th>Preview</Table.Th> */}
             <Table.Th>Download</Table.Th>
+            {/* <Table.Th>Update</Table.Th> */}
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
@@ -58,7 +61,6 @@ const AttachmentTable = ({ attachments, entityId, entityType }: any) => {
             <Table.Tr key={i}>
               <Table.Td>{i + 1}</Table.Td>
               <Table.Td>{el?.attachment?.fileName}</Table.Td>
-              {/* <Table.Td>{el?.attachment?.type}</Table.Td> */}
               {/* <Table.Td>
                 <Box
                   //   disabled
@@ -86,6 +88,27 @@ const AttachmentTable = ({ attachments, entityId, entityType }: any) => {
                   }
                 />
               </Table.Td>
+              {/* <Table.Td>
+                <IconEditCircle
+                  cursor={"pointer"}
+                  color="green"
+                  onClick={() =>
+                    modals.open({
+                      title: "Update Attachment",
+                      size: "60%",
+                      children: (
+                        <AttachmentForm
+                          file={el?.attachment?.file}
+                          fileName={el?.attachment?.fileName}
+                          entityId={el?.attachment?.entityId}
+                          entityType={el?.attachment?.entityType}
+                          action="update"
+                        />
+                      ),
+                    })
+                  }
+                />
+              </Table.Td> */}
             </Table.Tr>
           ))}
         </Table.Tbody>

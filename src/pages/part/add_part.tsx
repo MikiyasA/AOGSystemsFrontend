@@ -1,5 +1,6 @@
 import PartForm from "@/components/Part/PartForm";
 import Layout from "@/hocs/Layout";
+import withAuth from "@/hocs/withAuth";
 import { Box, Center } from "@mantine/core";
 
 const AddPart = () => {
@@ -19,4 +20,4 @@ const AddPart = () => {
   );
 };
 
-export default AddPart;
+export default withAuth(AddPart, ["Coordinator", "TL", "Management"]);

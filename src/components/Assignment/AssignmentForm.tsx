@@ -131,7 +131,7 @@ const AssignmentForm = ({ data, action }: any) => {
 
   return (
     <>
-      {addLoading || (updateLoading && <MyLoadingOverlay />)}
+      {(addLoading || updateLoading) && <MyLoadingOverlay />}
       <form onSubmit={handleFormSubmit}>
         <Box>
           <SimpleGrid
@@ -423,6 +423,7 @@ export const AssignmentFilterForm = ({
                   searchable
                   nothingFoundMessage="Nothing found..."
                   {...form.getInputProps("assignedTo")}
+                  required
                 />
                 <Select
                   label="Started By"

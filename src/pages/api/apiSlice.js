@@ -1,4 +1,7 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {
+  createApi,
+  fetchBaseQuery,
+} from "@reduxjs/toolkit/dist/query/react/index";
 import { API_URL } from "../../config/index";
 import { getSession, useSession } from "next-auth/react";
 
@@ -26,6 +29,8 @@ export const apiSlice = createApi({
     "Company",
     "Loan",
     "Attachment",
+    "CostSaving",
+    "SOA",
   ],
 
   endpoints: (builder) => ({
@@ -133,6 +138,15 @@ export const apiSlice = createApi({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["Followup"],
+    }),
+    updateRemark: builder.mutation({
+      query: (data) => ({
+        url: "AOGFollowUp/UpdateRemarkInAOGFollowUp",
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["Followup"],
     }),
     addFollowUpTab: builder.mutation({
       query: (data) => ({
@@ -266,6 +280,10 @@ export const apiSlice = createApi({
 
     getActiveAssignment: builder.query({
       query: () => `Assignment/GetActiveAssignments`,
+      providesTags: ["Assignment"],
+    }),
+    getActiveAssignmentByUserId: builder.query({
+      query: () => `Assignment/GetActiveAssignmentByUserId`,
       providesTags: ["Assignment"],
     }),
     getAllAssignment: builder.query({
@@ -657,36 +675,50 @@ export const apiSlice = createApi({
     // #region Attachment
     uploadAttachment: builder.mutation({
       async queryFn(data) {
+        const session = await getSession();
         const formData = new FormData();
-        for (const key in data) {
-          if (data.hasOwnProperty(key)) {
-            formData.append(key, data[key]);
-          }
+        if (data.fileName !== undefined && data.fileName !== null) {
+          formData.append("fileName", data.fileName);
         }
-
+        formData.append("entityType", data.entityType);
+        formData.append("entityId", data.entityId);
+        formData.append("file", data.file[0]); // Assuming file is an array with a single file object
         const response = await fetch(`${API_URL}/Attachment/UploadAttachment`, {
           method: "POST",
           body: formData,
           headers: {
-            Authorization: `Bearer ${getSession()?.token}`,
+            Authorization: `Bearer ${session?.token}`,
           },
         });
-
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
-
         return response.json();
       },
       invalidatesTags: ["Attachment"],
     }),
 
     updateAttachment: builder.mutation({
-      query: (data) => ({
-        url: "Attachment/UpdateAttachment",
-        method: "PUT",
-        body: data,
-      }),
+      async queryFn(data) {
+        const session = await getSession();
+        const formData = new FormData();
+        console.log({ data });
+        formData.append("fileName", data.fileName);
+        formData.append("entityType", data.entityType);
+        formData.append("entityId", data.entityId);
+        formData.append("file", data.file[0]); // Assuming file is an array with a single file object
+        const response = await fetch(`${API_URL}/Attachment/UpdateAttachment`, {
+          method: "PUT",
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${session?.token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      },
       invalidatesTags: ["Attachment"],
     }),
 
@@ -714,6 +746,184 @@ export const apiSlice = createApi({
     }),
 
     // #endregion
+
+    // #region CostSaving
+    createCostSaving: builder.mutation({
+      query: (data) => ({
+        url: "CostSaving/CreateCostSaving",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["CostSaving"],
+    }),
+    updateCostSaving: builder.mutation({
+      query: (data) => ({
+        url: "CostSaving/UpdateCostSaving",
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["CostSaving"],
+    }),
+    getAllCostSaving: builder.query({
+      query: (query) => `CostSaving/GetAllCostSaving?${query}`,
+      providesTags: ["CostSaving"],
+    }),
+    getCostSavingByID: builder.query({
+      query: (id) => `CostSaving/GetCostSavingByID/${id}`,
+      providesTags: ["CostSaving"],
+    }),
+    getActiveCostSavings: builder.query({
+      query: () => `CostSaving/GetActiveCostSavings`,
+      providesTags: ["CostSaving"],
+    }),
+    getCostSavingByNewPONo: builder.query({
+      query: (poNo) => `CostSaving/GetCostSavingByNewPONo/${poNo}`,
+      providesTags: ["CostSaving"],
+    }),
+    // #endregion
+
+    // #region SOA
+    createSOAVendor: builder.mutation({
+      query: (data) => ({
+        url: "SOA/CreateSOAVendor",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["SOA"],
+    }),
+    updateSOAVendor: builder.mutation({
+      query: (data) => ({
+        url: "SOA/UpdateSOAVendor",
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["SOA"],
+    }),
+
+    addInvoiceList: builder.mutation({
+      query: (data) => ({
+        url: "/SOA/AddInvoiceList",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["SOA"],
+    }),
+    updateInvoiceList: builder.mutation({
+      query: (data) => ({
+        url: "SOA/UpdateInvoiceList",
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["SOA"],
+    }),
+
+    importInvoiceList: builder.mutation({
+      async queryFn(data) {
+        const session = await getSession();
+        const formData = new FormData();
+
+        formData.append("vendorId", data.vendorId);
+        formData.append("file", data.file[0]); // Assuming file is an array with a single file object
+        const response = await fetch(`${API_URL}/SOA/ImportInvoiceList`, {
+          method: "POST",
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${session?.token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      },
+      invalidatesTags: ["SOA"],
+    }),
+
+    addBuyerRemark: builder.mutation({
+      query: (data) => ({
+        url: "/SOA/AddBuyerRemark",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["SOA"],
+    }),
+    updateBuyerRemark: builder.mutation({
+      query: (data) => ({
+        url: "SOA/UpdateBuyerRemark",
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["SOA"],
+    }),
+    addFinanceRemark: builder.mutation({
+      query: (data) => ({
+        url: "/SOA/AddFinanceRemark",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["SOA"],
+    }),
+    updateFinanceRemark: builder.mutation({
+      query: (data) => ({
+        url: "SOA/UpdateFinanceRemark",
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["SOA"],
+    }),
+
+    getAllSOAVendor: builder.query({
+      query: (query) => `SOA/GetAllSOAVendor?${query}`,
+      providesTags: ["SOA"],
+    }),
+    getSOAVendorByIDActive: builder.query({
+      query: (id) => `SOA/GetSOAVendorByIDActive/${id}`,
+      providesTags: ["SOA"],
+    }),
+    getSOAVendorByIDAll: builder.query({
+      query: ({ vendorId, query }) =>
+        `SOA/GetSOAVendorByIDAll/${vendorId}?${query}`,
+      providesTags: ["SOA"],
+    }),
+    getSOAVendorSOAByCodeId: builder.query({
+      query: (code) => `SOA/GetSOAVendorSOAByCodeId/${code}`,
+      providesTags: ["SOA"],
+    }),
+    getSOAVendorSOAByNameId: builder.query({
+      query: (name) => `SOA/GetSOAVendorSOAByNameId/${name}`,
+      providesTags: ["SOA"],
+    }),
+    getAllActiveSOAVendors: builder.query({
+      query: () => `SOA/GetAllActiveSOAVendors`,
+      providesTags: ["SOA"],
+    }),
+    getActiveVendorSOAByUserId: builder.query({
+      query: () => `SOA/GetActiveVendorSOAByUserId`,
+      providesTags: ["SOA"],
+    }),
+
+    getAllInvoiceLists: builder.query({
+      query: () => `SOA/GetAllInvoiceLists`,
+      providesTags: ["SOA"],
+    }),
+    getInvoiceListByID: builder.query({
+      query: (id) => `SOA/GetInvoiceListByID/${id}`,
+      providesTags: ["SOA"],
+    }),
+    getInvoiceListByOrderNo: builder.query({
+      query: (orderNo) => `SOA/GetInvoiceListByOrderNo/${orderNo}`,
+      providesTags: ["SOA"],
+    }),
+    getInvoiceListByInvoiceNo: builder.query({
+      query: (invoiceNo) => `SOA/GetInvoiceListByInvoiceNo/${invoiceNo}`,
+      providesTags: ["SOA"],
+    }),
+    getAllActiveSOAInvoiceList: builder.query({
+      query: () => `SOA/GetAllActiveSOAInvoiceList`,
+      providesTags: ["SOA"],
+    }),
+
+    // #endregion
   }),
 });
 
@@ -737,6 +947,7 @@ export const {
   // #region followup
   useUpdateFollowupMutation,
   useAddRemarkMutation,
+  useUpdateRemarkMutation,
   useAddFollowUpMutation,
   useAddFollowUpTabMutation,
   useUpdateFollowupTabMutation,
@@ -765,6 +976,7 @@ export const {
   useCloseAssignmentMutation,
 
   useGetActiveAssignmentQuery,
+  useGetActiveAssignmentByUserIdQuery,
   useGetAllAssignmentQuery,
   useGetAssignmentByIdQuery,
   // #endregion
@@ -859,5 +1071,40 @@ export const {
   useGetAttachmentLinkByIdQuery,
   useGetAttachmentLinkByAttachmentIdQuery,
   useGetAttachmentLinkByEntityIdQuery,
+  // #endregion
+
+  // #region
+  useCreateCostSavingMutation,
+  useUpdateCostSavingMutation,
+  useGetAllCostSavingQuery,
+  useGetActiveCostSavingsQuery,
+  useGetCostSavingByIDQuery,
+  useGetCostSavingByNewPONoQuery,
+  // #endregion
+
+  //#region SOA
+  useCreateSOAVendorMutation,
+  useUpdateSOAVendorMutation,
+  useAddInvoiceListMutation,
+  useUpdateInvoiceListMutation,
+  useImportInvoiceListMutation,
+  useAddBuyerRemarkMutation,
+  useUpdateBuyerRemarkMutation,
+  useAddFinanceRemarkMutation,
+  useUpdateFinanceRemarkMutation,
+
+  useGetAllSOAVendorQuery,
+  useGetSOAVendorByIDActiveQuery,
+  useGetSOAVendorByIDAllQuery,
+  useGetSOAVendorSOAByCodeIdQuery,
+  useGetSOAVendorSOAByNameIdQuery,
+  useGetAllActiveSOAVendorsQuery,
+  useGetActiveVendorSOAByUserIdQuery,
+  useGetAllInvoiceListsQuery,
+  useGetInvoiceListByIDQuery,
+  useGetInvoiceListByOrderNoQuery,
+  useGetInvoiceListByInvoiceNoQuery,
+  useGetAllActiveSOAInvoiceListQuery,
+
   // #endregion
 } = apiSlice;

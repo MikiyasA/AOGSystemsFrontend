@@ -12,6 +12,7 @@ import SalesForm, {
 import Layout from "@/hocs/Layout";
 import {
   useGetAllPartQuery,
+  useGetAttachmentLinkByEntityIdQuery,
   useGetCompanyByIDQuery,
   useGetSalesOrderByIdQuery,
   useSalesApprovalMutation,
@@ -43,15 +44,22 @@ import {
 import { truncate } from "fs";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import withAuth from "@/hocs/withAuth";
+import WithComponentAuth from "@/hocs/WithComponentAuth";
+import AttachmentTable from "@/components/Attachment/AttachmentTable";
 
 const Detail = ({ data }: any) => {
   const route = useRouter();
+  const id = route?.query.id;
   const {
     data: salesOrder,
     isLoading,
     isSuccess,
   } = useGetSalesOrderByIdQuery(route?.query.id);
-
+  const { data: attachments } = useGetAttachmentLinkByEntityIdQuery({
+    entityId: id,
+    entityType: "Sales",
+  });
   const { data: companyData } = useGetCompanyByIDQuery(salesOrder?.companyId);
   const { data: partData } = useGetAllPartQuery("");
   const header = [
@@ -89,24 +97,26 @@ const Detail = ({ data }: any) => {
           <Table.Td>{el.serialNo}</Table.Td>
           <Group>
             {!el.isInvoiced && !el.isDeleted && (
-              <Tooltip label="Edit Part Line">
-                <IconEdit
-                  color="green"
-                  onClick={() => {
-                    modals.open({
-                      title: "Edit Line",
-                      size: "90%",
-                      children: (
-                        <LineItemForm
-                          data={el}
-                          salesId={salesOrder?.id}
-                          action="update"
-                        />
-                      ),
-                    });
-                  }}
-                />
-              </Tooltip>
+              <WithComponentAuth allowedRoles={["Coordinator", "TL"]}>
+                <Tooltip label="Edit Part Line">
+                  <IconEdit
+                    color="green"
+                    onClick={() => {
+                      modals.open({
+                        title: "Edit Line",
+                        size: "90%",
+                        children: (
+                          <LineItemForm
+                            data={el}
+                            salesId={salesOrder?.id}
+                            action="update"
+                          />
+                        ),
+                      });
+                    }}
+                  />
+                </Tooltip>
+              </WithComponentAuth>
             )}
           </Group>
         </Table.Tr>
@@ -175,20 +185,22 @@ const Detail = ({ data }: any) => {
               <Title order={6} fw={"normal"}>
                 {salesOrder?.orderNo}
                 {salesOrder?.status !== "Closed" && (
-                  <Tooltip label="Edit Sales Order">
-                    <IconCircleArrowUpRight
-                      color="green"
-                      onClick={() => {
-                        modals.open({
-                          title: `Update Sales Order ${salesOrder?.orderNo}`,
-                          size: "90%",
-                          children: (
-                            <SalesForm action="update" data={salesOrder} />
-                          ),
-                        });
-                      }}
-                    />
-                  </Tooltip>
+                  <WithComponentAuth allowedRoles={["Coordinator", "TL"]}>
+                    <Tooltip label="Update Sales Order">
+                      <IconCircleArrowUpRight
+                        color="green"
+                        onClick={() => {
+                          modals.open({
+                            title: `Update Sales Order ${salesOrder?.orderNo}`,
+                            size: "90%",
+                            children: (
+                              <SalesForm action="update" data={salesOrder} />
+                            ),
+                          });
+                        }}
+                      />
+                    </Tooltip>
+                  </WithComponentAuth>
                 )}
               </Title>
             </Group>
@@ -277,101 +289,110 @@ const Detail = ({ data }: any) => {
           {salesOrder?.status !== "Closed" ? (
             <Group mb={20}>
               {salesOrder?.isApproved ? (
-                <Button
-                  onClick={() => {
-                    modals.openConfirmModal({
-                      title: "Unapproved Order",
-                      children: (
-                        <Text size="sm">
-                          Are you sure you want to unapproved the order?
-                        </Text>
-                      ),
-                      labels: { confirm: "Confirm", cancel: "Cancel" },
-                      onConfirm: () =>
-                        salesApproval({
-                          salesId: salesOrder?.id,
-                          isApproved: false,
-                        }),
-                    });
-                  }}
-                >
-                  Unapproved Order
-                </Button>
+                <WithComponentAuth allowedRoles={["Coordinator", "TL"]}>
+                  <Button
+                    onClick={() => {
+                      modals.openConfirmModal({
+                        title: "Unapproved Order",
+                        children: (
+                          <Text size="sm">
+                            Are you sure you want to unapproved the order?
+                          </Text>
+                        ),
+                        labels: { confirm: "Confirm", cancel: "Cancel" },
+                        onConfirm: () =>
+                          salesApproval({
+                            salesId: salesOrder?.id,
+                            isApproved: false,
+                          }),
+                      });
+                    }}
+                  >
+                    Unapproved Order
+                  </Button>
+                </WithComponentAuth>
               ) : (
-                <Button
-                  onClick={() => {
-                    modals.openConfirmModal({
-                      title: "Approve Order",
-                      children: (
-                        <Text size="sm">
-                          Are you sure you want to approved the order?
-                        </Text>
-                      ),
-                      labels: { confirm: "Confirm", cancel: "Cancel" },
-                      onConfirm: () =>
-                        salesApproval({
-                          salesId: salesOrder.id,
-                          isApproved: true,
-                        }),
-                    });
-                  }}
-                >
-                  Approve Order
-                </Button>
+                <WithComponentAuth allowedRoles={["TL"]}>
+                  <Button
+                    onClick={() => {
+                      modals.openConfirmModal({
+                        title: "Approve Order",
+                        children: (
+                          <Text size="sm">
+                            Are you sure you want to approved the order?
+                          </Text>
+                        ),
+                        labels: { confirm: "Confirm", cancel: "Cancel" },
+                        onConfirm: () =>
+                          salesApproval({
+                            salesId: salesOrder.id,
+                            isApproved: true,
+                          }),
+                      });
+                    }}
+                  >
+                    Approve Order
+                  </Button>
+                </WithComponentAuth>
               )}
 
               {salesOrder?.isApproved && (
+                <WithComponentAuth allowedRoles={["Coordinator", "TL"]}>
+                  <Button
+                    onClick={() => {
+                      modals.open({
+                        title: "Ship part to customer",
+                        size: "90%",
+                        children: <ShipSalesForm data={salesOrder} />,
+                      });
+                    }}
+                  >
+                    {salesOrder?.isFullyShipped ? "Update" : "Send"} Shipment
+                  </Button>
+                </WithComponentAuth>
+              )}
+              <WithComponentAuth allowedRoles={["TL"]}>
                 <Button
                   onClick={() => {
-                    modals.open({
-                      title: "Ship part to customer",
-                      size: "90%",
-                      children: <ShipSalesForm data={salesOrder} />,
+                    modals.openConfirmModal({
+                      title: "Close The Order",
+                      children: (
+                        <Text>Are you sure you want to close the order?</Text>
+                      ),
+                      labels: { confirm: "Confirm", cancel: "Cancel" },
+                      onConfirm: () =>
+                        salesCloser({
+                          id: salesOrder?.id,
+                          status: "Closed",
+                        }),
                     });
                   }}
                 >
-                  {salesOrder?.isFullyShipped ? "Update" : "Send"} Shipment
+                  Close Order
                 </Button>
-              )}
-
+              </WithComponentAuth>
+            </Group>
+          ) : (
+            <WithComponentAuth allowedRoles={["TL"]}>
               <Button
                 onClick={() => {
                   modals.openConfirmModal({
                     title: "Close The Order",
                     children: (
-                      <Text>Are you sure you want to close the order?</Text>
+                      <Text>Are you sure you want to re-open the order?</Text>
                     ),
                     labels: { confirm: "Confirm", cancel: "Cancel" },
                     onConfirm: () =>
                       salesCloser({
-                        id: salesOrder?.id,
-                        status: "Closed",
+                        id: salesOrder.id,
+                        status: "Re-Opened",
                       }),
                   });
                 }}
               >
-                Close Order
+                Re-Open Order
               </Button>
-            </Group>
-          ) : (
-            <Button
-              onClick={() => {
-                modals.openConfirmModal({
-                  title: "Close The Order",
-                  children: (
-                    <Text>Are you sure you want to re-open the order?</Text>
-                  ),
-                  labels: { confirm: "Confirm", cancel: "Cancel" },
-                  onConfirm: () =>
-                    salesCloser({
-                      id: salesOrder.id,
-                      status: "Re-Opened",
-                    }),
-                });
-              }}
-            >
-              Re-Open Order
-            </Button>
+            </WithComponentAuth>
           )}
           <Box>
             <Table>
@@ -382,22 +403,26 @@ const Detail = ({ data }: any) => {
                       return (
                         <Table.Th key={i}>
                           {th}{" "}
-                          <IconCirclePlus
-                            style={{ marginLeft: "10px" }}
-                            color="green"
-                            onClick={() => {
-                              modals.open({
-                                title: "Add Part List",
-                                size: "90%",
-                                children: (
-                                  <LineItemForm
-                                    action="add"
-                                    salesId={salesOrder.id}
-                                  />
-                                ),
-                              });
-                            }}
-                          />{" "}
+                          <WithComponentAuth
+                            allowedRoles={["Coordinator", "TL"]}
+                          >
+                            <IconCirclePlus
+                              style={{ marginLeft: "10px" }}
+                              color="green"
+                              onClick={() => {
+                                modals.open({
+                                  title: "Add Part List",
+                                  size: "90%",
+                                  children: (
+                                    <LineItemForm
+                                      action="add"
+                                      salesId={salesOrder.id}
+                                    />
+                                  ),
+                                });
+                              }}
+                            />{" "}
+                          </WithComponentAuth>
                         </Table.Th>
                       );
                     return <Table.Th key={i}>{th}</Table.Th>;
@@ -413,24 +438,26 @@ const Detail = ({ data }: any) => {
             <Box my={20}>
               <Title order={4}>Issued Invoices</Title>
               <Group my={10} display={"block"}>
-                {salesOrder?.isApproved ? (
-                  <>
-                    {isAllInvoice ? (
-                      <Text>
-                        All part line of this order is invoice, no more invoice
-                        rasing is needed
-                      </Text>
-                    ) : (
-                      <RaiseInvoice
-                        partData={partData}
-                        order={salesOrder}
-                        orderType="sales"
-                      />
-                    )}
-                  </>
-                ) : (
-                  <Text>Please Approve the order to raise invoice</Text>
-                )}
+                <WithComponentAuth allowedRoles={["Coordinator", "TL"]}>
+                  {salesOrder?.isApproved ? (
+                    <>
+                      {isAllInvoice ? (
+                        <Text>
+                          All part line of this order is invoice, no more
+                          invoice rasing is needed
+                        </Text>
+                      ) : (
+                        <RaiseInvoice
+                          partData={partData}
+                          order={salesOrder}
+                          orderType="sales"
+                        />
+                      )}
+                    </>
+                  ) : (
+                    <Text>Please Approve the order to raise invoice</Text>
+                  )}
+                </WithComponentAuth>
                 <Group mt={15}>
                   <InvoiceTable data={salesOrder} partData={partData} />
                 </Group>
@@ -438,9 +465,14 @@ const Detail = ({ data }: any) => {
             </Box>
           </Box>
         </Box>
+        <AttachmentTable
+          attachments={attachments}
+          entityId={id}
+          entityType="Sales"
+        />
       </Center>
     </Layout>
   );
 };
 
-export default Detail;
+export default withAuth(Detail, ["Coordinator", "TL", "Management"]);

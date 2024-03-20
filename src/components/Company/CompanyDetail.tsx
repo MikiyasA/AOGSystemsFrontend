@@ -2,8 +2,14 @@ import { Box, Button, Center, Group, SimpleGrid, Title } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { IconCircleArrowUpRight } from "@tabler/icons-react";
 import CompanyForm from "./CompanyForm";
+import { useGetAttachmentLinkByEntityIdQuery } from "@/pages/api/apiSlice";
+import AttachmentTable from "../Attachment/AttachmentTable";
 
 const CompanyDetail = ({ data }: any) => {
+  const { data: attachments } = useGetAttachmentLinkByEntityIdQuery({
+    entityId: data?.id,
+    entityType: "Company",
+  });
   return (
     <Center
       style={{
@@ -26,7 +32,7 @@ const CompanyDetail = ({ data }: any) => {
         </Button>
         <Group>
           <Title order={3} my={20}>
-            Company Detail PN: {data?.name}
+            Company Detail: {`${data?.code} (${data?.name})`}
           </Title>
           <IconCircleArrowUpRight
             cursor={"pointer"}
@@ -171,6 +177,11 @@ const CompanyDetail = ({ data }: any) => {
             </Title>
           </Group>
         </SimpleGrid>
+        <AttachmentTable
+          attachments={attachments}
+          entityId={data?.id}
+          entityType="Company"
+        />
       </Box>
     </Center>
   );

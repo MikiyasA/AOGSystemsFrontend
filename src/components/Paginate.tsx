@@ -16,7 +16,7 @@ function Paginate({ metadata, form, data }: any) {
   const [activePage, setActivePage] = useState(1);
   const handlePageChange = async (newNo: number) => {
     setActivePage(newNo);
-    await form.setFieldValue("page", newNo);
+    await form?.setFieldValue("page", newNo);
   };
   return (
     <Group>

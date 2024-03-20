@@ -41,6 +41,7 @@ const FollowUpForm = ({ tab }: any) => {
       stockNo: "",
       financialClass: "",
       poNumber: "",
+      haveCostSaving: false,
       orderType: "",
       quantity: 1,
       uom: "EA",
@@ -158,12 +159,13 @@ const FollowUpForm = ({ tab }: any) => {
             label="Part Number"
             placeholder="Part Number"
             {...form.getInputProps("partNumber")}
+            required
           />
           <TextInput
             label="Description"
             placeholder="Description"
             {...form.getInputProps("description")}
-            required={form.values.partNumber !== ""}
+            required={form.values.partNumber}
           />
           <TextInput
             label="Stock No"
@@ -174,6 +176,14 @@ const FollowUpForm = ({ tab }: any) => {
             label="PO Number"
             placeholder="PO Number"
             {...form.getInputProps("poNumber")}
+            required={form.values.haveCostSaving}
+          />
+          <Checkbox
+            label="Has Cost Saving"
+            variant="filled"
+            checked={form.values.haveCostSaving}
+            {...form.getInputProps("haveCostSaving")}
+            style={{ alignSelf: "end", paddingBottom: 10 }}
           />
           <Select
             label="Order Type" // {form.getInputProps('orderType').value ? "Order Type" : "Select an Option"}
@@ -185,12 +195,13 @@ const FollowUpForm = ({ tab }: any) => {
               "Repair",
               "Warranty",
               "Borrow",
+              "Stock",
             ]}
             allowDeselect={false}
             searchable
             nothingFoundMessage="Nothing found..."
             {...form.getInputProps("orderType")}
-            required={form.values.poNumber !== ""}
+            required={form.values.poNumber}
           />
           <Group justify="space-between">
             <NumberInput
@@ -201,7 +212,6 @@ const FollowUpForm = ({ tab }: any) => {
               }}
               label="Quantity"
               placeholder="Quantity"
-              defaultValue={1}
               min={1}
               {...form.getInputProps("quantity")}
               required
@@ -217,14 +227,13 @@ const FollowUpForm = ({ tab }: any) => {
               placeholder="Unit of measurment"
               defaultValue={"EA"}
               {...form.getInputProps("uom")}
-              // data={['EA', 'SH', 'LBS', 'CAN', 'A', 'B']}
             />
           </Group>
           <TextInput
             label="Vendor"
             placeholder="Vendor"
             {...form.getInputProps("vendor")}
-            required={form.values.poNumber !== ""}
+            required={form.values.poNumber}
           />
           <DateInput
             label="EDD"

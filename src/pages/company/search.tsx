@@ -9,13 +9,14 @@ import {
 } from "../api/apiSlice";
 import Link from "next/link";
 import MyLoadingOverlay from "@/components/MyLoadingOverlay";
+import withAuth from "@/hocs/withAuth";
 
 const SearchCompany = () => {
   const [company, setCompany] = useState<any>();
   const [companies, setCompanies] = useState<any>();
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
-  const [searchBy, setSearchBy] = useState("");
+  const [searchBy, setSearchBy] = useState("Name");
   console.log({ code });
   console.log({ name });
   console.log({ searchBy });
@@ -88,7 +89,8 @@ const SearchCompany = () => {
               <Select
                 label="Search Parameter"
                 placeholder="Search by"
-                data={["Code", "Name"]}
+                data={["Name", "Code"]}
+                defaultValue={"Name"}
                 onChange={(e: any) => setSearchBy(e)}
                 required
                 allowDeselect={false}
@@ -129,4 +131,4 @@ const SearchCompany = () => {
   );
 };
 
-export default SearchCompany;
+export default withAuth(SearchCompany, ["Coordinator", "TL", "Management"]);

@@ -1,0 +1,68 @@
+Tabs = ["Main Follow-up", "OEM-Service"];
+Role = ["Admin", "Coordinator", "TL", "Management", "Buyer", "Finance"];
+
+Component_Role = [
+  { "Export Followup": ["Coordinator", "TL"] },
+  { "Add/Update Followup": ["Coordinator", "TL"] },
+  { "Add/Update Followup Remark": ["Coordinator", "TL"] },
+  { "Add/Update Followup Tab": ["Coordinator", "TL"] },
+
+  { "Add Assignment": ["TL"] },
+  { "See My & Active Assignment": ["Coordinator", "TL"] },
+  { "See All Assignment": ["TL"] },
+  { "Start Assignment": ["Coordinator", "TL"] },
+  { "Reassign Assignment": ["Coordinator", "TL"] },
+  { "Finish Assignment": ["Coordinator", "TL"] },
+  { "Close Assignment": ["TL"] },
+  { "Re-open Assignment": ["TL"] },
+
+  { "Add/Update Core Followup": ["Coordinator", "TL"] },
+
+  { "Add/Update Cost Saving": ["Coordinator", "TL"] },
+
+  { "Add/Update Sales Order": ["Coordinator", "TL"] },
+  { "Unapproved Sales Order ": ["Coordinator", "TL"] },
+  { "Update/Send Shipment Of Sales Order ": ["Coordinator", "TL"] },
+  { "Approve Sales Order": ["TL"] },
+  { "Close Sales Order": ["TL"] },
+  { "Re-Open Sales Order": ["TL"] },
+  { "Add/Update Part Line ": ["Coordinator", "TL"] },
+
+  { "Add/Update Loan Order": ["Coordinator", "TL"] },
+  { "Unapproved Loan Order ": ["Coordinator", "TL"] },
+  { "Approve Loan Order": ["TL"] },
+  { "Close Loan Order": ["TL"] },
+  { "Re-Open Loan Order": ["TL"] },
+  { "Add/Update Part Line ": ["Coordinator", "TL"] },
+  { "Add/Update Offer ": ["Coordinator", "TL"] },
+
+  { "Raise/Update invoice ": ["Coordinator", "TL"] }, // To be consider finance role
+  { "Unapproved invoice ": ["Coordinator", "TL"] },
+  { "Approve invoice ": ["TL"] }, // To be consider finance role
+  { "Close Loan Order": ["TL"] },
+  { "Re-Open Loan Order": ["TL"] },
+
+  {
+    "Add/Update Vendor": [
+      "Coordinator",
+      "TL",
+      "Management",
+      "Buyer",
+      "Finance",
+    ],
+  },
+  {
+    "Add/Update SOA Invoice": [
+      "Coordinator",
+      "TL",
+      "Management",
+      "Buyer",
+      "Finance",
+    ],
+  },
+  { "Import SOA Invoice": ["Finance"] },
+  { "Add Buyer Remark": ["Coordinator", "TL", "Management", "Buyer"] },
+  { "Add Finance Remark": ["Finance"] },
+
+  { "Manage User": ["Admin"] },
+];

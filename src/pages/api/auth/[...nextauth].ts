@@ -28,11 +28,11 @@ export const authOptions: NextAuthOptions = {
       if(!data) {
         throw new Error('No data - something went wrong with login.');
       }
-      console.log(res)
       if(data.error){
         throw new Error(data.error)
       }
       const decoded: any = jwtDecode(data?.token)
+      const roles = [decoded?.role]; 
       const userData = {
         token: data?.token,
         user: { 
@@ -42,14 +42,17 @@ export const authOptions: NextAuthOptions = {
           userId: decoded.nameid,
           email: decoded.email
           },
-        role: decoded.role,
+        role: roles,
       };
       return userData;
       },
     }),
   ],
 
-  
+  session: {
+    strategy: 'jwt',
+    maxAge: 8 * 60  * 60 // 7 hours
+  },
   jwt: {
     secret: process.env.NEXTAUTH_SECRET
   },

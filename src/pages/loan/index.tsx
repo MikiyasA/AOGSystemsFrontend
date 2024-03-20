@@ -12,6 +12,7 @@ import { IconChecklist } from "@tabler/icons-react";
 import { useForm } from "@mantine/form";
 import { LoanFilterForm } from "@/components/Loan/LoanForm";
 import { useEffect, useState } from "react";
+import withAuth from "@/hocs/withAuth";
 
 var loanTable = [
   { key: "orderNo", value: "Order No" },
@@ -108,4 +109,4 @@ const Sales = () => {
   );
 };
 
-export default Sales;
+export default withAuth(Sales, ["Coordinator", "TL", "Management"]);

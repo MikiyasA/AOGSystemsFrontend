@@ -200,7 +200,12 @@ export function UserTable({ data, table, tableTitle, isActive }: any) {
             );
           } else {
             return (
-              <Table.Td key={`col-${index}`} p={2} m={0}>
+              <Table.Td
+                key={`col-${index}`}
+                p={2}
+                m={0}
+                style={{ overflowWrap: "break-word" }}
+              >
                 {row[col.key]}
               </Table.Td>
             );

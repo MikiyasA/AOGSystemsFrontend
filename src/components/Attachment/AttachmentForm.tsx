@@ -16,17 +16,29 @@ import { notifications } from "@mantine/notifications";
 import MyLoadingOverlay from "../MyLoadingOverlay";
 import { IconUpload, IconPhoto, IconX, IconFile } from "@tabler/icons-react";
 import { Dropzone, DropzoneProps, IMAGE_MIME_TYPE } from "@mantine/dropzone";
+import { modals } from "@mantine/modals";
 
-export const AttachmentForm = ({ entityId, entityType, action }: any) => {
+export const AttachmentForm = ({
+  file,
+  fileName,
+  entityId,
+  entityType,
+  action,
+  modalId,
+}: any) => {
+  console.log({ modalId });
   const form = useForm({
     initialValues: {
-      file: {},
-      fileName: "",
+      file: file,
+      fileName: fileName,
       entityId: entityId,
       entityType: entityType,
     },
   });
-  const attached = form.values.file[0]?.name;
+  const attached =
+    form.values.file && form.values.file.length > 0
+      ? form.values.file[0].name
+      : null;
   console.log(form.values);
   const [
     addAttachment,
@@ -40,8 +52,9 @@ export const AttachmentForm = ({ entityId, entityType, action }: any) => {
   const handleFormSubmit = async (e: any) => {
     e.preventDefault();
     if (action === "add") {
-      const { data: addReturn }: any = await addAttachment(form.values);
-      addReturn?.isSuccess
+      const addReturn = await addAttachment(form.values);
+      console.log({ addReturn });
+      addReturn?.data?.attachmentId
         ? notifications.show({
             title: "Success",
             message: addReturn?.message || "Attachment Added Successfully 👍",
@@ -54,8 +67,8 @@ export const AttachmentForm = ({ entityId, entityType, action }: any) => {
             color: "red",
           });
     } else if (action === "update") {
-      const { data: updateReturn }: any = await updateAttachment(form.values);
-      updateReturn?.isSuccess
+      const updateReturn = await updateAttachment(form.values).unwrap();
+      updateReturn
         ? notifications.show({
             title: "Success",
             message:
@@ -65,13 +78,14 @@ export const AttachmentForm = ({ entityId, entityType, action }: any) => {
         : notifications.show({
             title: "Failure",
             message:
-              updateError?.data.message ||
-              updateError?.data.title ||
+              updateReturn?.data?.message ||
+              updateError?.data?.title ||
               "Error occurs on update Assignment",
             color: "red",
           });
     }
   };
+  (addSuccess || updateSuccess) && modals.closeAll();
 
   return (
     <>
@@ -84,7 +98,6 @@ export const AttachmentForm = ({ entityId, entityType, action }: any) => {
             label="File Name"
             placeholder="File Name"
             {...form.getInputProps("fileName")}
-            required
           />
           <Dropzone
             onDrop={(file) => form.setFieldValue("file", file)}

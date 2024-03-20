@@ -39,6 +39,7 @@ import Link from "next/link";
 import { formatDate } from "@/config/util";
 import Paginate from "../Paginate";
 import DownloadExcel from "../DownloadExcel";
+import WithComponentAuth from "@/hocs/WithComponentAuth";
 
 export interface RowData {
   rid: string;
@@ -115,11 +116,24 @@ function sortData(
 
   return filterData(
     [...data].sort((a, b) => {
-      if (payload.reversed) {
-        return b[sortBy].localeCompare(a[sortBy]);
+      const aValue = a[sortBy];
+      const bValue = b[sortBy];
+
+      if (aValue === null || aValue === undefined) {
+        return payload.reversed ? 1 : -1;
+      }
+      if (bValue === null || bValue === undefined) {
+        return payload.reversed ? -1 : 1;
       }
 
-      return a[sortBy].localeCompare(b[sortBy]);
+      if (typeof aValue === "number" && typeof bValue === "number") {
+        return payload.reversed ? bValue - aValue : aValue - bValue;
+      }
+
+      // Fallback to string comparison
+      return payload.reversed
+        ? bValue.toString().localeCompare(aValue.toString())
+        : aValue.toString().localeCompare(bValue.toString());
     }),
     payload.search
   );
@@ -202,7 +216,7 @@ export function FollowupTable({
 
   const rows = sortedData?.map((row: any, index: any) => (
     <Table.Tr key={index} style={{ backgroundColor: getColor(row.id) }}>
-      <Table.Td p={5} m={0}>
+      <Table.Td p={5} m={0} style={{ overflowWrap: "break-word" }}>
         {index + 1}
       </Table.Td>
       {table?.map((col: any, index: any) => {
@@ -222,7 +236,12 @@ export function FollowupTable({
           );
         } else if (col.key === "partNumber") {
           return (
-            <Table.Td key={`col-${index}`} p={5} m={0}>
+            <Table.Td
+              key={`col-${index}`}
+              p={5}
+              m={0}
+              style={{ overflowWrap: "break-word" }}
+            >
               <Link
                 href={`/part/detail/${row.partNumber}`}
                 style={{ textDecoration: "none", color: "inherit" }}
@@ -239,7 +258,12 @@ export function FollowupTable({
           );
         } else if (col.key === "requestDate" || col.key === "edd") {
           return (
-            <Table.Td key={`col-${index}`} p={5} m={0}>
+            <Table.Td
+              key={`col-${index}`}
+              p={5}
+              m={0}
+              style={{ overflowWrap: "break-word" }}
+            >
               {formatDate(row[col.key])}
             </Table.Td>
           );
@@ -253,7 +277,12 @@ export function FollowupTable({
           );
         } else {
           return (
-            <Table.Td key={`col-${index}`} p={2} m={0}>
+            <Table.Td
+              key={`col-${index}`}
+              p={2}
+              m={0}
+              style={{ overflowWrap: "break-word" }}
+            >
               {row[col.key]}
             </Table.Td>
           );
@@ -271,27 +300,30 @@ export function FollowupTable({
             });
           }}
         />
-
-        <IconEditCircle
-          cursor={"pointer"}
-          color="green"
-          onClick={() =>
-            modals.open({
-              size: "100%",
-              title: "Update FollowUp",
-              children: <EditFollowup data={row} tab={tab} />,
-            })
-          }
-        />
+        <WithComponentAuth allowedRoles={["Coordinator", "TL"]}>
+          <IconEditCircle
+            cursor={"pointer"}
+            color="green"
+            onClick={() =>
+              modals.open({
+                size: "100%",
+                title: "Update FollowUp",
+                children: <EditFollowup data={row} tab={tab} />,
+              })
+            }
+          />
+        </WithComponentAuth>
         <ActionMenu row={row} setColor={setColor} />
       </Table.Td>
     </Table.Tr>
   ));
 
   return (
-    <Box mx={30}>
-      <Center className={classes.tableTitle}>
-        <Title>{tableTitle}</Title>
+    <Box mx={20}>
+      <Center>
+        <Title order={4} my={20}>
+          {tableTitle}
+        </Title>
       </Center>
       <ScrollArea>
         <TextInput
@@ -307,17 +339,19 @@ export function FollowupTable({
           onChange={handleSearchChange}
         />
         {isActive && (
-          <Button
-            onClick={() =>
-              modals.open({
-                size: "100%",
-                title: "Add Followup",
-                children: <FollowUpForm tab={tab} />,
-              })
-            }
-          >
-            Add FollowUp
-          </Button>
+          <WithComponentAuth allowedRoles={["Coordinator", "TL"]}>
+            <Button
+              onClick={() =>
+                modals.open({
+                  size: "100%",
+                  title: "Add Followup",
+                  children: <FollowUpForm tab={tab} />,
+                })
+              }
+            >
+              Add FollowUp
+            </Button>
+          </WithComponentAuth>
         )}
         {!isActive && <Paginate metadata={metadata} form={form} data={data} />}
 

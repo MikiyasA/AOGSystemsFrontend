@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   Grid,
@@ -8,55 +8,68 @@ import {
   useMantineColorScheme,
   useComputedColorScheme,
   useMantineTheme,
-  Switch,
-  Divider,
-  rem,
   Menu,
+  Box,
 } from "@mantine/core";
 import Link from "next/link";
-import cx from "clsx";
 import classes from "../styles/Navbar.module.css";
 import { modals } from "@mantine/modals";
 import Login from "@/pages/login";
-import {
-  IconCaretRightFilled,
-  IconDirectionArrows,
-  IconMoon,
-  IconMoonStars,
-  IconSun,
-} from "@tabler/icons-react";
+import { IconCaretRightFilled, IconMoon, IconSun } from "@tabler/icons-react";
 import { getSession, signOut, useSession } from "next-auth/react";
 import UserActionMenu from "./User/UserActionMenu";
+import { useRouter } from "next/router";
 
 const links = [
-  { link: "/", label: "Home" },
-  { link: "/assignment", label: "Assignment" },
-  { link: "/corefollowup", label: "Core Followup" },
+  { link: "/", label: "Home", role: ["All"] },
   {
-    // link: "/part",
+    link: "/AOGFollowUp",
+    label: "AOG Follow Up",
+    role: ["Coordinator", "TL", "Management"],
+  },
+  { link: "/assignment", label: "Assignment", role: ["Coordinator", "TL"] },
+  {
+    link: "/corefollowup",
+    label: "Core Followup",
+    role: ["Coordinator", "TL", "Management"],
+  },
+  {
+    link: "/costSaving",
+    label: "Cost Saving",
+    role: ["Coordinator", "TL", "Management"],
+  },
+  {
+    inactiveLink: "/part",
     label: "Part",
     subLinks: [
       { link: "/part/add_part", label: "Add Part" },
       { link: "/part/search", label: "Part Search" },
-      { link: "/part/search", label: "Part Search" },
     ],
+    role: ["Coordinator", "TL", "Management"],
   },
   {
-    // link: "/company",
+    inactiveLink: "/company",
     label: "Company",
     subLinks: [
       { link: "/company/add_company", label: "Add Company" },
       { link: "/company/search", label: "Company Search" },
     ],
+    role: ["Coordinator", "TL", "Management"],
   },
-  { link: "/sales", label: "Sales" },
-  { link: "/loan", label: "Loan" },
+  { link: "/sales", label: "Sales", role: ["Coordinator", "TL", "Management"] },
+  { link: "/loan", label: "Loan", role: ["Coordinator", "TL", "Management"] },
   {
     link: "/invoice",
     label: "Invoice",
     subLinks: [{ link: "/invoice/search", label: "Invoice Search" }],
+    role: ["Coordinator", "TL", "Management"],
   },
-  { link: "/admin", label: "Admin" },
+  {
+    link: "/soa",
+    label: "SOA",
+    role: ["Coordinator", "TL", "Management", "Buyer", "Finance"],
+  },
+  { link: "/admin", label: "Admin", role: ["Admin"] },
 ];
 
 const Navbar = () => {
@@ -65,37 +78,64 @@ const Navbar = () => {
     getInitialValueInEffect: true,
   });
 
-  const session = useSession();
-  session.status === "authenticated" && modals.closeAll();
+  const { data: session, status } = useSession();
+  status === "authenticated" && modals.closeAll();
 
-  const items = links.map((link) => (
-    <Link
-      key={link.label}
-      href={link.link ? link.link : ""}
-      className={classes.link}
-    >
-      {link.label}
-      {link.subLinks && (
-        <Menu width="auto" shadow="md">
-          <Menu.Target>
-            <IconCaretRightFilled size={17} />
-          </Menu.Target>
-          <Menu.Dropdown>
-            {link.subLinks.map((sl: any, i: any) => (
-              <Menu.Item key={i}>
-                <Link href={sl.link} className={classes.link}>
-                  {sl.label}
-                </Link>
-              </Menu.Item>
-            ))}
-          </Menu.Dropdown>
-        </Menu>
-      )}
-    </Link>
-  ));
+  const router = useRouter();
+  const [activeLink, setActiveLink] = useState("");
 
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  const theme = useMantineTheme();
+  // Update the active link whenever the route changes
+  useEffect(() => {
+    setActiveLink(router.pathname);
+  }, [router.pathname]);
+
+  const items = links.map((link) => {
+    const user = session?.user;
+    const flattenedRoles = user?.role?.flat();
+    const allowedRoles = link.role;
+    !flattenedRoles?.includes("All") && flattenedRoles?.push("All");
+    !allowedRoles?.includes("Admin") && allowedRoles?.push("Admin");
+    const haveAccess = flattenedRoles?.some((r: any) =>
+      allowedRoles.includes(r)
+    );
+
+    const activeSplitList = `/${activeLink.split("/")[1]}`;
+    const isActive = (link.link || link.inactiveLink) === activeSplitList;
+    const linkStyle = isActive ? classes.activeLink : classes.link;
+
+    if (haveAccess)
+      return (
+        <Group key={link.label} gap={5}>
+          <Link
+            key={link.label}
+            href={link.link ? link.link : ""}
+            className={`${classes.link} ${isActive ? classes.activeLink : ""}`}
+          >
+            {link.label}
+          </Link>
+
+          {link.subLinks && (
+            <Menu width="auto" shadow="md">
+              <Menu.Target>
+                <IconCaretRightFilled size={17} />
+              </Menu.Target>
+              <Menu.Dropdown>
+                {link.subLinks.map((sl: any, i: any) => (
+                  <Menu.Item key={i}>
+                    <Link href={sl.link} className={classes.link}>
+                      {sl.label}
+                    </Link>
+                  </Menu.Item>
+                ))}
+              </Menu.Dropdown>
+            </Menu>
+          )}
+        </Group>
+      );
+  });
+
+  // const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  // const theme = useMantineTheme();
   const isLight = computedColorScheme === "light";
 
   return (
@@ -111,16 +151,17 @@ const Navbar = () => {
         />
       </Grid.Col>
 
-      <Grid.Col span={7} style={{ textAlign: "center" }}>
+      <Grid.Col span={8}>
         <Group ml={50} gap={15} className={classes.linksGroup} visibleFrom="sm">
           {items}
         </Group>
       </Grid.Col>
-      <Grid.Col span="auto" style={{ textAlign: "end" }}>
-        {!session.data ? (
+      <Grid.Col span="auto">
+        {!session ? (
           <Group
             style={{
               right: "10px",
+              justifyContent: "center",
             }}
           >
             <Button
@@ -150,7 +191,7 @@ const Navbar = () => {
             </ActionIcon>
           </Group>
         ) : (
-          <Group>
+          <Group style={{ justifyContent: "center" }}>
             <UserActionMenu />
             <ActionIcon
               onClick={() => setColorScheme(isLight ? "dark" : "light")}

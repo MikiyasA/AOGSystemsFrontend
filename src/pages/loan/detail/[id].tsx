@@ -10,6 +10,7 @@ import SalesForm, { ShipSalesForm } from "@/components/Loan/LoanForm";
 import Layout from "@/hocs/Layout";
 import {
   useGetAllPartQuery,
+  useGetAttachmentLinkByEntityIdQuery,
   useGetCompanyByIDQuery,
   useGetLoanByIDQuery,
   useLoanApprovalMutation,
@@ -47,12 +48,20 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { formatDate } from "@/config/util";
 import { RaiseInvoice } from "@/components/Invoice/RaiseInvoice";
+import withAuth from "@/hocs/withAuth";
+import WithComponentAuth from "@/hocs/WithComponentAuth";
+import AttachmentTable from "@/components/Attachment/AttachmentTable";
 
 const Detail = ({ data }: any) => {
   const route = useRouter();
-  const { data: loanOrder, isLoading } = useGetLoanByIDQuery(route?.query.id);
+  const id = route?.query.id;
+  const { data: loanOrder, isLoading } = useGetLoanByIDQuery(id);
   const { data: companyData } = useGetCompanyByIDQuery(loanOrder?.companyId);
   const { data: partData } = useGetAllPartQuery("");
+  const { data: attachments } = useGetAttachmentLinkByEntityIdQuery({
+    entityId: id,
+    entityType: "Loan",
+  });
   const header = [
     "IT#",
     "Part",
@@ -109,57 +118,61 @@ const Detail = ({ data }: any) => {
           )}
           <Group>
             {!el.isDeleted && (
-              <Tooltip label="Edit Part Line">
-                <IconEdit
-                  cursor={"pointer"}
-                  color="green"
-                  onClick={() => {
-                    modals.open({
-                      title: "Edit Line",
-                      size: "90%",
-                      children: (
-                        <EditPartLine data={el} invoiced={el.isInvoiced} />
-                      ),
-                    });
-                  }}
-                />
-              </Tooltip>
+              <WithComponentAuth allowedRoles={["Coordinator", "TL"]}>
+                <Tooltip label="Edit Part Line">
+                  <IconEdit
+                    cursor={"pointer"}
+                    color="green"
+                    onClick={() => {
+                      modals.open({
+                        title: "Edit Line",
+                        size: "90%",
+                        children: (
+                          <EditPartLine data={el} invoiced={el.isInvoiced} />
+                        ),
+                      });
+                    }}
+                  />
+                </Tooltip>
+              </WithComponentAuth>
             )}
-            {el.isDeleted ? (
-              <Tooltip label="Undelete Part Line">
-                <IconArrowBackUp
-                  cursor={"pointer"}
-                  color="mediumspringgreen"
-                  onClick={() => {
-                    modals.openConfirmModal({
-                      title: "Un-delete Part Line",
-                      children: (
-                        <Text>Are you sure to un-delete part line</Text>
-                      ),
-                      labels: { confirm: "Confirm", cancel: "Cancel" },
-                      onConfirm: () =>
-                        partLineRemoval({ id: el.id, isDeleted: false }),
-                    });
-                  }}
-                />
-              </Tooltip>
-            ) : (
-              <Tooltip label="Delete Part Line">
-                <IconTrash
-                  cursor={"pointer"}
-                  color="red"
-                  onClick={() => {
-                    modals.openConfirmModal({
-                      title: "Delete Part Line",
-                      children: <Text>Are you sure to delete part line</Text>,
-                      labels: { confirm: "Confirm", cancel: "Cancel" },
-                      onConfirm: () =>
-                        partLineRemoval({ id: el.id, isDeleted: true }),
-                    });
-                  }}
-                />
-              </Tooltip>
-            )}
+            <WithComponentAuth allowedRoles={["Coordinator", "TL"]}>
+              {el.isDeleted ? (
+                <Tooltip label="Un-delete Part Line">
+                  <IconArrowBackUp
+                    cursor={"pointer"}
+                    color="mediumspringgreen"
+                    onClick={() => {
+                      modals.openConfirmModal({
+                        title: "Un-delete Part Line",
+                        children: (
+                          <Text>Are you sure to Un-delete part line</Text>
+                        ),
+                        labels: { confirm: "Confirm", cancel: "Cancel" },
+                        onConfirm: () =>
+                          partLineRemoval({ id: el.id, isDeleted: false }),
+                      });
+                    }}
+                  />
+                </Tooltip>
+              ) : (
+                <Tooltip label="Delete Part Line">
+                  <IconTrash
+                    cursor={"pointer"}
+                    color="red"
+                    onClick={() => {
+                      modals.openConfirmModal({
+                        title: "Delete Part Line",
+                        children: <Text>Are you sure to delete part line</Text>,
+                        labels: { confirm: "Confirm", cancel: "Cancel" },
+                        onConfirm: () =>
+                          partLineRemoval({ id: el.id, isDeleted: true }),
+                      });
+                    }}
+                  />
+                </Tooltip>
+              )}
+            </WithComponentAuth>
           </Group>
         </Table.Tr>
         <Table.Tr>
@@ -175,24 +188,28 @@ const Detail = ({ data }: any) => {
                           <Table.Th key={i}>
                             {th}
                             {!el.isInvoiced && (
-                              <Tooltip label="Add Offer for specific part line">
-                                <IconCirclePlus
-                                  style={{ marginLeft: "10px" }}
-                                  color="green"
-                                  onClick={() => {
-                                    modals.open({
-                                      title: "Add Offer",
-                                      size: "90%",
-                                      children: (
-                                        <OfferForm
-                                          action="add"
-                                          loanPartListId={el.id}
-                                        />
-                                      ),
-                                    });
-                                  }}
-                                />
-                              </Tooltip>
+                              <WithComponentAuth
+                                allowedRoles={["Coordinator", "TL"]}
+                              >
+                                <Tooltip label="Add Offer for specific part line">
+                                  <IconCirclePlus
+                                    style={{ marginLeft: "10px" }}
+                                    color="green"
+                                    onClick={() => {
+                                      modals.open({
+                                        title: "Add Offer",
+                                        size: "90%",
+                                        children: (
+                                          <OfferForm
+                                            action="add"
+                                            loanPartListId={el.id}
+                                          />
+                                        ),
+                                      });
+                                    }}
+                                  />
+                                </Tooltip>
+                              </WithComponentAuth>
                             )}
                           </Table.Th>
                         );
@@ -217,26 +234,30 @@ const Detail = ({ data }: any) => {
                       <Table.Td>{elm.currency}</Table.Td>
                       <Table.Td>
                         {!el.isInvoiced && !el.isDeleted && (
-                          <Tooltip label="Edit Offer">
-                            <IconEdit
-                              size={"20px"}
-                              cursor={"pointer"}
-                              color="green"
-                              onClick={() => {
-                                modals.open({
-                                  title: "Edit Line",
-                                  size: "90%",
-                                  children: (
-                                    <OfferForm
-                                      data={elm}
-                                      action="update"
-                                      // loanPartListId={el.id}
-                                    />
-                                  ),
-                                });
-                              }}
-                            />
-                          </Tooltip>
+                          <WithComponentAuth
+                            allowedRoles={["Coordinator", "TL"]}
+                          >
+                            <Tooltip label="Update Offer">
+                              <IconEdit
+                                size={"20px"}
+                                cursor={"pointer"}
+                                color="green"
+                                onClick={() => {
+                                  modals.open({
+                                    title: "Update Line",
+                                    size: "90%",
+                                    children: (
+                                      <OfferForm
+                                        data={elm}
+                                        action="update"
+                                        // loanPartListId={el.id}
+                                      />
+                                    ),
+                                  });
+                                }}
+                              />
+                            </Tooltip>
+                          </WithComponentAuth>
                         )}
                       </Table.Td>
                     </Table.Tr>
@@ -312,21 +333,23 @@ const Detail = ({ data }: any) => {
               <Title order={6} fw={"normal"}>
                 {loanOrder?.orderNo}
                 {loanOrder?.status !== "Closed" && (
-                  <Tooltip label="Edit Sales Order">
-                    <IconCircleArrowUpRight
-                      color="green"
-                      onClick={() => {
-                        modals.open({
-                          title: `Update Loan Order ${loanOrder?.orderNo}`,
-                          size: "90%",
-                          children: (
-                            // eslint-disable-next-line react/jsx-no-undef
-                            <LoanForm action="update" data={loanOrder} />
-                          ),
-                        });
-                      }}
-                    />
-                  </Tooltip>
+                  <WithComponentAuth allowedRoles={["Coordinator", "TL"]}>
+                    <Tooltip label="Edit Sales Order">
+                      <IconCircleArrowUpRight
+                        color="green"
+                        onClick={() => {
+                          modals.open({
+                            title: `Update Loan Order ${loanOrder?.orderNo}`,
+                            size: "90%",
+                            children: (
+                              // eslint-disable-next-line react/jsx-no-undef
+                              <LoanForm action="update" data={loanOrder} />
+                            ),
+                          });
+                        }}
+                      />
+                    </Tooltip>
+                  </WithComponentAuth>
                 )}
               </Title>
             </Group>
@@ -399,101 +422,108 @@ const Detail = ({ data }: any) => {
           {loanOrder?.status !== "Closed" ? (
             <Group mb={20}>
               {loanOrder?.isApproved ? (
-                <Button
-                  onClick={() => {
-                    modals.openConfirmModal({
-                      title: "Unapproved Order",
-                      children: (
-                        <Text size="sm">
-                          Are you sure you want to unapproved the order?
-                        </Text>
-                      ),
-                      labels: { confirm: "Confirm", cancel: "Cancel" },
-                      onConfirm: () =>
-                        loanApproval({
-                          id: loanOrder.id,
-                          isApproved: false,
-                        }),
-                    });
-                  }}
-                >
-                  Unapproved Order
-                </Button>
+                <WithComponentAuth allowedRoles={["Coordinator", "TL"]}>
+                  <Button
+                    onClick={() => {
+                      modals.openConfirmModal({
+                        title: "Unapproved Order",
+                        children: (
+                          <Text size="sm">
+                            Are you sure you want to unapproved the order?
+                          </Text>
+                        ),
+                        labels: { confirm: "Confirm", cancel: "Cancel" },
+                        onConfirm: () =>
+                          loanApproval({
+                            id: loanOrder.id,
+                            isApproved: false,
+                          }),
+                      });
+                    }}
+                  >
+                    Unapproved Order
+                  </Button>
+                </WithComponentAuth>
               ) : (
+                <WithComponentAuth allowedRoles={["TL"]}>
+                  <Button
+                    onClick={() => {
+                      modals.openConfirmModal({
+                        title: "Approve Order",
+                        children: (
+                          <Text size="sm">
+                            Are you sure you want to approved the order?
+                          </Text>
+                        ),
+                        labels: { confirm: "Confirm", cancel: "Cancel" },
+                        onConfirm: () =>
+                          loanApproval({
+                            id: loanOrder.id,
+                            isApproved: true,
+                          }),
+                      });
+                    }}
+                  >
+                    Approve Order
+                  </Button>
+                </WithComponentAuth>
+              )}
+              <WithComponentAuth allowedRoles={["TL"]}>
                 <Button
                   onClick={() => {
-                    modals.openConfirmModal({
-                      title: "Approve Order",
-                      children: (
-                        <Text size="sm">
-                          Are you sure you want to approved the order?
-                        </Text>
-                      ),
-                      labels: { confirm: "Confirm", cancel: "Cancel" },
-                      onConfirm: () =>
-                        loanApproval({
-                          id: loanOrder.id,
-                          isApproved: true,
-                        }),
-                    });
+                    if (isAllInvoice) {
+                      modals.openConfirmModal({
+                        title: "Close The Order",
+                        children: (
+                          <Text>Are you sure you want to close the order?</Text>
+                        ),
+                        labels: { confirm: "Confirm", cancel: "Cancel" },
+                        onConfirm: () =>
+                          loanCloser({
+                            id: loanOrder?.id,
+                            status: "Closed",
+                          }),
+                      });
+                    } else {
+                      modals.openConfirmModal({
+                        title: "Order Cannot be Closed",
+                        children: (
+                          <Text>
+                            To close the order you need to issue invoice for all
+                            part line.
+                          </Text>
+                        ),
+                        labels: { confirm: "Ok", cancel: "Cancel" },
+                        confirmProps: { color: "red" },
+                      });
+                    }
                   }}
                 >
-                  Approve Order
+                  Close Order
                 </Button>
-              )}
-
-              <Button
-                onClick={() => {
-                  if (isAllInvoice) {
-                    modals.openConfirmModal({
-                      title: "Close The Order",
-                      children: (
-                        <Text>Are you sure you want to close the order?</Text>
-                      ),
-                      labels: { confirm: "Confirm", cancel: "Cancel" },
-                      onConfirm: () =>
-                        loanCloser({
-                          id: loanOrder?.id,
-                          status: "Closed",
-                        }),
-                    });
-                  } else {
-                    modals.openConfirmModal({
-                      title: "Order Cannot be Closed",
-                      children: (
-                        <Text>
-                          To close the order you need to issue invoice for all
-                          part line.
-                        </Text>
-                      ),
-                      labels: { confirm: "Ok", cancel: "Cancel" },
-                      confirmProps: { color: "red" },
-                    });
-                  }
-                }}
-              >
-                Close Order
-              </Button>
+              </WithComponentAuth>
             </Group>
           ) : (
-            <Button
-              onClick={() => {
-                modals.openConfirmModal({
-                  title: "Close The Order",
-                  children: (
-                    <Text>Are you sure you want to re-open the order?</Text>
-                  ),
-                  labels: { confirm: "Confirm", cancel: "Cancel" },
-                  onConfirm: () =>
-                    loanCloser({
-                      id: loanOrder?.id,
-                      status: "Re-Opened",
-                    }),
-                });
-              }}
-            >
-              Re-Open Order
-            </Button>
+            <WithComponentAuth allowedRoles={["TL"]}>
+              <Button
+                onClick={() => {
+                  modals.openConfirmModal({
+                    title: "Close The Order",
+                    children: (
+                      <Text>Are you sure you want to re-open the order?</Text>
+                    ),
+                    labels: { confirm: "Confirm", cancel: "Cancel" },
+                    onConfirm: () =>
+                      loanCloser({
+                        id: loanOrder?.id,
+                        status: "Re-Opened",
+                      }),
+                  });
+                }}
+              >
+                Re-Open Order
+              </Button>
+            </WithComponentAuth>
           )}
           <Box>
             <Table>
@@ -505,24 +535,28 @@ const Detail = ({ data }: any) => {
                         <Table.Th key={i}>
                           {th}{" "}
                           {loanOrder?.status !== "Close" && (
-                            <Tooltip label="Add Part Line">
-                              <IconCirclePlus
-                                style={{ marginLeft: "10px" }}
-                                color="green"
-                                onClick={() => {
-                                  modals.open({
-                                    title: "Add Part List",
-                                    size: "90%",
-                                    children: (
-                                      <AddLineItemForm
-                                        action="add"
-                                        loanId={loanOrder.id}
-                                      />
-                                    ),
-                                  });
-                                }}
-                              />
-                            </Tooltip>
+                            <WithComponentAuth
+                              allowedRoles={["Coordinator", "TL"]}
+                            >
+                              <Tooltip label="Add Part Line">
+                                <IconCirclePlus
+                                  style={{ marginLeft: "10px" }}
+                                  color="green"
+                                  onClick={() => {
+                                    modals.open({
+                                      title: "Add Part List",
+                                      size: "90%",
+                                      children: (
+                                        <AddLineItemForm
+                                          action="add"
+                                          loanId={loanOrder.id}
+                                        />
+                                      ),
+                                    });
+                                  }}
+                                />
+                              </Tooltip>
+                            </WithComponentAuth>
                           )}
                         </Table.Th>
                       );
@@ -539,24 +573,26 @@ const Detail = ({ data }: any) => {
             <Box my={20}>
               <Title order={4}>Issued Invoices</Title>
               <Group my={10} display={"block"}>
-                {loanOrder?.isApproved ? (
-                  <>
-                    {isAllInvoice ? (
-                      <Text>
-                        All part line of this order is invoice, no more invoice
-                        rasing is needed
-                      </Text>
-                    ) : (
-                      <RaiseInvoice
-                        order={loanOrder}
-                        partData={partData}
-                        orderType="loan"
-                      />
-                    )}
-                  </>
-                ) : (
-                  <Text>Please Approve the order to raise invoice</Text>
-                )}
+                <WithComponentAuth allowedRoles={["Coordinator", "TL"]}>
+                  {loanOrder?.isApproved ? (
+                    <>
+                      {isAllInvoice ? (
+                        <Text>
+                          All part line of this order is invoice, no more
+                          invoice rasing is needed
+                        </Text>
+                      ) : (
+                        <RaiseInvoice
+                          order={loanOrder}
+                          partData={partData}
+                          orderType="loan"
+                        />
+                      )}
+                    </>
+                  ) : (
+                    <Text>Please Approve the order to raise invoice</Text>
+                  )}
+                </WithComponentAuth>
                 <Group mt={15}>
                   <InvoiceTable data={loanOrder} />
                 </Group>
@@ -564,9 +600,14 @@ const Detail = ({ data }: any) => {
             </Box>
           </Box>
         </Box>
+        <AttachmentTable
+          attachments={attachments}
+          entityId={id}
+          entityType="Loan"
+        />
       </Center>
     </Layout>
   );
 };
 
-export default Detail;
+export default withAuth(Detail, ["Coordinator", "TL", "Management"]);

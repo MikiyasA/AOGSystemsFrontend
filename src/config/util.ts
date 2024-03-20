@@ -1,4 +1,7 @@
+import { Box, Text } from "@mantine/core";
 import { API_URL } from ".";
+import { modals } from "@mantine/modals";
+import { getSession } from "next-auth/react";
 
 export const formatDate = (value: any) => {
   if (typeof value === 'string') {
@@ -42,21 +45,31 @@ export const camelToAllCapital = (str: string) => {
 };
 
 export const downloadFile = async (attachmentId: any, fileName: any, fileType: any) => {
-  try {
-    const downloadUrl = `${API_URL}/Attachment/DownloadAttachment/${attachmentId}`;
-    const response = await fetch(downloadUrl);
-    const blob = await response.blob();
-
-    // Create a temporary link to trigger the download
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${fileName}${fileType}`; // Set the file name for download
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  } catch (error) {
-    console.error('Error downloading file:', error);
-  }
-}
-
+  const session = await getSession();
+    await fetch(`${API_URL}/Attachment/DownloadAttachment/${attachmentId}`, {
+      headers: {
+        Authorization: `Bearer ${session?.token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          modals.open({
+            title: "Error on Downloading File",
+            size: "40%",
+          });
+          throw new Error(`${res.statusText}`);
+        }
+        return res.blob();
+      })
+      .then((blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `${fileName}${fileType}`;
+        link.click();
+        URL.revokeObjectURL(url);
+      })
+      .catch((error) => {
+        console.error("Error exporting to Excel:", error);
+      });
+    }

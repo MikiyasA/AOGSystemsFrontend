@@ -4,22 +4,34 @@ import * as XLSX from "xlsx";
 import { formatDate, camelToAllCapital } from "@/config/util";
 
 const jsonToExcel = (data: any, filename: any) => {
-  const camelToPascal = (str: string) => {
-    return str
-      .replace(/([A-Z])/g, " $1") // Add space before capital letters
-      .toUpperCase(); // Convert entire string to uppercase
-  };
+  const excludedKeys = [
+    "id",
+    "createdat",
+    "updatedat",
+    "createdby",
+    "updatedby",
+  ];
+
+  // const camelToAllCapital = (str: string) => {
+  //   return str.toUpperCase(); // Convert entire string to uppercase
+  // };
+
   if (data) {
     const formattedData = data.map((item: any) => {
       const transformedItem: any = {};
       for (const key in item) {
-        if (Object.prototype.hasOwnProperty.call(item, key)) {
+        if (
+          Object.prototype.hasOwnProperty.call(item, key) &&
+          !excludedKeys.includes(key.toLowerCase()) // Check if the lowercase key is not in the excluded keys list
+        ) {
           const formattedValue = formatDate(item[key]);
           transformedItem[camelToAllCapital(key)] = formattedValue;
         }
       }
       return transformedItem;
     });
+
+    // Convert formatted data to Excel sheet
     const ws = XLSX.utils.json_to_sheet(formattedData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Sheet1");

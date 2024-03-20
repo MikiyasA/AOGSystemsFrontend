@@ -72,7 +72,7 @@ const CompanyForm = ({ data, action, closeModal }: any) => {
     }
   };
   addIsSuccess && closeModal && modals.close();
-  updateIsSuccess && modals.closeAll();
+  (updateIsSuccess || addIsSuccess) && modals.closeAll();
   return (
     <Box w={"100%"}>
       {addIsLoading || (updateIsLoading && <MyLoadingOverlay />)}

@@ -1,6 +1,7 @@
 import InvoiceDetail from "@/components/Invoice/InvoiceDetail";
 import MyLoadingOverlay from "@/components/MyLoadingOverlay";
 import Layout from "@/hocs/Layout";
+import withAuth from "@/hocs/withAuth";
 import { useGetInvoiceByIDQuery } from "@/pages/api/apiSlice";
 import { Box, Center, GridCol, Grid, Title } from "@mantine/core";
 import { useRouter } from "next/router";
@@ -21,4 +22,4 @@ const InvoiceDetailPage = () => {
   );
 };
 
-export default InvoiceDetailPage;
+export default withAuth(InvoiceDetailPage, ["Coordinator", "TL", "Management"]);

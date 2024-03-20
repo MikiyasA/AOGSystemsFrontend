@@ -62,7 +62,7 @@ const CoreForm = ({ data, action }: any) => {
       description: data?.description,
       stockNo: data?.stockNo,
       vendor: data?.vendor,
-      partReleasedDate: data?.partReleasedDate,
+      partReleasedDate: data?.partReleasedDate || new Date(),
       partReceiveDate: data?.partReceiveDate,
       returnDueDate: data?.returnDueDate,
       returnProcessedDate: data?.returnProcessedDate,
@@ -94,7 +94,7 @@ const CoreForm = ({ data, action }: any) => {
     e.preventDefault();
     if (action === "add") {
       const addReturn = await addCoreFollowup(form.values).unwrap();
-      addReturn?.id
+      addReturn.isSuccess
         ? notifications.show({
             title: "Success",
             message: addReturn?.message || "Core Followup Add Successfully 👍",
@@ -108,7 +108,7 @@ const CoreForm = ({ data, action }: any) => {
           });
     } else if (action === "update") {
       const updateReturn = await updateCoreFollowup(form.values).unwrap();
-      updateReturn?.id
+      updateReturn.isSuccess
         ? notifications.show({
             title: "Success",
             message:
@@ -199,7 +199,6 @@ const CoreForm = ({ data, action }: any) => {
           <DateInput
             label="Part Released Date"
             placeholder="Part Released Date"
-            defaultValue={new Date()}
             value={
               form.values.partReleasedDate &&
               new Date(form.values.partReleasedDate)
@@ -217,8 +216,9 @@ const CoreForm = ({ data, action }: any) => {
             placeholder="Part Receive Date"
             defaultValue={new Date()}
             value={
-              form.values.partReceiveDate &&
-              new Date(form.values.partReceiveDate)
+              form.values.returnProcessedDate
+                ? new Date(form.values.returnProcessedDate)
+                : null
             }
             onChange={(e: any) =>
               form.setValues({
@@ -231,22 +231,25 @@ const CoreForm = ({ data, action }: any) => {
           <DateInput
             label="Return Due Date"
             placeholder="Return Due Date"
-            defaultValue={new Date()}
             value={
               form.values.returnDueDate && new Date(form.values.returnDueDate)
             }
             onChange={(e: any) =>
-              form.setValues({ returnDueDate: new Date(e?.toString()) })
+              form.setValues({
+                returnDueDate: e ? new Date(e.toString()) : null,
+              })
             }
             error={form.errors.returnDueDate}
+            clearable
           />
           <DateInput
             label="Return Processed Date"
             placeholder="Return Processed Date"
             defaultValue={new Date()}
             value={
-              form.values.returnProcessedDate &&
-              new Date(form.values.returnProcessedDate)
+              form.values.returnProcessedDate
+                ? new Date(form.values.returnProcessedDate)
+                : null
             }
             onChange={(e: any) =>
               form.setValues({

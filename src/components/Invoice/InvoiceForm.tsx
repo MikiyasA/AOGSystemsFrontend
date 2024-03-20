@@ -25,11 +25,11 @@ import { IconFilterSearch } from "@tabler/icons-react";
 
 const InvoiceForm = ({ data, action, partData, orderType }: any) => {
   console.log({ data });
-  const carOrderNo = data?.orderNo?.charAt(0);
+  const charOrderNo = data?.orderNo?.charAt(0);
   const transactionType =
-    carOrderNo === "S" ? "Sales" : carOrderNo === "L" ? "Loan" : null;
-  const salesOrderId = carOrderNo === "S" ? data?.id : null;
-  const loanOrderId = carOrderNo === "L" ? data?.id : 0;
+    charOrderNo === "S" ? "Sales" : charOrderNo === "L" ? "Loan" : null;
+  const salesOrderId = charOrderNo === "S" ? data?.id : null;
+  const loanOrderId = charOrderNo === "L" ? data?.id : null;
 
   const form = useForm({
     initialValues: {
@@ -338,6 +338,7 @@ export const UpdateInvoiceForm = ({ data }: any) => {
             label="POP Reference"
             placeholder="POP Reference"
             {...form.getInputProps("popReference")}
+            required={form.values.popDate}
           />
           <DateInput
             label="POP Date"
@@ -349,6 +350,7 @@ export const UpdateInvoiceForm = ({ data }: any) => {
             }}
             error={form.errors.popDate}
             clearable
+            required={form.values.popReference}
           />
           <Select
             label="Status"

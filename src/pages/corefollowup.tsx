@@ -11,6 +11,7 @@ import MyLoadingOverlay from "@/components/MyLoadingOverlay";
 import { CoreFilterForm } from "@/components/Core/CoreForm";
 import { useForm } from "@mantine/form";
 import { useEffect, useState } from "react";
+import withAuth from "@/hocs/withAuth";
 
 var coreTable = [
   { key: "poNo", value: "PO" },
@@ -119,4 +120,4 @@ const CoreFollowup = () => {
   );
 };
 
-export default CoreFollowup;
+export default withAuth(CoreFollowup, ["Coordinator", "TL", "Management"]);

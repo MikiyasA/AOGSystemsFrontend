@@ -39,6 +39,7 @@ import SalesDetail from "./SalesDetail";
 import SalesForm from "./SalesForm";
 import Link from "next/link";
 import Paginate from "../Paginate";
+import WithComponentAuth from "@/hocs/WithComponentAuth";
 
 export interface RowData {
   companyId: number;
@@ -103,20 +104,30 @@ function sortData(
   }
 
   return filterData(
-    [...data].sort((a: any, b: any) => {
-      if (payload.reversed) {
-        return b[sortBy]
-          ?.toLocaleString()
-          .localeCompare(a[sortBy].toLocaleString());
+    [...data].sort((a, b) => {
+      const aValue = a[sortBy];
+      const bValue = b[sortBy];
+
+      if (aValue === null || aValue === undefined) {
+        return payload.reversed ? 1 : -1;
+      }
+      if (bValue === null || bValue === undefined) {
+        return payload.reversed ? -1 : 1;
       }
 
-      return a[sortBy]
-        ?.toLocaleString()
-        .localeCompare(b[sortBy].toLocaleString());
+      if (typeof aValue === "number" && typeof bValue === "number") {
+        return payload.reversed ? bValue - aValue : aValue - bValue;
+      }
+
+      // Fallback to string comparison
+      return payload.reversed
+        ? bValue.toString().localeCompare(aValue.toString())
+        : aValue.toString().localeCompare(bValue.toString());
     }),
     payload.search
   );
 }
+
 var detailData = [
   { key: "orderNo", value: "Order No" },
   { key: "customerOrderNo", value: "Customer Order No" },
@@ -242,19 +253,21 @@ export function SalesTable({
               });
             }}
           />
-
-          <IconEditCircle
-            cursor={"pointer"}
-            color="green"
-            onClick={() =>
-              modals.open({
-                size: "90%",
-                title: `Update Sales Order ${row?.orderNo}`,
-                children: <SalesForm data={row} action="update" />,
-              })
-            }
-          />
-          <UserAction data={row} />
+          <WithComponentAuth allowedRoles={["Coordinator", "TL"]}>
+            {row.status !== "Closed" && (
+              <IconEditCircle
+                cursor={"pointer"}
+                color="green"
+                onClick={() =>
+                  modals.open({
+                    size: "90%",
+                    title: `Update Sales Order ${row?.orderNo}`,
+                    children: <SalesForm data={row} action="update" />,
+                  })
+                }
+              />
+            )}
+          </WithComponentAuth>
         </Table.Td>
       </Table.Tr>
     );
@@ -285,17 +298,19 @@ export function SalesTable({
             onChange={handleSearchChange}
           />
           {isActive && (
-            <Button
-              onClick={() =>
-                modals.open({
-                  title: "Create Sales Order",
-                  size: "90%",
-                  children: <SalesForm action="add" />,
-                })
-              }
-            >
-              Create Sales Order
-            </Button>
+            <WithComponentAuth allowedRoles={["Coordinator", "TL"]}>
+              <Button
+                onClick={() =>
+                  modals.open({
+                    title: "Create Sales Order",
+                    size: "90%",
+                    children: <SalesForm action="add" />,
+                  })
+                }
+              >
+                Create Sales Order
+              </Button>
+            </WithComponentAuth>
           )}
 
           {!isActive && (

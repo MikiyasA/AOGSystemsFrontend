@@ -51,7 +51,7 @@ const LoanForm = ({ data, action }: any) => {
       orderedByName: data?.orderedByName,
       orderedByEmail: data?.orderedByEmail,
       shipToAddress: data?.shipToAddress,
-      status: data?.status,
+      status: data?.status || "Created",
       note: data?.note,
       partId: data?.partId,
       quantity: data?.quantity || 1,
@@ -532,9 +532,10 @@ export const EditPartLine = ({ data, invoiced }: any) => {
         });
   };
 
+  updateIsSuccess && modals.closeAll();
   return (
     <Box w={"100%"} px={50}>
-      {updateIsSuccess && <MyLoadingOverlay />}
+      {updateIsLoading && <MyLoadingOverlay />}
       <form onSubmit={handleFormSubmit}>
         <SimpleGrid
           cols={{ base: 1, sm: 2, lg: 4 }}
@@ -714,7 +715,7 @@ export const OfferForm = ({ data, action, loanPartListId }: any) => {
           });
     }
   };
-
+  (addIsSuccess || updateIsSuccess) && modals.closeAll();
   return (
     <Box w={"100%"} px={50}>
       {updateIsSuccess && <MyLoadingOverlay />}
@@ -741,7 +742,7 @@ export const OfferForm = ({ data, action, loanPartListId }: any) => {
             label="Quantity"
             placeholder="Quantity"
             defaultValue={1}
-            min={1}
+            min={0}
             {...form.getInputProps("quantity")}
             required
             disabled={data?.isInvoiced}
