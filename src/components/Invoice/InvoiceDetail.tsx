@@ -157,10 +157,10 @@ const InvoiceDetail = ({ data, location }: any) => {
                 mb={8}
               />
 
-              <Text>Telephone: 0115178254/ 0115178210 </Text>
-              <Text>P. O. Box 1755 {"\n"}</Text>
-              <Text>Fax: 251-1-611474 {"\n"}</Text>
-              <Text>ADDIS ABABA</Text>
+              <Text fz={13}>Telephone: 0115178254/ 0115178210 </Text>
+              <Text fz={13}>P. O. Box 1755 {"\n"}</Text>
+              <Text fz={13}>Fax: 251-1-611474 {"\n"}</Text>
+              <Text fz={13}>ADDIS ABABA</Text>
             </Box>
           ) : (
             <Box>
@@ -389,14 +389,38 @@ const InvoiceDetail = ({ data, location }: any) => {
               order={6}
               style={{ fontWeight: 100, TitleOverflow: "ellipsis" }}
             >
-              {salesOrder?.shipToAddress}
+              {data?.transactionType == "Sales" && salesOrder?.shipToAddress}
+              {data?.transactionType == "Loan" && loanOrder?.shipToAddress}
             </Title>
           </Box>
           <Box>
             <Title order={5}>Please Remit To:</Title>
-            <Title order={6} style={{ fontWeight: 100 }}>
-              Ethiopian Airlines
-            </Title>
+            <Box>
+              <Box fz={15}>
+                If the transfer amount is in USD please use our Citi bank USD
+                Account
+                <Box ml={20}>
+                  <Text fz={12}>CITI BANK of New York </Text>
+                  <Text fz={12}>
+                    111 wall street 19 th floor N .Y 10043 USA
+                  </Text>
+                  <Text fz={12}>
+                    Account N umber 30464658 Swift Code CI TI US33
+                  </Text>
+                </Box>
+              </Box>
+              <Box fz={15}>
+                If the transfer amount is in EUR please use Deutsche bank EUR
+                Account
+                <Box ml={20}>
+                  <Text fz={12}>Ethiopian Airlines Group </Text>
+                  <Text fz={12}>
+                    Deutsche bank AG London ninety 6 bishop gate
+                  </Text>
+                  <Text fz={12}>London EC2N 4DA ENGLAND</Text>
+                </Box>
+              </Box>
+            </Box>
           </Box>
         </SimpleGrid>
         <Box mt={30}>

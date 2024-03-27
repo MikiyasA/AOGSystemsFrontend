@@ -406,22 +406,24 @@ const Detail = ({ data }: any) => {
                           <WithComponentAuth
                             allowedRoles={["Coordinator", "TL"]}
                           >
-                            <IconCirclePlus
-                              style={{ marginLeft: "10px" }}
-                              color="green"
-                              onClick={() => {
-                                modals.open({
-                                  title: "Add Part List",
-                                  size: "90%",
-                                  children: (
-                                    <LineItemForm
-                                      action="add"
-                                      salesId={salesOrder.id}
-                                    />
-                                  ),
-                                });
-                              }}
-                            />{" "}
+                            {salesOrder?.status !== "Closed" && (
+                              <IconCirclePlus
+                                style={{ marginLeft: "10px" }}
+                                color="green"
+                                onClick={() => {
+                                  modals.open({
+                                    title: "Add Part List",
+                                    size: "90%",
+                                    children: (
+                                      <LineItemForm
+                                        action="add"
+                                        salesId={salesOrder.id}
+                                      />
+                                    ),
+                                  });
+                                }}
+                              />
+                            )}
                           </WithComponentAuth>
                         </Table.Th>
                       );

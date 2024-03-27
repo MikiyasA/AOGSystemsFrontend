@@ -313,7 +313,7 @@ export const ReassignForm = ({ data, users }: any) => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    const reassignReturn: any = await reassignAssignment(form.values).unwrap();
+    const { data: reassignReturn }: any = await reassignAssignment(form.values);
     reassignReturn?.succeeded
       ? notifications.show({
           title: "Success",

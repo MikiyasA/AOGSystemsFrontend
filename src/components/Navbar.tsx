@@ -108,7 +108,7 @@ const Navbar = () => {
         <Group key={link.label} gap={5}>
           <Link
             key={link.label}
-            href={link.link ? link.link : ""}
+            href={link.link ? link.link : "#"}
             className={`${classes.link} ${isActive ? classes.activeLink : ""}`}
           >
             {link.label}

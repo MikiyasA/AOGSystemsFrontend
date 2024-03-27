@@ -116,64 +116,68 @@ const Detail = ({ data }: any) => {
           ) : (
             <Table.Td></Table.Td>
           )}
-          <Group>
-            {!el.isDeleted && (
-              <WithComponentAuth allowedRoles={["Coordinator", "TL"]}>
-                <Tooltip label="Edit Part Line">
-                  <IconEdit
-                    cursor={"pointer"}
-                    color="green"
-                    onClick={() => {
-                      modals.open({
-                        title: "Edit Line",
-                        size: "90%",
-                        children: (
-                          <EditPartLine data={el} invoiced={el.isInvoiced} />
-                        ),
-                      });
-                    }}
-                  />
-                </Tooltip>
-              </WithComponentAuth>
-            )}
-            <WithComponentAuth allowedRoles={["Coordinator", "TL"]}>
-              {el.isDeleted ? (
-                <Tooltip label="Un-delete Part Line">
-                  <IconArrowBackUp
-                    cursor={"pointer"}
-                    color="mediumspringgreen"
-                    onClick={() => {
-                      modals.openConfirmModal({
-                        title: "Un-delete Part Line",
-                        children: (
-                          <Text>Are you sure to Un-delete part line</Text>
-                        ),
-                        labels: { confirm: "Confirm", cancel: "Cancel" },
-                        onConfirm: () =>
-                          partLineRemoval({ id: el.id, isDeleted: false }),
-                      });
-                    }}
-                  />
-                </Tooltip>
-              ) : (
-                <Tooltip label="Delete Part Line">
-                  <IconTrash
-                    cursor={"pointer"}
-                    color="red"
-                    onClick={() => {
-                      modals.openConfirmModal({
-                        title: "Delete Part Line",
-                        children: <Text>Are you sure to delete part line</Text>,
-                        labels: { confirm: "Confirm", cancel: "Cancel" },
-                        onConfirm: () =>
-                          partLineRemoval({ id: el.id, isDeleted: true }),
-                      });
-                    }}
-                  />
-                </Tooltip>
+          {!el.isInvoiced && (
+            <Group>
+              {!el.isDeleted && (
+                <WithComponentAuth allowedRoles={["Coordinator", "TL"]}>
+                  <Tooltip label="Edit Part Line">
+                    <IconEdit
+                      cursor={"pointer"}
+                      color="green"
+                      onClick={() => {
+                        modals.open({
+                          title: "Edit Line",
+                          size: "90%",
+                          children: (
+                            <EditPartLine data={el} invoiced={el.isInvoiced} />
+                          ),
+                        });
+                      }}
+                    />
+                  </Tooltip>
+                </WithComponentAuth>
               )}
-            </WithComponentAuth>
-          </Group>
+              <WithComponentAuth allowedRoles={["Coordinator", "TL"]}>
+                {el.isDeleted ? (
+                  <Tooltip label="Un-delete Part Line">
+                    <IconArrowBackUp
+                      cursor={"pointer"}
+                      color="mediumspringgreen"
+                      onClick={() => {
+                        modals.openConfirmModal({
+                          title: "Un-delete Part Line",
+                          children: (
+                            <Text>Are you sure to Un-delete part line</Text>
+                          ),
+                          labels: { confirm: "Confirm", cancel: "Cancel" },
+                          onConfirm: () =>
+                            partLineRemoval({ id: el.id, isDeleted: false }),
+                        });
+                      }}
+                    />
+                  </Tooltip>
+                ) : (
+                  <Tooltip label="Delete Part Line">
+                    <IconTrash
+                      cursor={"pointer"}
+                      color="red"
+                      onClick={() => {
+                        modals.openConfirmModal({
+                          title: "Delete Part Line",
+                          children: (
+                            <Text>Are you sure to delete part line</Text>
+                          ),
+                          labels: { confirm: "Confirm", cancel: "Cancel" },
+                          onConfirm: () =>
+                            partLineRemoval({ id: el.id, isDeleted: true }),
+                        });
+                      }}
+                    />
+                  </Tooltip>
+                )}
+              </WithComponentAuth>
+            </Group>
+          )}
         </Table.Tr>
         <Table.Tr>
           <Table.Td></Table.Td>
@@ -534,7 +538,7 @@ const Detail = ({ data }: any) => {
                       return (
                         <Table.Th key={i}>
                           {th}{" "}
-                          {loanOrder?.status !== "Close" && (
+                          {loanOrder?.status !== "Closed" && (
                             <WithComponentAuth
                               allowedRoles={["Coordinator", "TL"]}
                             >

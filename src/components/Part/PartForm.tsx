@@ -47,9 +47,9 @@ const PartForm = ({ data, action, redirect }: any) => {
   const handleFormSubmit = async (e: any) => {
     e.preventDefault();
     if (action === "add") {
-      const addReturn = await addPart(form.values).unwrap();
+      const addReturn = await addPart(form.values);
       console.log({ addReturn });
-      if (addReturn.isSuccess) {
+      if (addReturn?.data?.isSuccess) {
         route.push(`/part/detail/${addReturn.data.id}`);
         notifications.show({
           title: "Success",
@@ -60,6 +60,7 @@ const PartForm = ({ data, action, redirect }: any) => {
         notifications.show({
           title: "Failure",
           message:
+            addReturn?.error?.data?.message ||
             addReturn?.message ||
             addError?.data?.message ||
             "Error occurs on add Part",
@@ -75,13 +76,13 @@ const PartForm = ({ data, action, redirect }: any) => {
             "Error occurs on add Part",
           color: "red",
         });
-      addReturn.isSuccess &&
+      addReturn?.data?.isSuccess &&
         redirect &&
         route.push(`${FE_LINK}part/detail/${addReturn?.data.partNumber}`);
     } else if (action === "update") {
-      const updateReturn = await updatePart(form.values).unwrap();
+      const updateReturn = await updatePart(form.values);
       console.log(updateReturn);
-      updateReturn.isSuccess
+      updateReturn?.data.isSuccess
         ? notifications.show({
             title: "Success",
             message: updateReturn?.message || "Part Updated Successfully 👍",
@@ -89,10 +90,13 @@ const PartForm = ({ data, action, redirect }: any) => {
           })
         : notifications.show({
             title: "Failure",
-            message: updateError?.data.message || "Error occurs on add Part",
+            message:
+              updateError?.error?.data.message ||
+              updateError?.data.message ||
+              "Error occurs on add Part",
             color: "red",
           });
-      updateReturn.isSuccess &&
+      updateReturn?.data.isSuccess &&
         redirect &&
         route.push(`${FE_LINK}part/detail/${updateReturn?.data.partNumber}`);
     }

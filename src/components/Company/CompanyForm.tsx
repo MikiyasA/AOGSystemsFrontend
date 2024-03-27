@@ -8,6 +8,7 @@ import { notifications } from "@mantine/notifications";
 import React from "react";
 import MyLoadingOverlay from "../MyLoadingOverlay";
 import { useForm } from "@mantine/form";
+import { useRouter } from "next/router";
 
 const CompanyForm = ({ data, action, closeModal }: any) => {
   const form = useForm({
@@ -39,28 +40,38 @@ const CompanyForm = ({ data, action, closeModal }: any) => {
     },
   ] = useUpdateCompanyMutation();
 
+  const route = useRouter();
   const handleFormSubmit = async (e: any) => {
     e.preventDefault();
     if (action === "add") {
-      const addReturn = await addCompany(form.values).unwrap();
-      addReturn.isSuccess
-        ? notifications.show({
-            title: "Success",
-            message: addReturn?.message || "Company Created Successfully 👍",
-            color: "green",
-          })
-        : notifications.show({
-            title: "Failure",
-            message: addError?.message || "Error occurs when Company Created",
-            color: "red",
-          });
+      const addReturn = await addCompany(form.values);
+      if (addReturn?.data?.isSuccess) {
+        route.push(`/company/detail/${addReturn?.data?.data?.id}`);
+        notifications.show({
+          title: "Success",
+          message: addReturn?.message || "Company Created Successfully 👍",
+          color: "green",
+        });
+      } else {
+        notifications.show({
+          title: "Failure",
+          message:
+            addReturn?.error?.data?.message ||
+            addError?.message ||
+            "Error occurs when Company Created",
+          color: "red",
+        });
+      }
     } else if (action === "update") {
-      const updateReturn = await updateCompany(form.values).unwrap();
+      const updateReturn = await updateCompany(form.values);
       console.log(updateReturn);
-      updateReturn.isSuccess
+      updateReturn?.data?.isSuccess
         ? notifications.show({
             title: "Success",
-            message: updateReturn?.message || "Company update Successfully 👍",
+            message:
+              updateError?.error?.data.message ||
+              updateReturn?.message ||
+              "Company update Successfully 👍",
             color: "green",
           })
         : notifications.show({

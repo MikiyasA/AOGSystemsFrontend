@@ -37,7 +37,7 @@ const TabForm = ({ data, action }: any) => {
       id: data?.id,
       name: data?.name,
       color: data?.color,
-      status: data?.status,
+      status: data?.status || "Active",
     },
     validate: {
       name: (v) =>
@@ -51,22 +51,26 @@ const TabForm = ({ data, action }: any) => {
   const handleFormSubmit = async (e: any) => {
     e.preventDefault();
     if (action === "add") {
-      const { data: addReturn }: any = await addFpTab(form.values);
+      const addReturn = await addFpTab(form.values);
       console.log("addReturn", addReturn);
-      addReturn?.isSuccess
+      addReturn?.data?.isSuccess
         ? notifications.show({
             title: "Success",
-            message: addReturn?.message || "Followup Tab Add Successfully 👍",
+            message:
+              addReturn?.data?.message || "Followup Tab Add Successfully 👍",
             color: "green",
           })
         : notifications.show({
             title: "Failure",
             message:
-              addError?.data?.message || "Error occurs on add Followup Tab",
+              addReturn?.error?.data?.message ||
+              addReturn?.message ||
+              addError?.data?.message ||
+              "Error occurs on add Followup Tab",
             color: "red",
           });
     } else if (action === "update") {
-      const { data: updateReturn }: any = await updateFpTab(form.values);
+      const updateReturn = await updateFpTab(form.values).unwrap();
       updateReturn?.isSuccess
         ? notifications.show({
             title: "Success",
@@ -77,7 +81,10 @@ const TabForm = ({ data, action }: any) => {
         : notifications.show({
             title: "Failure",
             message:
-              updateError?.data.message || "Error occurs on add Followup Tab",
+              updateReturn?.error?.data?.message ||
+              updateReturn?.message ||
+              updateError?.data.message ||
+              "Error occurs on add Followup Tab",
             color: "red",
           });
     }

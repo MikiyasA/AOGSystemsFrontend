@@ -6,6 +6,8 @@ import { formatDate, camelToAllCapital } from "@/config/util";
 const jsonToExcel = (data: any, filename: any) => {
   const excludedKeys = [
     "id",
+    "partId",
+    "followUpTabsId",
     "createdat",
     "updatedat",
     "createdby",
