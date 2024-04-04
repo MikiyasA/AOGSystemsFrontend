@@ -104,8 +104,8 @@ const SOADetail = ({ data, detailData }: any) => {
                       <Table.Tbody>
                         {data[d.key]?.map((r: any, i: any) => {
                           const today = new Date().getTime();
-                          const updatedTime = r.updatedBy
-                            ? new Date(r.updatedBy).getTime()
+                          const updatedTime = r.updatedAt
+                            ? new Date(r.updatedAt).getTime()
                             : new Date(r.createdAT).getTime();
                           const updatedBefore = today - updatedTime;
                           const eightHoursInMillis = 8 * 60 * 60 * 1000;
