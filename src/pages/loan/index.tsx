@@ -81,7 +81,7 @@ const Sales = () => {
                 <LoanTable
                   data={loanData}
                   table={loanTable}
-                  tableTitle="All Active Loan Orders"
+                  tableTitle="Active Loan Orders"
                   isActive
                 />
               </Box>
@@ -96,7 +96,7 @@ const Sales = () => {
                 <LoanTable
                   data={allLoans?.data}
                   table={loanTable}
-                  tableTitle="All Active Loan Orders"
+                  tableTitle="All Loan Orders"
                   metadata={allLoans?.metadata}
                   form={form}
                 />
