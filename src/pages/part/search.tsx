@@ -15,9 +15,6 @@ const SearchCompany = () => {
   const [partToBeSearched, setPartToBeSearched] = useState<any>();
   const [part, setPart] = useState<any>();
 
-  console.log({ partToBeSearched });
-  console.log({ part });
-
   const handleSubmit = (e: any) => {
     e.preventDefault();
     setPart(partToBeSearched);

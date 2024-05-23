@@ -59,7 +59,6 @@ export default function Login() {
       callbackUrl: callbackUrl ?? "/",
       redirect: false,
     });
-    console.log({ result });
     if (result?.ok) router.push(callbackUrl);
     if (result?.error) setErrorMessage(result?.error);
   };

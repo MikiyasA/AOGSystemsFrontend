@@ -199,7 +199,7 @@ export function FollowupTable({
     rowId: string;
     color: string;
   }
-  const [rowColors, setRowColors] = useLocalStorage<RowColor>({
+  const [rowColors, setRowColors] = useLocalStorage<RowColor | any>({
     key: "row-color",
   });
 

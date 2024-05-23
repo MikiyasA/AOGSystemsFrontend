@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Box,
   Button,
@@ -70,7 +71,6 @@ export const VendorForm = ({ data, action }: any) => {
       `${user?.firstName} ${user?.lastName}`
     );
   }, [form.values.soaHandlerBuyerId]);
-  console.log(form.values);
   const [
     addVendor,
     { isLoading: addVisLoading, isSuccess: addVisSuccess, error: addError },
@@ -96,7 +96,7 @@ export const VendorForm = ({ data, action }: any) => {
           })
         : notifications.show({
             title: "Failure",
-            message: addError?.data?.message || "Error occurs on add Vendor",
+            message: addReturn?.data?.message || "Error occurs on add Vendor",
             color: "red",
           });
     } else if (action === "update") {
@@ -110,8 +110,8 @@ export const VendorForm = ({ data, action }: any) => {
         : notifications.show({
             title: "Failure",
             message:
-              updateError?.data.message ||
-              updateError?.data.title ||
+              updateReturn?.data.message ||
+              updateReturn?.data.title ||
               "Error occurs on update Vendor",
             color: "red",
           });
@@ -307,7 +307,7 @@ export const InvoiceListForm = ({ data, vendorId, action }: any) => {
         : notifications.show({
             title: "Failure",
             message:
-              addError?.data?.message || "Error occurs on add InvoiceList",
+              addReturn?.data?.message || "Error occurs on add InvoiceList",
             color: "red",
           });
     } else if (action === "update") {
@@ -322,8 +322,8 @@ export const InvoiceListForm = ({ data, vendorId, action }: any) => {
         : notifications.show({
             title: "Failure",
             message:
-              updateError?.data.message ||
-              updateError?.data.title ||
+              updateReturn?.data.message ||
+              updateReturn?.data.title ||
               "Error occurs on update InvoiceList",
             color: "red",
           });
@@ -507,7 +507,8 @@ export const ImportInvoiceListForm = ({ vendorId }: any) => {
       vendorId: vendorId,
     },
   });
-  const attached = form.values.file && form.values.file[0]?.name;
+  const attached =
+    (form as any).values.file && (form as any).values.file[0]?.name;
 
   const [importInvoiceList, { isLoading, isSuccess, status }] =
     useImportInvoiceListMutation();
@@ -515,7 +516,7 @@ export const ImportInvoiceListForm = ({ vendorId }: any) => {
   const handleFormSubmit = async (e: any) => {
     e.preventDefault();
     const data = await importInvoiceList(form.values).unwrap();
-    console.log(data);
+
     if (data?.error.length > 0) {
       data?.error.forEach((el: any) => {
         notifications.show({
@@ -543,9 +544,9 @@ export const ImportInvoiceListForm = ({ vendorId }: any) => {
           color: "Green",
         });
       });
+      modals.closeAll();
     }
   };
-  isSuccess && modals.closeAll();
   return (
     <>
       {isLoading && <MyLoadingOverlay />}
@@ -654,7 +655,7 @@ export const BuyerRemarkForm = ({ invoiceId, message, action, id }: any) => {
         : notifications.show({
             title: "Failure",
             message:
-              addError?.data?.message || "Error occurs on add Buyer Remark",
+              addReturn?.data?.message || "Error occurs on add Buyer Remark",
             color: "red",
           });
     } else if (action === "update") {
@@ -669,8 +670,8 @@ export const BuyerRemarkForm = ({ invoiceId, message, action, id }: any) => {
         : notifications.show({
             title: "Failure",
             message:
-              updateError?.data.message ||
-              updateError?.data.title ||
+              updateReturn?.data.message ||
+              updateReturn?.data.title ||
               "Error occurs on update Buyer Remark",
             color: "red",
           });
@@ -726,7 +727,7 @@ export const FinanceRemarkForm = ({ invoiceId, message, action, id }: any) => {
         : notifications.show({
             title: "Failure",
             message:
-              addError?.data?.message || "Error occurs on add Buyer Remark",
+              addReturn?.data?.message || "Error occurs on add Buyer Remark",
             color: "red",
           });
     } else if (action === "update") {
@@ -741,8 +742,8 @@ export const FinanceRemarkForm = ({ invoiceId, message, action, id }: any) => {
         : notifications.show({
             title: "Failure",
             message:
-              updateError?.data.message ||
-              updateError?.data.title ||
+              updateReturn?.data.message ||
+              updateReturn?.data.title ||
               "Error occurs on update Buyer Remark",
             color: "red",
           });

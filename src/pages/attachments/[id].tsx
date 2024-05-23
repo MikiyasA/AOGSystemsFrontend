@@ -13,7 +13,6 @@ const OpenFiles = () => {
   const { data: attachment, error } = useGetAttachmentByIdQuery(id);
 
   const [fileUrl, setFileUrl] = useState<any>(null);
-  console.log(fileUrl);
   useEffect(() => {
     const fetchFileUrl = async () => {
       try {

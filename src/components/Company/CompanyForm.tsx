@@ -44,7 +44,7 @@ const CompanyForm = ({ data, action, closeModal }: any) => {
   const handleFormSubmit = async (e: any) => {
     e.preventDefault();
     if (action === "add") {
-      const addReturn = await addCompany(form.values);
+      const addReturn: any = await addCompany(form.values);
       if (addReturn?.data?.isSuccess) {
         route.push(`/company/detail/${addReturn?.data?.data?.id}`);
         notifications.show({
@@ -57,19 +57,18 @@ const CompanyForm = ({ data, action, closeModal }: any) => {
           title: "Failure",
           message:
             addReturn?.error?.data?.message ||
-            addError?.message ||
+            addReturn?.message ||
             "Error occurs when Company Created",
           color: "red",
         });
       }
     } else if (action === "update") {
-      const updateReturn = await updateCompany(form.values);
-      console.log(updateReturn);
+      const updateReturn: any = await updateCompany(form.values);
       updateReturn?.data?.isSuccess
         ? notifications.show({
             title: "Success",
             message:
-              updateError?.error?.data.message ||
+              updateReturn?.error?.data.message ||
               updateReturn?.message ||
               "Company update Successfully 👍",
             color: "green",
@@ -77,12 +76,12 @@ const CompanyForm = ({ data, action, closeModal }: any) => {
         : notifications.show({
             title: "Failure",
             message:
-              updateError?.data.message || "Error occurs on Company updated",
+              updateReturn?.data.message || "Error occurs on Company updated",
             color: "red",
           });
     }
   };
-  addIsSuccess && closeModal && modals.close();
+  addIsSuccess && closeModal && modals.closeAll();
   (updateIsSuccess || addIsSuccess) && modals.closeAll();
   return (
     <Box w={"100%"}>

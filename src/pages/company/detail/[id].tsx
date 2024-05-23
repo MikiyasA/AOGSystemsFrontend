@@ -11,7 +11,6 @@ import withAuth from "@/hocs/withAuth";
 
 const Detail = () => {
   const route = useRouter();
-  console.log(route?.query.id);
   const { data: company, isLoading } = useGetCompanyByIDQuery(route?.query.id);
 
   return (

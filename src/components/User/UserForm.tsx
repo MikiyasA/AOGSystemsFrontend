@@ -58,7 +58,7 @@ const UserForm = ({ data, action }: any) => {
           title: "Failure",
           message:
             updateReturn?.data.message ||
-            error?.data?.title ||
+            updateReturn?.data?.title ||
             "Error occurs on update Assignment",
           color: "red",
         });
@@ -133,7 +133,7 @@ export function RoleForm({ data }: any) {
           message:
             assignReturn?.errors[0]?.description ||
             assignReturn?.data?.message ||
-            error?.data?.title ||
+            assignReturn?.data?.title ||
             "Error occurs on Role assignment",
           color: "red",
         });
@@ -188,7 +188,7 @@ export function UnassignRoleForm({ data }: any) {
           message:
             assignReturn?.errors[0]?.description ||
             assignReturn?.data?.message ||
-            error?.data?.title ||
+            assignReturn?.data?.title ||
             "Error occurs when Role unassigned",
           color: "red",
         });
@@ -239,7 +239,7 @@ export function CreateRoleForm({ data }: any) {
           message:
             createReturn?.errors[0]?.description ||
             createReturn?.data?.message ||
-            error?.data?.title ||
+            createReturn?.data?.title ||
             "Error occurs when Role creating",
           color: "red",
         });

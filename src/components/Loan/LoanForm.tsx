@@ -65,7 +65,6 @@ const LoanForm = ({ data, action }: any) => {
       companyId: (v) => (v?.length < 1 ? "Company must be selected" : null),
     },
   });
-  console.log({ form });
   const [
     createLoan,
     { isLoading: addIsLoading, isSuccess: addIsSuccess, error: addError },
@@ -106,8 +105,8 @@ const LoanForm = ({ data, action }: any) => {
         notifications.show({
           title: "Failure",
           message:
+            createReturn?.error?.message ||
             createReturn?.message ||
-            addError?.message ||
             "Error occurs on add Part",
           color: "red",
         });
@@ -125,8 +124,8 @@ const LoanForm = ({ data, action }: any) => {
         notifications.show({
           title: "Failure",
           message:
+            updateReturn?.error?.message ||
             updateReturn?.message ||
-            addError?.message ||
             "Error occurs on add Part",
           color: "red",
         });
@@ -349,7 +348,6 @@ export const AddLineItemForm = ({ data, loanId }: any) => {
       quantity: (x: any) => (x < 1 ? "Quantity must be grater than one" : null),
     },
   });
-  console.log({ loanId });
   const {
     data: partData,
     isLoading: isLoadingPart,
@@ -370,7 +368,7 @@ export const AddLineItemForm = ({ data, loanId }: any) => {
         })
       : notifications.show({
           title: "Failure",
-          message: addError?.data.message || "Error occurs on Part List Added",
+          message: addReturn?.data.message || "Error occurs on Part List Added",
           color: "red",
         });
   };
@@ -526,7 +524,7 @@ export const EditPartLine = ({ data, invoiced }: any) => {
           title: "Failure",
           message:
             updateReturn?.message ||
-            updateError?.data.message ||
+            updateReturn?.data.message ||
             "Error occurs on Part List Updated",
           color: "red",
         });
@@ -644,7 +642,6 @@ export const EditPartLine = ({ data, invoiced }: any) => {
 };
 
 export const OfferForm = ({ data, action, loanPartListId }: any) => {
-  console.log({ data });
   const form = useForm({
     validateInputOnBlur: true,
     initialValues: {
@@ -685,14 +682,14 @@ export const OfferForm = ({ data, action, loanPartListId }: any) => {
       addReturn.isSuccess
         ? notifications.show({
             title: "Success",
-            message: addReturn?.message || "Part List addd Successfully 👍",
+            message: addReturn?.message || "Part List added Successfully 👍",
             color: "green",
           })
         : notifications.show({
             title: "Failure",
             message:
               addReturn?.message ||
-              addError?.data.message ||
+              addReturn?.data.message ||
               "Error occurs on Part List Updated",
             color: "red",
           });
@@ -709,7 +706,7 @@ export const OfferForm = ({ data, action, loanPartListId }: any) => {
             title: "Failure",
             message:
               updateReturn?.message ||
-              updateError?.data.message ||
+              updateReturn?.data.message ||
               "Error occurs on Part List Updated",
             color: "red",
           });
@@ -810,7 +807,8 @@ export const ShipSalesForm = ({ data, salesId, action }: any) => {
       : notifications.show({
           title: "Failure",
           message:
-            error?.data.message || "Error occurs on Sale Ordered Part Shipped",
+            shipReturn?.data.message ||
+            "Error occurs on Sale Ordered Part Shipped",
           color: "red",
         });
   };

@@ -51,8 +51,7 @@ const TabForm = ({ data, action }: any) => {
   const handleFormSubmit = async (e: any) => {
     e.preventDefault();
     if (action === "add") {
-      const addReturn = await addFpTab(form.values);
-      console.log("addReturn", addReturn);
+      const addReturn: any = await addFpTab(form.values);
       addReturn?.data?.isSuccess
         ? notifications.show({
             title: "Success",
@@ -65,17 +64,17 @@ const TabForm = ({ data, action }: any) => {
             message:
               addReturn?.error?.data?.message ||
               addReturn?.message ||
-              addError?.data?.message ||
+              (addError as any)?.data?.message ||
               "Error occurs on add Followup Tab",
             color: "red",
           });
     } else if (action === "update") {
-      const updateReturn = await updateFpTab(form.values).unwrap();
-      updateReturn?.isSuccess
+      const updateReturn: any = await updateFpTab(form.values);
+      updateReturn?.data?.isSuccess
         ? notifications.show({
             title: "Success",
             message:
-              updateReturn?.message || "Followup Tab Add Successfully 👍",
+              updateReturn?.data?.message || "Followup Tab Add Successfully 👍",
             color: "green",
           })
         : notifications.show({
@@ -83,14 +82,15 @@ const TabForm = ({ data, action }: any) => {
             message:
               updateReturn?.error?.data?.message ||
               updateReturn?.message ||
-              updateError?.data.message ||
+              (updateError as any)?.data.message ||
               "Error occurs on add Followup Tab",
             color: "red",
           });
     }
   };
+
   (isFpTabSuccess || isUpFpTabSuccess) && modals.closeAll();
-  useEffect(() => {}, [isFpTabSuccess, isUpFpTabSuccess]);
+
   return (
     <Box>
       {isFpTabLoading || (isUpFpTabLoading && <MyLoadingOverlay />)}

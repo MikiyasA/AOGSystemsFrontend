@@ -39,7 +39,9 @@ const Assignment = ({ data }: any) => {
     .map(
       (key) =>
         form.values[key] &&
-        `${encodeURIComponent(key)}=${encodeURIComponent(form.values[key])}`
+        `${encodeURIComponent(key)}=${encodeURIComponent(
+          (form as any).values[key]
+        )}`
     )
     .join("&");
 
@@ -101,7 +103,7 @@ const Assignment = ({ data }: any) => {
               <AssignmentTable
                 data={myAssignment}
                 table={assignmentTable}
-                tableTitle="Active Assignment"
+                tableTitle="My Assignment"
                 isActive
               />
             </Box>

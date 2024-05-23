@@ -10,6 +10,7 @@ Component_Role = [
   { "Add Assignment": ["TL"] },
   { "See My & Active Assignment": ["Coordinator", "TL"] },
   { "See All Assignment": ["TL"] },
+  { "Update Assignment": ["Coordinator", "TL"] },
   { "Start Assignment": ["Coordinator", "TL"] },
   { "Reassign Assignment": ["Coordinator", "TL"] },
   { "Finish Assignment": ["Coordinator", "TL"] },

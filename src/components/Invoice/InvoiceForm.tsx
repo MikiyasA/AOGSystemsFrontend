@@ -24,7 +24,6 @@ import { modals } from "@mantine/modals";
 import { IconFilterSearch } from "@tabler/icons-react";
 
 const InvoiceForm = ({ data, action, partData, orderType }: any) => {
-  console.log({ data });
   const charOrderNo = data?.orderNo?.charAt(0);
   const transactionType =
     charOrderNo === "S" ? "Sales" : charOrderNo === "L" ? "Loan" : null;
@@ -37,7 +36,7 @@ const InvoiceForm = ({ data, action, partData, orderType }: any) => {
       loanOrderId: loanOrderId,
       transactionType,
       remark: data?.remark,
-      partLists: [],
+      partLists: [] as { id?: any }[],
     },
     validate: {
       partLists: (x) =>
@@ -65,8 +64,7 @@ const InvoiceForm = ({ data, action, partData, orderType }: any) => {
   const handleFormSubmit = async (e: any) => {
     e.preventDefault();
     if (action === "add") {
-      const addReturn = await createInvoice(form.values);
-      console.log({ addReturn });
+      const addReturn: any = await createInvoice(form.values);
       addReturn?.data?.isSuccess
         ? notifications.show({
             title: "Success",
@@ -77,12 +75,12 @@ const InvoiceForm = ({ data, action, partData, orderType }: any) => {
             title: "Failure",
             message:
               addReturn?.error?.data?.message ||
-              createError?.data.message ||
+              addReturn?.data.message ||
               "Error occurs on Invoice Added",
             color: "red",
           });
     } else if (action === "update") {
-      const updateReturn = await updateInvoice(form.values).unwrap();
+      const updateReturn: any = await updateInvoice(form.values).unwrap();
       updateReturn.isSuccess
         ? notifications.show({
             title: "Success",
@@ -92,7 +90,7 @@ const InvoiceForm = ({ data, action, partData, orderType }: any) => {
         : notifications.show({
             title: "Failure",
             message:
-              updateError?.data.message || "Error occurs on update Invoice",
+              updateReturn?.data.message || "Error occurs on update Invoice",
             color: "red",
           });
     }
@@ -308,7 +306,7 @@ export const UpdateInvoiceForm = ({ data }: any) => {
       : notifications.show({
           title: "Failure",
           message:
-            updateError?.data.message || "Error occurs on update Invoice",
+            updateReturn?.data.message || "Error occurs on update Invoice",
           color: "red",
         });
   };

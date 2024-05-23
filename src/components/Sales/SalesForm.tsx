@@ -98,7 +98,7 @@ const SalesForm = ({ data, action }: any) => {
       } else {
         notifications.show({
           title: "Failure",
-          message: addError?.message || "Error occurs on add Part",
+          message: addReturn?.message || "Error occurs on add Part",
           color: "red",
         });
       }
@@ -113,7 +113,7 @@ const SalesForm = ({ data, action }: any) => {
           })
         : notifications.show({
             title: "Failure",
-            message: updateError?.data.message || "Error occurs on add Part",
+            message: updateReturn?.data.message || "Error occurs on add Part",
             color: "red",
           });
     }
@@ -338,7 +338,7 @@ export const LineItemForm = ({ data, salesId, action }: any) => {
         : notifications.show({
             title: "Failure",
             message:
-              addError?.data.message || "Error occurs on Part List Added",
+              addReturn?.data.message || "Error occurs on Part List Added",
             color: "red",
           });
     } else if (action === "update") {
@@ -353,7 +353,7 @@ export const LineItemForm = ({ data, salesId, action }: any) => {
         : notifications.show({
             title: "Failure",
             message:
-              updateError?.data.message || "Error occurs on update Part List",
+              updateReturn?.data.message || "Error occurs on update Part List",
             color: "red",
           });
     }
@@ -493,7 +493,8 @@ export const ShipSalesForm = ({ data, salesId, action }: any) => {
       : notifications.show({
           title: "Failure",
           message:
-            error?.data.message || "Error occurs on Sale Ordered Part Shipped",
+            shipReturn?.data.message ||
+            "Error occurs on Sale Ordered Part Shipped",
           color: "red",
         });
   };

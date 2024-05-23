@@ -90,7 +90,7 @@ const Navbar = () => {
   }, [router.pathname]);
 
   const items = links.map((link) => {
-    const user = session?.user;
+    const user: any = session?.user;
     const flattenedRoles = user?.role?.flat();
     const allowedRoles = link.role;
     !flattenedRoles?.includes("All") && flattenedRoles?.push("All");

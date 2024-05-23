@@ -23,6 +23,7 @@ import { modals } from "@mantine/modals";
 import { useEffect } from "react";
 import MyLoadingOverlay from "../MyLoadingOverlay";
 import { IconFilterSearch } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
 
 const FollowUpForm = ({ tab }: any) => {
   const form = useForm({
@@ -46,7 +47,7 @@ const FollowUpForm = ({ tab }: any) => {
       quantity: 1,
       uom: "EA",
       vendor: "",
-      edd: null,
+      edd: null as Date | null,
       status: "Request Received",
       awbNo: "",
       flightNo: "",
@@ -71,9 +72,22 @@ const FollowUpForm = ({ tab }: any) => {
     },
   ] = useAddFollowUpMutation();
 
-  const handleFormSubmit = (e: any) => {
+  const handleFormSubmit = async (e: any) => {
     e.preventDefault();
-    addFollowup(form.values);
+    const addReturnData = await addFollowup(form.values).unwrap();
+    addReturnData.isSuccess
+      ? notifications.show({
+          title: "Success",
+          message: addReturnData?.message || "Followup added Successfully 👍",
+          color: "green",
+        })
+      : notifications.show({
+          title: "Failure",
+          message:
+            (upFperror as any)?.data.message ||
+            "Error occurs when followup added",
+          color: "red",
+        });
   };
   useEffect(() => {
     isFpSuccess && modals.closeAll();
@@ -165,7 +179,7 @@ const FollowUpForm = ({ tab }: any) => {
             label="Description"
             placeholder="Description"
             {...form.getInputProps("description")}
-            required={form.values.partNumber}
+            required={form.values.partNumber != null}
           />
           <TextInput
             label="Stock No"
@@ -201,7 +215,7 @@ const FollowUpForm = ({ tab }: any) => {
             searchable
             nothingFoundMessage="Nothing found..."
             {...form.getInputProps("orderType")}
-            required={form.values.poNumber}
+            required={form.values.poNumber != null}
           />
           <Group justify="space-between">
             <NumberInput
@@ -233,7 +247,7 @@ const FollowUpForm = ({ tab }: any) => {
             label="Vendor"
             placeholder="Vendor"
             {...form.getInputProps("vendor")}
-            required={form.values.poNumber}
+            required={form.values.poNumber != null}
           />
           <DateInput
             label="EDD"

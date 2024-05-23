@@ -62,7 +62,9 @@ export const SOADetail = ({}: any) => {
     .map(
       (key) =>
         form.values[key] &&
-        `${encodeURIComponent(key)}=${encodeURIComponent(form.values[key])}`
+        `${encodeURIComponent(key)}=${encodeURIComponent(
+          (form as any).values[key]
+        )}`
     )
     .join("&");
 

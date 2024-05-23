@@ -47,8 +47,7 @@ const PartForm = ({ data, action, redirect }: any) => {
   const handleFormSubmit = async (e: any) => {
     e.preventDefault();
     if (action === "add") {
-      const addReturn = await addPart(form.values);
-      console.log({ addReturn });
+      const addReturn: any = await addPart(form.values);
       if (addReturn?.data?.isSuccess) {
         route.push(`/part/detail/${addReturn.data.id}`);
         notifications.show({
@@ -62,7 +61,7 @@ const PartForm = ({ data, action, redirect }: any) => {
           message:
             addReturn?.error?.data?.message ||
             addReturn?.message ||
-            addError?.data?.message ||
+            addReturn?.data?.message ||
             "Error occurs on add Part",
           color: "red",
         });
@@ -72,7 +71,7 @@ const PartForm = ({ data, action, redirect }: any) => {
           title: "Failure",
           message:
             addReturn?.message ||
-            addError?.data?.message ||
+            addReturn?.data?.message ||
             "Error occurs on add Part",
           color: "red",
         });
@@ -80,8 +79,7 @@ const PartForm = ({ data, action, redirect }: any) => {
         redirect &&
         route.push(`${FE_LINK}part/detail/${addReturn?.data.partNumber}`);
     } else if (action === "update") {
-      const updateReturn = await updatePart(form.values);
-      console.log(updateReturn);
+      const updateReturn: any = await updatePart(form.values);
       updateReturn?.data.isSuccess
         ? notifications.show({
             title: "Success",
@@ -91,8 +89,8 @@ const PartForm = ({ data, action, redirect }: any) => {
         : notifications.show({
             title: "Failure",
             message:
-              updateError?.error?.data.message ||
-              updateError?.data.message ||
+              updateReturn?.error?.data.message ||
+              updateReturn?.data.message ||
               "Error occurs on add Part",
             color: "red",
           });

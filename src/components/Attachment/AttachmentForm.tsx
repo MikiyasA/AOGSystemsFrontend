@@ -26,7 +26,6 @@ export const AttachmentForm = ({
   action,
   modalId,
 }: any) => {
-  console.log({ modalId });
   const form = useForm({
     initialValues: {
       file: file,
@@ -39,7 +38,6 @@ export const AttachmentForm = ({
     form.values.file && form.values.file.length > 0
       ? form.values.file[0].name
       : null;
-  console.log(form.values);
   const [
     addAttachment,
     { isLoading: addLoading, isSuccess: addSuccess, error: addError },
@@ -52,8 +50,7 @@ export const AttachmentForm = ({
   const handleFormSubmit = async (e: any) => {
     e.preventDefault();
     if (action === "add") {
-      const addReturn = await addAttachment(form.values);
-      console.log({ addReturn });
+      const addReturn: any = await addAttachment(form.values);
       addReturn?.data?.attachmentId
         ? notifications.show({
             title: "Success",
@@ -63,7 +60,7 @@ export const AttachmentForm = ({
         : notifications.show({
             title: "Failure",
             message:
-              addError?.data?.message || "Error occurs on add Assignment",
+              addReturn?.data?.message || "Error occurs on add Assignment",
             color: "red",
           });
     } else if (action === "update") {
@@ -78,8 +75,8 @@ export const AttachmentForm = ({
         : notifications.show({
             title: "Failure",
             message:
-              updateReturn?.data?.message ||
-              updateError?.data?.title ||
+              updateReturn?.data?.error.message ||
+              updateReturn?.data?.title ||
               "Error occurs on update Assignment",
             color: "red",
           });

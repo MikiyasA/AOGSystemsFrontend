@@ -87,7 +87,7 @@ const CostSavingForm = ({ data, action }: any) => {
   const handleFormSubmit = async (e: any) => {
     e.preventDefault();
     if (action === "add") {
-      const addReturn = await addCostSaving(form.values).unwrap();
+      const addReturn: any = await addCostSaving(form.values).unwrap();
       addReturn?.isSuccess
         ? notifications.show({
             title: "Success",
@@ -97,7 +97,7 @@ const CostSavingForm = ({ data, action }: any) => {
         : notifications.show({
             title: "Failure",
             message:
-              addError?.data?.message || "Error occurs on add CostSaving",
+              addReturn?.data?.message || "Error occurs on add CostSaving",
             color: "red",
           });
     } else if (action === "update") {
@@ -111,8 +111,8 @@ const CostSavingForm = ({ data, action }: any) => {
         : notifications.show({
             title: "Failure",
             message:
-              updateError?.data.message ||
-              updateError?.data.title ||
+              updateReturn?.data.message ||
+              updateReturn?.data.title ||
               "Error occurs on update CostSaving",
             color: "red",
           });

@@ -30,7 +30,7 @@ export const hasValue = (value: any) => {
 }
 
 export const getUserNameById = (users: any, id: any) => {
-  
+
   // Find the user with the matching ID
   const user = users?.find((user: any) => user.id === id);
 
@@ -45,31 +45,31 @@ export const camelToAllCapital = (str: string) => {
 };
 
 export const downloadFile = async (attachmentId: any, fileName: any, fileType: any) => {
-  const session = await getSession();
-    await fetch(`${API_URL}/Attachment/DownloadAttachment/${attachmentId}`, {
-      headers: {
-        Authorization: `Bearer ${session?.token}`,
-      },
+  const session: any = await getSession();
+  await fetch(`${API_URL}/Attachment/DownloadAttachment/${attachmentId}`, {
+    headers: {
+      Authorization: `Bearer ${session?.token}`,
+    },
+  })
+    .then((res) => {
+      if (!res.ok) {
+        modals.open({
+          title: "Error on Downloading File",
+          size: "40%",
+        });
+        throw new Error(`${res.statusText}`);
+      }
+      return res.blob();
     })
-      .then((res) => {
-        if (!res.ok) {
-          modals.open({
-            title: "Error on Downloading File",
-            size: "40%",
-          });
-          throw new Error(`${res.statusText}`);
-        }
-        return res.blob();
-      })
-      .then((blob) => {
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = `${fileName}${fileType}`;
-        link.click();
-        URL.revokeObjectURL(url);
-      })
-      .catch((error) => {
-        console.error("Error exporting to Excel:", error);
-      });
-    }
+    .then((blob) => {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${fileName}${fileType}`;
+      link.click();
+      URL.revokeObjectURL(url);
+    })
+    .catch((error) => {
+      console.error("Error exporting to Excel:", error);
+    });
+}

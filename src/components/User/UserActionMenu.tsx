@@ -6,7 +6,7 @@ import { useGetUserByUsernameQuery } from "@/pages/api/apiSlice";
 import MyLoadingOverlay from "../MyLoadingOverlay";
 
 const UserActionMenu = () => {
-  const session = useSession();
+  const session: any = useSession();
   const { data: userData, isLoading } = useGetUserByUsernameQuery(
     session?.data?.user?.username
   );

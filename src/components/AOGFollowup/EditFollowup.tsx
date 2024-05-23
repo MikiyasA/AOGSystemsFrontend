@@ -86,7 +86,6 @@ const EditFollowup = ({ data, tab }: any) => {
       // requestDate: (v) => (v === null ? 'Request Date is mandatory' : null)
     },
   });
-  console.log(form.values);
   const remarkForm = useForm({
     initialValues: {
       aogFollowUpId: data.id,
@@ -94,39 +93,33 @@ const EditFollowup = ({ data, tab }: any) => {
     },
   });
 
-  const [
-    updateFollowup,
-    {
-      isSuccess: isFpSuccess,
-      isError,
-      error: upFperror,
-      isLoading: isFpLoading,
-    },
-  ] = useUpdateFollowupMutation();
+  const [updateFollowup, { isSuccess: isFpSuccess, isLoading: isFpLoading }] =
+    useUpdateFollowupMutation();
   const [addRemark, { isLoading }] = useAddRemarkMutation();
 
   const handleFormSubmit = async (e: any) => {
     e.preventDefault();
     remarkForm.values.message !== data.remarks[0]?.message &&
       addRemark(remarkForm.values);
-    const { data: updateReturnData }: any = await updateFollowup(form.values);
-    updateReturnData?.isSuccess
+    const updateReturnData: any = await updateFollowup(form.values);
+    updateReturnData?.data?.isSuccess
       ? notifications.show({
           title: "Success",
           message:
-            updateReturnData?.message || "Followup updated Successfully 👍",
+            updateReturnData?.data?.message ||
+            "Followup updated Successfully 👍",
           color: "green",
         })
       : notifications.show({
           title: "Failure",
           message:
-            upFperror?.data.message || "Error occure on followup updated",
+            updateReturnData?.data?.error?.message ||
+            "Error occure on followup updated",
           color: "red",
         });
   };
-  useEffect(() => {
-    isFpSuccess && modals.closeAll();
-  }, [isFpSuccess]);
+  isFpSuccess && modals.closeAll();
+
   useEffect(() => {
     remarkForm.setFieldValue(
       "message",

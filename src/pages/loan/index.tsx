@@ -32,7 +32,9 @@ const Sales = () => {
     .map(
       (key) =>
         form.values[key] &&
-        `${encodeURIComponent(key)}=${encodeURIComponent(form.values[key])}`
+        `${encodeURIComponent(key)}=${encodeURIComponent(
+          (form as any).values[key]
+        )}`
     )
     .join("&");
 
@@ -97,6 +99,7 @@ const Sales = () => {
                   data={allLoans?.data}
                   table={loanTable}
                   tableTitle="All Loan Orders"
+                  ao
                   metadata={allLoans?.metadata}
                   form={form}
                 />

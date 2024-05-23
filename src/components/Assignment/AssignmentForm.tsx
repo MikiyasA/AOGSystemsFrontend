@@ -53,7 +53,7 @@ const AssignmentForm = ({ data, action }: any) => {
   useEffect(() => {
     form.setFieldValue(
       "status",
-      data.status === undefined ? "Created" : data.status
+      data?.status === undefined ? "Created" : data?.status
     );
   }, []);
   const editor = useEditor({
@@ -68,7 +68,7 @@ const AssignmentForm = ({ data, action }: any) => {
       TextStyle,
       Color,
     ],
-    content: data.description,
+    content: data?.description,
     onUpdate({ editor }) {
       form.setValues({ description: editor.getHTML() });
     },
@@ -86,8 +86,8 @@ const AssignmentForm = ({ data, action }: any) => {
   const handleFormSubmit = async (e: any) => {
     e.preventDefault();
     if (action === "add") {
-      const { data: addReturn }: any = await addAssignment(form.values);
-      addReturn?.isSuccess
+      const addReturn: any = await addAssignment(form.values);
+      addReturn?.data?.isSuccess
         ? notifications.show({
             title: "Success",
             message: addReturn?.message || "Assignment Add Successfully 👍",
@@ -96,26 +96,26 @@ const AssignmentForm = ({ data, action }: any) => {
         : notifications.show({
             title: "Failure",
             message:
-              addError?.data?.message ||
-              addError?.data?.errors?.Description[0] ||
-              addError?.data?.title ||
+              addReturn?.data?.message ||
+              addReturn?.data?.errors?.Description[0] ||
               "Error occurs on add Assignment",
             color: "red",
           });
     } else if (action === "update") {
-      const { data: updateReturn }: any = await updateAssignment(form.values);
-      updateReturn?.isSuccess
+      const updateReturn: any = await updateAssignment(form.values);
+      updateReturn?.data?.isSuccess
         ? notifications.show({
             title: "Success",
             message:
-              updateReturn?.message || "Assignment updated Successfully 👍",
+              updateReturn?.data?.message ||
+              "Assignment updated Successfully 👍",
             color: "green",
           })
         : notifications.show({
             title: "Failure",
             message:
-              updateError?.data.message ||
-              updateError?.data.title ||
+              updateReturn?.data?.error?.message ||
+              updateReturn?.data.title ||
               "Error occurs on update Assignment",
             color: "red",
           });
@@ -313,12 +313,13 @@ export const ReassignForm = ({ data, users }: any) => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    const { data: reassignReturn }: any = await reassignAssignment(form.values);
-    reassignReturn?.succeeded
+    const reassignReturn: any = await reassignAssignment(form.values);
+    reassignReturn?.data?.succeeded
       ? notifications.show({
           title: "Success",
           message:
-            reassignReturn?.message || "Assignment reassigned  Successfully 👍",
+            reassignReturn?.data?.message ||
+            "Assignment reassigned  Successfully 👍",
           color: "green",
         })
       : notifications.show({

@@ -44,7 +44,6 @@ const FollowupDetail = ({ data, detailData }: any) => {
                     </Table.Thead>
                     <Table.Tbody>
                       {data[d.key].map((r: any, i: any) => {
-                        // console.log({ r });
                         const today = new Date().getTime();
                         const updatedTime = r.updatedBy
                           ? new Date(r.updatedBy).getTime()

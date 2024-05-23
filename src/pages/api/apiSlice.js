@@ -702,7 +702,6 @@ export const apiSlice = createApi({
       async queryFn(data) {
         const session = await getSession();
         const formData = new FormData();
-        console.log({ data });
         formData.append("fileName", data.fileName);
         formData.append("entityType", data.entityType);
         formData.append("entityId", data.entityId);

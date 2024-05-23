@@ -17,10 +17,6 @@ const SearchCompany = () => {
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
   const [searchBy, setSearchBy] = useState("Name");
-  console.log({ code });
-  console.log({ name });
-  console.log({ searchBy });
-  console.log({ companies });
 
   const {
     data: codeData,

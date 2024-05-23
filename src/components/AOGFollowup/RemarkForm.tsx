@@ -19,7 +19,6 @@ const RemarkForm = ({ remark, aOGFollowUpId, id, action }: any) => {
       message: remark,
     },
   });
-  console.log({ aOGFollowUpId });
   const [
     addRemark,
     { isLoading: addLoading, isSuccess: addSuccess, error: addError },
@@ -32,7 +31,7 @@ const RemarkForm = ({ remark, aOGFollowUpId, id, action }: any) => {
   const handleFormSubmit = async (e: any) => {
     e.preventDefault();
     if (action === "add") {
-      const { data: addReturn }: any = await addRemark(form.values);
+      const addReturn: any = await addRemark(form.values);
       addReturn?.isSuccess
         ? notifications.show({
             title: "Success",
@@ -42,14 +41,14 @@ const RemarkForm = ({ remark, aOGFollowUpId, id, action }: any) => {
         : notifications.show({
             title: "Failure",
             message:
-              addError?.data?.message ||
-              addError?.data?.errors?.Description[0] ||
-              addError?.data?.title ||
+              addReturn?.data?.message ||
+              addReturn?.data?.errors?.Description[0] ||
+              addReturn?.data?.title ||
               "Error occurs on add Remark",
             color: "red",
           });
     } else if (action === "update") {
-      const { data: updateReturn }: any = await updateRemark(form.values);
+      const updateReturn: any = await updateRemark(form.values);
       updateReturn?.isSuccess
         ? notifications.show({
             title: "Success",
@@ -59,8 +58,8 @@ const RemarkForm = ({ remark, aOGFollowUpId, id, action }: any) => {
         : notifications.show({
             title: "Failure",
             message:
-              updateError?.data.message ||
-              updateError?.data.title ||
+              updateReturn?.data?.error.message ||
+              updateReturn?.data?.title ||
               "Error occurs on update Remark",
             color: "red",
           });

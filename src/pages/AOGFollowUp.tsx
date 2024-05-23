@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { Inter } from "next/font/google";
 import Layout from "@/hocs/Layout";
 import { FollowupTable } from "@/components/AOGFollowup/FollowupTable";
 import {
@@ -27,8 +26,6 @@ import { useForm } from "@mantine/form";
 import { getSession } from "next-auth/react";
 import withAuth from "@/hocs/withAuth";
 import WithComponentAuth from "../hocs/WithComponentAuth";
-
-const inter = Inter({ subsets: ["latin"] });
 
 const AOGFollowUp = () => {
   var { data, isSuccess, isLoading } = useGetAllActiveFollowUpsQuery("");
@@ -89,7 +86,7 @@ const AOGFollowUp = () => {
   } = useGetAllActiveFollowUpsTabsQuery("");
 
   const handleExport = async () => {
-    const session = await getSession();
+    const session: any = await getSession();
     await fetch(`${API_URL}/AOGFollowUp/ExportAOGFPTOExcel`, {
       headers: {
         Authorization: `Bearer ${session?.token}`,
@@ -137,7 +134,9 @@ const AOGFollowUp = () => {
     .map(
       (key) =>
         form.values[key] &&
-        `${encodeURIComponent(key)}=${encodeURIComponent(form.values[key])}`
+        `${encodeURIComponent(key)}=${encodeURIComponent(
+          (form as any).values[key]
+        )}`
     )
     .join("&");
 

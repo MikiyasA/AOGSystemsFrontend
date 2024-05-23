@@ -93,7 +93,7 @@ const CoreForm = ({ data, action }: any) => {
   const handleFormSubmit = async (e: any) => {
     e.preventDefault();
     if (action === "add") {
-      const addReturn = await addCoreFollowup(form.values).unwrap();
+      const addReturn: any = await addCoreFollowup(form.values).unwrap();
       addReturn.isSuccess
         ? notifications.show({
             title: "Success",
@@ -103,7 +103,8 @@ const CoreForm = ({ data, action }: any) => {
         : notifications.show({
             title: "Failure",
             message:
-              addError?.data?.message || "Error occurs on add Core Followup",
+              addReturn?.data?.error.message ||
+              "Error occurs on add Core Followup",
             color: "red",
           });
     } else if (action === "update") {
@@ -118,8 +119,8 @@ const CoreForm = ({ data, action }: any) => {
         : notifications.show({
             title: "Failure",
             message:
-              updateError?.data.message ||
-              updateError?.data.title ||
+              updateReturn?.data.error.message ||
+              updateReturn?.data.title ||
               "Error occurs on update Core Followup",
             color: "red",
           });
