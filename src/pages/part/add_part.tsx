@@ -14,7 +14,7 @@ const AddPart = () => {
           width: "80%",
         }}
       >
-        <PartForm action="add" />
+        <PartForm action="add" redirect />
       </Center>
     </Layout>
   );

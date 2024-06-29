@@ -30,19 +30,15 @@ export default function Login() {
       username: "",
       password: "",
     },
-    // validate:
+    validate: {
+      username: (value) => {
+        if (value?.includes(" ")) {
+          return "Vendor Code cannot contain spaces";
+        }
+      },
+    },
   });
 
-  const initialData = {
-    token: "",
-    user: {
-      username: "",
-      fullName: "",
-      userId: "",
-      email: "",
-    },
-    role: [],
-  };
   const [errorMessage, setErrorMessage] = useState("");
 
   const router = useRouter();
@@ -61,8 +57,8 @@ export default function Login() {
     });
     if (result?.ok) router.push(callbackUrl);
     if (result?.error) setErrorMessage(result?.error);
+    console.log(result);
   };
-
   return (
     <Container size={420} my={40}>
       <Title ta="center" className={classes.title}>
@@ -95,7 +91,7 @@ export default function Login() {
               Forgot password?
             </Anchor>
           </Group>
-          <Button fullWidth mt="xl" type="submit">
+          <Button fullWidth mt="xl" type="submit" disabled={!form.isValid()}>
             Sign in
           </Button>
           {errorMessage && <Text color="red">{errorMessage}</Text>}

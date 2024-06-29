@@ -100,7 +100,13 @@ const UserForm = ({ data, action }: any) => {
             required
             {...form.getInputProps("phoneNumber")}
           />
-          <Button fullWidth mt="xl" type="submit" loading={isLoading}>
+          <Button
+            fullWidth
+            mt="xl"
+            type="submit"
+            loading={isLoading}
+            disabled={!form.isValid()}
+          >
             {action == "update" ? "Update" : "Register"}
           </Button>
         </SimpleGrid>
@@ -156,7 +162,13 @@ export function RoleForm({ data }: any) {
           {...form.getInputProps("role")}
           required
         />
-        <Button fullWidth mt="xl" type="submit" loading={isLoading}>
+        <Button
+          fullWidth
+          mt="xl"
+          type="submit"
+          loading={isLoading}
+          disabled={!form.isValid()}
+        >
           Assign
         </Button>
       </form>
@@ -209,7 +221,13 @@ export function UnassignRoleForm({ data }: any) {
           {...form.getInputProps("role")}
           required
         />
-        <Button fullWidth mt="xl" type="submit" loading={isLoading}>
+        <Button
+          fullWidth
+          mt="xl"
+          type="submit"
+          loading={isLoading}
+          disabled={!form.isValid()}
+        >
           Unassign
         </Button>
       </form>
@@ -257,7 +275,13 @@ export function CreateRoleForm({ data }: any) {
           required
           {...form.getInputProps("role")}
         />
-        <Button fullWidth mt="xl" type="submit" loading={isLoading}>
+        <Button
+          fullWidth
+          mt="xl"
+          type="submit"
+          loading={isLoading}
+          disabled={!form.isValid()}
+        >
           Create Role
         </Button>
       </form>

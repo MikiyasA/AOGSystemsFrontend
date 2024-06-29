@@ -179,7 +179,7 @@ const FollowUpForm = ({ tab }: any) => {
             label="Description"
             placeholder="Description"
             {...form.getInputProps("description")}
-            required={form.values.partNumber != null}
+            required={form.values.partNumber != ""}
           />
           <TextInput
             label="Stock No"
@@ -215,7 +215,7 @@ const FollowUpForm = ({ tab }: any) => {
             searchable
             nothingFoundMessage="Nothing found..."
             {...form.getInputProps("orderType")}
-            required={form.values.poNumber != null}
+            required={form.values.poNumber != ""}
           />
           <Group justify="space-between">
             <NumberInput
@@ -247,7 +247,7 @@ const FollowUpForm = ({ tab }: any) => {
             label="Vendor"
             placeholder="Vendor"
             {...form.getInputProps("vendor")}
-            required={form.values.poNumber != null}
+            required={form.values.poNumber != ""}
           />
           <DateInput
             label="EDD"
@@ -307,7 +307,12 @@ const FollowUpForm = ({ tab }: any) => {
             />
           </Group>
         </SimpleGrid>
-        <Button type="submit" mt="sm" loading={isFpLoading}>
+        <Button
+          type="submit"
+          mt="sm"
+          loading={isFpLoading}
+          disabled={!form.isValid()}
+        >
           {" "}
           Submit
         </Button>
@@ -485,7 +490,12 @@ export const FollowupFilterForm = ({ form, handleSubmit, isLoading }: any) => {
                 />
               </SimpleGrid>
             </Box>
-            <Button type="submit" mt="sm" loading={isLoading}>
+            <Button
+              type="submit"
+              mt="sm"
+              loading={isLoading}
+              disabled={!form.isValid()}
+            >
               {" "}
               Filter
             </Button>

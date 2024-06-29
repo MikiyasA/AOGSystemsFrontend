@@ -69,7 +69,7 @@ const AssignmentDetail = ({ data, detailData }: any) => {
             onClick={() => {
               modals.open({
                 title: "Update Assignment",
-                size: "90%",
+                size: "100%",
                 children: <AssignmentForm data={data} action="update" />,
               });
             }}

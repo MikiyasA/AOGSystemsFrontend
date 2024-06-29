@@ -136,16 +136,19 @@ export const VendorForm = ({ data, action }: any) => {
             label="Vendor Name"
             placeholder="Vendor Name"
             {...form.getInputProps("vendorName")}
+            required
           />
           <TextInput
             label="Vendor Code"
             placeholder="Vendor Code"
             {...form.getInputProps("vendorCode")}
+            required
           />
           <TextInput
             label="Address"
             placeholder="Address"
             {...form.getInputProps("address")}
+            required
           />
           <TextInput
             label="Vendor Account Manager Name"
@@ -211,11 +214,12 @@ export const VendorForm = ({ data, action }: any) => {
               })
             }
             error={form.errors.certificateExpiryDate}
+            required
             clearable
           />
           <DateInput
-            label="Assessment Date"
-            placeholder="Assessment Date"
+            label="Next Assessment Date"
+            placeholder="Next Assessment Date"
             defaultValue={new Date()}
             value={
               form.values.assessmentDate
@@ -226,6 +230,7 @@ export const VendorForm = ({ data, action }: any) => {
               form.setValues({ assessmentDate: e && new Date(e?.toString()) })
             }
             error={form.errors.assessmentDate}
+            required
             clearable
           />
 
@@ -249,6 +254,7 @@ export const VendorForm = ({ data, action }: any) => {
           type="submit"
           mt="sm"
           loading={addVisLoading || updateVisLoading}
+          disabled={!form.isValid()}
         >
           {" "}
           Submit
@@ -347,11 +353,13 @@ export const InvoiceListForm = ({ data, vendorId, action }: any) => {
             label="Invoice No"
             placeholder="Invoice No"
             {...form.getInputProps("invoiceNo")}
+            required
           />
           <TextInput
             label="PO No"
             placeholder="PO No"
             {...form.getInputProps("poNo")}
+            required
           />
           <DateInput
             label="Invoice Date"
@@ -367,6 +375,7 @@ export const InvoiceListForm = ({ data, vendorId, action }: any) => {
             }
             error={form.errors.invoiceDate}
             clearable
+            required
           />
           <DateInput
             label="Due Date"
@@ -459,6 +468,7 @@ export const InvoiceListForm = ({ data, vendorId, action }: any) => {
             label="Buyer Name"
             placeholder="Buyer Name"
             {...form.getInputProps("buyerName")}
+            required
           />
           <TextInput
             label="TL Name"
@@ -492,6 +502,7 @@ export const InvoiceListForm = ({ data, vendorId, action }: any) => {
           type="submit"
           mt="sm"
           loading={addILisLoading || updateILisLoading}
+          disabled={!form.isValid()}
         >
           {" "}
           Submit
@@ -616,7 +627,12 @@ export const ImportInvoiceListForm = ({ vendorId }: any) => {
             </Box>
           </Group>
         </Dropzone>
-        <Button type="submit" mt="sm" loading={isLoading}>
+        <Button
+          type="submit"
+          mt="sm"
+          loading={isLoading}
+          disabled={!form.isValid()}
+        >
           {" "}
           Submit
         </Button>
@@ -687,8 +703,14 @@ export const BuyerRemarkForm = ({ invoiceId, message, action, id }: any) => {
           label="Message"
           placeholder="Message"
           {...form.getInputProps("message")}
+          required
         />
-        <Button type="submit" mt="sm" loading={addLoading || updateLoading}>
+        <Button
+          type="submit"
+          mt="sm"
+          loading={addLoading || updateLoading}
+          disabled={!form.isValid()}
+        >
           {" "}
           Submit
         </Button>
@@ -759,8 +781,14 @@ export const FinanceRemarkForm = ({ invoiceId, message, action, id }: any) => {
           label="Message"
           placeholder="Message"
           {...form.getInputProps("message")}
+          required
         />
-        <Button type="submit" mt="sm" loading={addLoading || updateLoading}>
+        <Button
+          type="submit"
+          mt="sm"
+          loading={addLoading || updateLoading}
+          disabled={!form.isValid()}
+        >
           {" "}
           Submit
         </Button>
@@ -969,7 +997,12 @@ export const InvoiceListFilterForm = ({
                 />
               </SimpleGrid>
             </Box>
-            <Button type="submit" mt="sm" loading={isLoading}>
+            <Button
+              type="submit"
+              mt="sm"
+              loading={isLoading}
+              disabled={!form.isValid()}
+            >
               {" "}
               Filter
             </Button>
@@ -1074,7 +1107,12 @@ export const VendorFilterForm = ({ form, handleSubmit, isLoading }: any) => {
                 />
               </SimpleGrid>
             </Box>
-            <Button type="submit" mt="sm" loading={isLoading}>
+            <Button
+              type="submit"
+              mt="sm"
+              loading={isLoading}
+              disabled={!form.isValid()}
+            >
               {" "}
               Filter
             </Button>

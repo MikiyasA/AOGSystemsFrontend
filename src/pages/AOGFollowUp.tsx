@@ -160,10 +160,10 @@ const AOGFollowUp = () => {
         style={{
           placeContent: "center",
           flexDirection: "column",
-          width: "100%",
         }}
+        m={30}
       >
-        <Tabs defaultValue="Main Follow-up" color="green">
+        <Tabs defaultValue="Main Follow-up" color="green" w={"100%"}>
           {tabIsSuccess && (
             <Tabs.List>
               <Tabs.Tab

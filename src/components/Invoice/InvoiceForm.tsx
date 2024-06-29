@@ -258,6 +258,7 @@ const InvoiceForm = ({ data, action, partData, orderType }: any) => {
           type="submit"
           mt="sm"
           loading={createIsLoading || updateIsLoading}
+          disabled={!form.isValid()}
         >
           Submit
         </Button>
@@ -373,7 +374,12 @@ export const UpdateInvoiceForm = ({ data }: any) => {
             {...form.getInputProps("remark")}
           />
         </SimpleGrid>
-        <Button type="submit" mt="sm" loading={updateIsLoading}>
+        <Button
+          type="submit"
+          mt="sm"
+          loading={updateIsLoading}
+          disabled={!form.isValid()}
+        >
           Submit
         </Button>
       </form>
@@ -526,7 +532,12 @@ export const InvoiceFilterForm = ({ form, handleSubmit, isLoading }: any) => {
                 />
               </SimpleGrid>
             </Box>
-            <Button type="submit" mt="sm" loading={isLoading}>
+            <Button
+              type="submit"
+              mt="sm"
+              loading={isLoading}
+              disabled={!form.isValid()}
+            >
               {" "}
               Filter
             </Button>

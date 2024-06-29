@@ -140,6 +140,7 @@ const TabForm = ({ data, action }: any) => {
           type="submit"
           mt="sm"
           loading={isFpTabLoading || isUpFpTabLoading}
+          disabled={!form.isValid()}
         >
           {" "}
           Submit

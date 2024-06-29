@@ -260,7 +260,7 @@ export function SalesTable({
                 color="green"
                 onClick={() =>
                   modals.open({
-                    size: "90%",
+                    size: "100%",
                     title: `Update Sales Order ${row?.orderNo}`,
                     children: <SalesForm data={row} action="update" />,
                   })
@@ -303,7 +303,7 @@ export function SalesTable({
                 onClick={() =>
                   modals.open({
                     title: "Create Sales Order",
-                    size: "90%",
+                    size: "100%",
                     children: <SalesForm action="add" />,
                   })
                 }

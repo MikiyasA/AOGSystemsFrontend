@@ -2,13 +2,21 @@ import {
   useCreateCompanyMutation,
   useUpdateCompanyMutation,
 } from "@/pages/api/apiSlice";
-import { Box, Button, SimpleGrid, TextInput, Title } from "@mantine/core";
+import {
+  Box,
+  Button,
+  Select,
+  SimpleGrid,
+  TextInput,
+  Title,
+} from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import React from "react";
 import MyLoadingOverlay from "../MyLoadingOverlay";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
+import { PaymentTerm } from "@/config/constant";
 
 const CompanyForm = ({ data, action, closeModal }: any) => {
   const form = useForm({
@@ -23,7 +31,18 @@ const CompanyForm = ({ data, action, closeModal }: any) => {
       phone: data?.phone,
       shipToAddress: data?.shipToAddress,
       billToAddress: data?.billToAddress,
-      paymentTerm: data?.paymentTerm,
+      paymentTerm: data?.paymentTerm || "N-30",
+    },
+    validate: {
+      code: (value) => {
+        if (value?.includes(" ")) {
+          return "Vendor Code cannot contain spaces";
+        }
+        if (value?.length !== 5) {
+          return "Vendor Code must be exactly 5 characters";
+        }
+        return null;
+      },
     },
   });
 
@@ -46,7 +65,8 @@ const CompanyForm = ({ data, action, closeModal }: any) => {
     if (action === "add") {
       const addReturn: any = await addCompany(form.values);
       if (addReturn?.data?.isSuccess) {
-        route.push(`/company/detail/${addReturn?.data?.data?.id}`);
+        closeModal &&
+          route.push(`/company/detail/${addReturn?.data?.data?.id}`);
         notifications.show({
           title: "Success",
           message: addReturn?.message || "Company Created Successfully 👍",
@@ -81,8 +101,10 @@ const CompanyForm = ({ data, action, closeModal }: any) => {
           });
     }
   };
-  addIsSuccess && closeModal && modals.closeAll();
-  (updateIsSuccess || addIsSuccess) && modals.closeAll();
+  if (closeModal) {
+    addIsSuccess && modals.closeAll();
+    updateIsSuccess && modals.closeAll();
+  }
   return (
     <Box w={"100%"}>
       {addIsLoading || (updateIsLoading && <MyLoadingOverlay />)}
@@ -104,6 +126,7 @@ const CompanyForm = ({ data, action, closeModal }: any) => {
           <TextInput
             label="Company Code"
             placeholder="Company Code"
+            maxLength={5}
             {...form.getInputProps("code")}
             required
           />
@@ -137,13 +160,19 @@ const CompanyForm = ({ data, action, closeModal }: any) => {
             placeholder="Bill To Address"
             {...form.getInputProps("billToAddress")}
           />
-          <TextInput
+          <Select
             label="Payment Term"
             placeholder="Payment Term"
+            data={PaymentTerm.map((x: string) => x)}
             {...form.getInputProps("paymentTerm")}
           />
         </SimpleGrid>
-        <Button type="submit" mt="sm" loading={addIsLoading || updateIsLoading}>
+        <Button
+          type="submit"
+          mt="sm"
+          loading={addIsLoading || updateIsLoading}
+          disabled={!form.isValid()}
+        >
           {" "}
           Submit
         </Button>

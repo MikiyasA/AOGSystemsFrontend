@@ -63,6 +63,11 @@ const LoanForm = ({ data, action }: any) => {
     },
     validate: {
       companyId: (v) => (v?.length < 1 ? "Company must be selected" : null),
+      customerOrderNo: (value) => {
+        if (value?.includes(" ")) {
+          return "Customer Order No cannot contain spaces";
+        }
+      },
     },
   });
   const [
@@ -165,8 +170,8 @@ const LoanForm = ({ data, action }: any) => {
                 onClick={() => {
                   modals.open({
                     title: "Add Company",
-                    size: "80%",
-                    children: <CompanyForm action="add" />,
+                    size: "90%",
+                    children: <CompanyForm action="add" closeModal={false} />,
                   });
                 }}
               />
@@ -217,7 +222,7 @@ const LoanForm = ({ data, action }: any) => {
                     onClick={() => {
                       modals.open({
                         title: "Add Part",
-                        size: "80%",
+                        size: "90%",
                         children: <PartForm action="add" redirect={false} />,
                       });
                     }}
@@ -319,7 +324,12 @@ const LoanForm = ({ data, action }: any) => {
             {...form.getInputProps("note")}
           />
         </SimpleGrid>
-        <Button type="submit" mt="sm" loading={addIsLoading || updateIsLoading}>
+        <Button
+          type="submit"
+          mt="sm"
+          loading={addIsLoading || updateIsLoading}
+          disabled={!form.isValid()}
+        >
           {" "}
           Submit
         </Button>
@@ -456,6 +466,7 @@ export const AddLineItemForm = ({ data, loanId }: any) => {
               "Loan charge (from 11th - 30th Day)",
               "Loan charge (from 31st - 45th Day)",
               "Administrative charge (One time)",
+              "Loan charge Per Day",
             ]}
             clearable
             hidePickedOptions
@@ -769,7 +780,12 @@ export const OfferForm = ({ data, action, loanPartListId }: any) => {
             {...form.getInputProps("currency")}
           />
         </SimpleGrid>
-        <Button type="submit" mt="sm" loading={addIsLoading || updateIsLoading}>
+        <Button
+          type="submit"
+          mt="sm"
+          loading={addIsLoading || updateIsLoading}
+          disabled={!form.isValid()}
+        >
           Submit
         </Button>
       </form>
@@ -869,7 +885,12 @@ export const ShipSalesForm = ({ data, salesId, action }: any) => {
             />
           </Group>
         </SimpleGrid>
-        <Button type="submit" mt="sm" loading={shipSalesLoading}>
+        <Button
+          type="submit"
+          mt="sm"
+          loading={shipSalesLoading}
+          disabled={!form.isValid()}
+        >
           Submit
         </Button>
       </form>
@@ -954,7 +975,12 @@ export const LoanFilterForm = ({ form, handleSubmit, isLoading }: any) => {
                 />
               </SimpleGrid>
             </Box>
-            <Button type="submit" mt="sm" loading={isLoading}>
+            <Button
+              type="submit"
+              mt="sm"
+              loading={isLoading}
+              disabled={!form.isValid()}
+            >
               {" "}
               Filter
             </Button>

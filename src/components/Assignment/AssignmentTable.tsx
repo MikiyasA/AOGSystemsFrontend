@@ -223,7 +223,12 @@ export function AssignmentTable({
             );
           } else if (col.key === "title") {
             return (
-              <Table.Td key={`col-${index}`} p={2} m={0}>
+              <Table.Td
+                key={`col-${index}`}
+                p={2}
+                m={0}
+                style={{ overflowWrap: "anywhere" }}
+              >
                 <Link href={`/assignment/detail/${row.id}`}>
                   {row[col.key]}
                 </Link>
@@ -231,7 +236,12 @@ export function AssignmentTable({
             );
           } else {
             return (
-              <Table.Td key={`col-${index}`} p={2} m={0}>
+              <Table.Td
+                key={`col-${index}`}
+                p={2}
+                m={0}
+                style={{ overflowWrap: "anywhere" }}
+              >
                 {row[col.key]}
               </Table.Td>
             );

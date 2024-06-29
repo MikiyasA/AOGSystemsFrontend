@@ -16,7 +16,17 @@ const initialValues = [
     key: randomId(),
   },
   {
+    label: "Is the part returned and information is updated properly?",
+    checked: false,
+    key: randomId(),
+  },
+  {
     label: "RID and SN is updated for all line item to be invoiced?",
+    checked: false,
+    key: randomId(),
+  },
+  {
+    label: "Is all charges are included and correct?",
     checked: false,
     key: randomId(),
   },
@@ -73,7 +83,7 @@ export function RaiseInvoice({ order, partData, orderType }: any) {
             onConfirm() {
               modals.open({
                 title: `Raise Invoice For ${order?.orderNo}`,
-                size: "90%",
+                size: "100%",
                 children: (
                   <InvoiceForm
                     action="add"

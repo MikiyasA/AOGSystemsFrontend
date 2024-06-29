@@ -15,7 +15,7 @@ const AddCompany = () => {
           width: "80%",
         }}
       >
-        <CompanyForm action="add" />
+        <CompanyForm action="add" closeModal />
       </Center>
       {/* </Box> */}
     </Layout>

@@ -149,7 +149,7 @@ const SalesForm = ({ data, action }: any) => {
                 onClick={() => {
                   modals.open({
                     title: "Add Company",
-                    size: "80%",
+                    size: "90%",
                     children: <CompanyForm action="add" closeModal={false} />,
                   });
                 }}
@@ -197,7 +197,7 @@ const SalesForm = ({ data, action }: any) => {
                     onClick={() => {
                       modals.open({
                         title: "Add Company",
-                        size: "80%",
+                        size: "90%",
                         children: <PartForm action="add" redirect={false} />,
                       });
                     }}
@@ -277,7 +277,12 @@ const SalesForm = ({ data, action }: any) => {
             {...form.getInputProps("note")}
           />
         </SimpleGrid>
-        <Button type="submit" mt="sm" loading={addIsLoading || updateIsLoading}>
+        <Button
+          type="submit"
+          mt="sm"
+          loading={addIsLoading || updateIsLoading}
+          disabled={!form.isValid()}
+        >
           {" "}
           Submit
         </Button>
@@ -389,7 +394,7 @@ export const LineItemForm = ({ data, salesId, action }: any) => {
                 onClick={() => {
                   modals.open({
                     title: "Add Part",
-                    size: "80%",
+                    size: "90%",
                     children: <PartForm action="add" redirect={false} />,
                   });
                 }}
@@ -555,7 +560,12 @@ export const ShipSalesForm = ({ data, salesId, action }: any) => {
             />
           </Group>
         </SimpleGrid>
-        <Button type="submit" mt="sm" loading={shipSalesLoading}>
+        <Button
+          type="submit"
+          mt="sm"
+          loading={shipSalesLoading}
+          disabled={!form.isValid()}
+        >
           Submit
         </Button>
       </form>
@@ -673,7 +683,12 @@ export const SalesFilterForm = ({ form, handleSubmit, isLoading }: any) => {
                 />
               </SimpleGrid>
             </Box>
-            <Button type="submit" mt="sm" loading={isLoading}>
+            <Button
+              type="submit"
+              mt="sm"
+              loading={isLoading}
+              disabled={!form.isValid()}
+            >
               {" "}
               Filter
             </Button>

@@ -252,7 +252,7 @@ export function LoanTable({
                 color="green"
                 onClick={() =>
                   modals.open({
-                    size: "90%",
+                    size: "100%",
                     title: `Update Loan Order ${row?.orderNo}`,
                     children: <LoanForm data={row} action="update" />,
                   })
@@ -295,7 +295,7 @@ export function LoanTable({
                 onClick={() =>
                   modals.open({
                     title: "Create Loan Order",
-                    size: "90%",
+                    size: "100%",
                     children: <LoanForm action="add" />,
                   })
                 }

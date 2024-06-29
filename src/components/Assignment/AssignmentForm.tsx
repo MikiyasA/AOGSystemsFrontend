@@ -287,7 +287,12 @@ const AssignmentForm = ({ data, action }: any) => {
             </Group>
           </Box>
         </Box>
-        <Button type="submit" mt="sm" loading={addLoading || updateLoading}>
+        <Button
+          type="submit"
+          mt="sm"
+          loading={addLoading || updateLoading}
+          disabled={!form.isValid()}
+        >
           {" "}
           Submit
         </Button>
@@ -347,7 +352,13 @@ export const ReassignForm = ({ data, users }: any) => {
           {...form.getInputProps("reAssignedTo")}
           required
         />
-        <Button fullWidth mt="xl" type="submit" loading={reassignLoading}>
+        <Button
+          fullWidth
+          mt="xl"
+          type="submit"
+          loading={reassignLoading}
+          disabled={!form.isValid()}
+        >
           Reassign
         </Button>
       </form>
@@ -549,7 +560,12 @@ export const AssignmentFilterForm = ({
                 />
               </SimpleGrid>
             </Box>
-            <Button type="submit" mt="sm" loading={isLoading}>
+            <Button
+              type="submit"
+              mt="sm"
+              loading={isLoading}
+              disabled={!form.isValid()}
+            >
               {" "}
               Filter
             </Button>

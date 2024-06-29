@@ -354,7 +354,12 @@ const EditFollowup = ({ data, tab }: any) => {
             />
           </Group>
         </SimpleGrid>
-        <Button type="submit" mt="sm" loading={isFpLoading}>
+        <Button
+          type="submit"
+          mt="sm"
+          loading={isFpLoading}
+          disabled={!form.isValid()}
+        >
           {" "}
           Submit
         </Button>

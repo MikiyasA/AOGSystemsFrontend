@@ -247,6 +247,7 @@ const CostSavingForm = ({ data, action }: any) => {
           type="submit"
           mt="sm"
           loading={addCSisLoading || updateCSisLoading}
+          disabled={!form.isValid()}
         >
           {" "}
           Submit
@@ -388,7 +389,12 @@ export const CostSavingFilterForm = ({
                 />
               </SimpleGrid>
             </Box>
-            <Button type="submit" mt="sm" loading={isLoading}>
+            <Button
+              type="submit"
+              mt="sm"
+              loading={isLoading}
+              disabled={!form.isValid()}
+            >
               {" "}
               Filter
             </Button>

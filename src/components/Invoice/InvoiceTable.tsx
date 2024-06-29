@@ -84,7 +84,7 @@ export default function InvoiceTable({ data }: any) {
                     onClick={() => {
                       modals.open({
                         title: `Update Invoice ${el.invoiceNo}`,
-                        size: "90%",
+                        size: "100%",
                         children: <UpdateInvoiceForm data={el} />,
                       });
                     }}

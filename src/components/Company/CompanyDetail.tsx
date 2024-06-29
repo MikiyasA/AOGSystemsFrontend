@@ -18,7 +18,7 @@ const CompanyDetail = ({ data }: any) => {
         width: "100%",
       }}
     >
-      <Box w={"50%"} m={50} style={{}}>
+      <Box m={50} style={{}}>
         <Button
           onClick={() => {
             modals.open({
@@ -51,12 +51,7 @@ const CompanyDetail = ({ data }: any) => {
           spacing={{ base: 10, sm: "xl" }}
           verticalSpacing={{ base: "md", sm: "xl" }}
         >
-          <Group
-            display={"grid"}
-            w={"max-content"}
-            gap={2}
-            style={{ alignContent: "baseline" }}
-          >
+          <Group display={"grid"} gap={2} style={{ alignContent: "baseline" }}>
             <Title order={5} fw={600}>
               Company Name
             </Title>
@@ -65,12 +60,7 @@ const CompanyDetail = ({ data }: any) => {
             </Title>
           </Group>
 
-          <Group
-            display={"grid"}
-            w={"max-content"}
-            gap={2}
-            style={{ alignContent: "baseline" }}
-          >
+          <Group display={"grid"} gap={2} style={{ alignContent: "baseline" }}>
             <Title order={5} fw={600}>
               Company Code
             </Title>
@@ -79,12 +69,7 @@ const CompanyDetail = ({ data }: any) => {
             </Title>
           </Group>
 
-          <Group
-            display={"grid"}
-            w={"max-content"}
-            gap={2}
-            style={{ alignContent: "baseline" }}
-          >
+          <Group display={"grid"} gap={2} style={{ alignContent: "baseline" }}>
             <Title order={5} fw={600}>
               Company Address
             </Title>
@@ -93,12 +78,7 @@ const CompanyDetail = ({ data }: any) => {
             </Title>
           </Group>
 
-          <Group
-            display={"grid"}
-            w={"max-content"}
-            gap={2}
-            style={{ alignContent: "baseline" }}
-          >
+          <Group display={"grid"} gap={2} style={{ alignContent: "baseline" }}>
             <Title order={5} fw={600}>
               City
             </Title>
@@ -107,12 +87,7 @@ const CompanyDetail = ({ data }: any) => {
             </Title>
           </Group>
 
-          <Group
-            display={"grid"}
-            w={"max-content"}
-            gap={2}
-            style={{ alignContent: "baseline" }}
-          >
+          <Group display={"grid"} gap={2} style={{ alignContent: "baseline" }}>
             <Title order={5} fw={600}>
               Country
             </Title>
@@ -121,12 +96,7 @@ const CompanyDetail = ({ data }: any) => {
             </Title>
           </Group>
 
-          <Group
-            display={"grid"}
-            w={"max-content"}
-            gap={2}
-            style={{ alignContent: "baseline" }}
-          >
+          <Group display={"grid"} gap={2} style={{ alignContent: "baseline" }}>
             <Title order={5} fw={600}>
               Phone No
             </Title>
@@ -135,12 +105,7 @@ const CompanyDetail = ({ data }: any) => {
             </Title>
           </Group>
 
-          <Group
-            display={"grid"}
-            w={"max-content"}
-            gap={2}
-            style={{ alignContent: "baseline" }}
-          >
+          <Group display={"grid"} gap={2} style={{ alignContent: "baseline" }}>
             <Title order={5} fw={600}>
               Ship To Address
             </Title>
@@ -149,12 +114,7 @@ const CompanyDetail = ({ data }: any) => {
             </Title>
           </Group>
 
-          <Group
-            display={"grid"}
-            w={"max-content"}
-            gap={2}
-            style={{ alignContent: "baseline" }}
-          >
+          <Group display={"grid"} gap={2} style={{ alignContent: "baseline" }}>
             <Title order={5} fw={600}>
               Bill To Address
             </Title>
@@ -163,12 +123,7 @@ const CompanyDetail = ({ data }: any) => {
             </Title>
           </Group>
 
-          <Group
-            display={"grid"}
-            w={"max-content"}
-            gap={2}
-            style={{ alignContent: "baseline" }}
-          >
+          <Group display={"grid"} gap={2} style={{ alignContent: "baseline" }}>
             <Title order={5} fw={600}>
               Payment Term
             </Title>

@@ -49,7 +49,7 @@ const PartForm = ({ data, action, redirect }: any) => {
     if (action === "add") {
       const addReturn: any = await addPart(form.values);
       if (addReturn?.data?.isSuccess) {
-        route.push(`/part/detail/${addReturn.data.id}`);
+        redirect && route.push(`/part/detail/${addReturn?.data?.data?.id}`);
         notifications.show({
           title: "Success",
           message: addReturn?.message || "Part Add Successfully 👍",
@@ -77,7 +77,7 @@ const PartForm = ({ data, action, redirect }: any) => {
         });
       addReturn?.data?.isSuccess &&
         redirect &&
-        route.push(`${FE_LINK}part/detail/${addReturn?.data.partNumber}`);
+        route.push(`/part/detail/${addReturn?.data?.data?.id}`);
     } else if (action === "update") {
       const updateReturn: any = await updatePart(form.values);
       updateReturn?.data.isSuccess
@@ -96,11 +96,13 @@ const PartForm = ({ data, action, redirect }: any) => {
           });
       updateReturn?.data.isSuccess &&
         redirect &&
-        route.push(`${FE_LINK}part/detail/${updateReturn?.data.partNumber}`);
+        route.push(`/part/detail/${updateReturn?.data?.data?.id}`);
     }
   };
-  addIsSuccess && redirect && modals.closeAll();
-  updateIsSuccess && modals.closeAll();
+  if (redirect) {
+    addIsSuccess && modals.closeAll();
+    updateIsSuccess && modals.closeAll();
+  }
   return (
     <Box w={"100%"}>
       {addIsLoading || (updateIsLoading && <MyLoadingOverlay />)}
@@ -143,13 +145,18 @@ const PartForm = ({ data, action, redirect }: any) => {
           <Select
             label="Part Type"
             placeholder="Part Type"
-            data={["Component", "Hardware", "Tool"]}
+            data={["Component", "Hardware", "Tool", "Miscellaneous"]}
             searchable
             nothingFoundMessage="Nothing found..."
             {...form.getInputProps("partType")}
           />
         </SimpleGrid>
-        <Button type="submit" mt="sm" loading={addIsLoading || updateIsLoading}>
+        <Button
+          type="submit"
+          mt="sm"
+          loading={addIsLoading || updateIsLoading}
+          disabled={!form.isValid()}
+        >
           {" "}
           Submit
         </Button>

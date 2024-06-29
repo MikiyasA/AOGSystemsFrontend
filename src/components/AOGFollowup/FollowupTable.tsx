@@ -242,12 +242,7 @@ export function FollowupTable({
               m={0}
               style={{ overflowWrap: "break-word" }}
             >
-              <Link
-                href={`/part/detail/${row.partNumber}`}
-                style={{ textDecoration: "none", color: "inherit" }}
-              >
-                {row.partNumber}
-              </Link>
+              {row.partNumber}
             </Table.Td>
           );
         } else if (col.key === "quantity") {
@@ -319,7 +314,7 @@ export function FollowupTable({
   ));
 
   return (
-    <Box mx={20}>
+    <Box mx={20} miw={"100%"}>
       <Center>
         <Title order={4} my={20}>
           {tableTitle}
@@ -357,9 +352,8 @@ export function FollowupTable({
 
         <Table.ScrollContainer minWidth={200}>
           <Table
-            horizontalSpacing="lg"
+            horizontalSpacing="sm"
             verticalSpacing="xs"
-            layout="fixed"
             highlightOnHover
             striped
           >

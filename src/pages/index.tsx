@@ -22,9 +22,10 @@ export const Home = () => {
         style={{
           placeContent: "center",
           textAlignLast: "center",
-          // flexDirection: "column",
+          // margin: 30,
           width: "100%",
         }}
+        m={30}
       >
         <Grid m={30} p={30}>
           <Grid.Col span={12}>

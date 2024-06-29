@@ -32,7 +32,7 @@ const RemarkForm = ({ remark, aOGFollowUpId, id, action }: any) => {
     e.preventDefault();
     if (action === "add") {
       const addReturn: any = await addRemark(form.values);
-      addReturn?.isSuccess
+      addReturn?.data?.isSuccess
         ? notifications.show({
             title: "Success",
             message: addReturn?.message || "Remark Add Successfully 👍",
@@ -49,7 +49,7 @@ const RemarkForm = ({ remark, aOGFollowUpId, id, action }: any) => {
           });
     } else if (action === "update") {
       const updateReturn: any = await updateRemark(form.values);
-      updateReturn?.isSuccess
+      updateReturn?.data?.isSuccess
         ? notifications.show({
             title: "Success",
             message: updateReturn?.message || "Remark updated Successfully 👍",
@@ -58,7 +58,7 @@ const RemarkForm = ({ remark, aOGFollowUpId, id, action }: any) => {
         : notifications.show({
             title: "Failure",
             message:
-              updateReturn?.data?.error.message ||
+              updateReturn?.data?.error?.message ||
               updateReturn?.data?.title ||
               "Error occurs on update Remark",
             color: "red",
@@ -83,7 +83,12 @@ const RemarkForm = ({ remark, aOGFollowUpId, id, action }: any) => {
             required
           />
         </SimpleGrid>
-        <Button type="submit" mt="sm" loading={addLoading || updateLoading}>
+        <Button
+          type="submit"
+          mt="sm"
+          loading={addLoading || updateLoading}
+          disabled={!form.isValid()}
+        >
           {" "}
           Submit
         </Button>

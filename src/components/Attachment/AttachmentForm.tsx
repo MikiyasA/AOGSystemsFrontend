@@ -159,7 +159,12 @@ export const AttachmentForm = ({
             </Group>
           </Dropzone>
         </Box>
-        <Button type="submit" mt="sm" loading={addLoading || updateLoading}>
+        <Button
+          type="submit"
+          mt="sm"
+          loading={addLoading || updateLoading}
+          disabled={!form.isValid()}
+        >
           {" "}
           Submit
         </Button>

@@ -309,6 +309,7 @@ const CoreForm = ({ data, action }: any) => {
           type="submit"
           mt="sm"
           loading={addCFisLoading || updateCFisLoading}
+          disabled={!form.isValid()}
         >
           {" "}
           Submit
@@ -461,7 +462,12 @@ export const CoreFilterForm = ({ form, handleSubmit, isLoading }: any) => {
                 />
               </SimpleGrid>
             </Box>
-            <Button type="submit" mt="sm" loading={isLoading}>
+            <Button
+              type="submit"
+              mt="sm"
+              loading={isLoading}
+              disabled={!form.isValid()}
+            >
               {" "}
               Filter
             </Button>

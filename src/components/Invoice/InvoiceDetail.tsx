@@ -254,7 +254,7 @@ const InvoiceDetail = ({ data, location }: any) => {
                     onClick={() =>
                       modals.open({
                         title: "Update Invoice",
-                        size: "90%",
+                        size: "100%",
                         children: (
                           <UpdateInvoiceForm data={data} action="update" />
                         ),
